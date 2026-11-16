@@ -474,3 +474,21 @@ checkIncomingGift();
 document.getElementById('inputHari').value = selectedDay;
 document.getElementById('sessionCount').textContent = state.sessions || 0;
 renderHeader(); renderDayPills(); renderJadwal(); renderTugas(); renderUjian(); renderGpa();
+
+function redeemGiftPrompt() {
+  const raw = prompt('Tempel link kejutan yang dikirim ke kamu:');
+  if (!raw) return;
+  const idx = raw.indexOf('#gift=');
+  if (idx === -1) return alert('Format link kejutan tidak valid.');
+  try {
+    const payload = JSON.parse(decodeURIComponent(atob(raw.slice(idx + 6).trim())));
+    if (payload.msg) state.bannerMsg = payload.msg;
+    if (payload.vTitle) {
+      state.voucher = { title: payload.vTitle, desc: payload.vDesc || 'Hadiah spesial buat kamu!', claimed: false };
+    }
+    persist(); renderAll(); closeModals();
+    alert('Pesan & kejutan berhasil dipasang! ✨');
+  } catch (e) {
+    alert('Gagal membaca link kejutan.');
+  }
+}
