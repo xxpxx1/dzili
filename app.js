@@ -2,8 +2,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
-const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-const DAY_SHORT = { Senin: 'Sen', Selasa: 'Sel', Rabu: 'Rab', Kamis: 'Kam', Jumat: 'Jum', Sabtu: 'Sab' };
+const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+const DAY_SHORT = { Senin: 'Sen', Selasa: 'Sel', Rabu: 'Rab', Kamis: 'Kam', Jumat: 'Jum', Sabtu: 'Sab', Minggu: 'Min' };
 
 const defaultData = {
   userName: 'Dzili',
@@ -55,7 +55,7 @@ function checkIncomingGift() {
 }
 
 const jsDay = new Date().getDay();
-const todayName = (jsDay >= 1 && jsDay <= 6) ? DAYS[jsDay - 1] : 'Senin';
+const todayName = jsDay === 0 ? 'Minggu' : DAYS[jsDay - 1];
 let selectedDay = todayName;
 let editingJadwalId = null, editingTugasId = null, editingUjianId = null;
 function renderHeader() {
