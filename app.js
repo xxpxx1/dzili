@@ -2,8 +2,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
-const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-const DAY_SHORT = { Senin: 'Sen', Selasa: 'Sel', Rabu: 'Rab', Kamis: 'Kam', Jumat: 'Jum', Sabtu: 'Sab', Minggu: 'Min' };
+const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+const DAY_SHORT = { Senin: 'Sen', Selasa: 'Sel', Rabu: 'Rab', Kamis: 'Kam', Jumat: 'Jum', Sabtu: 'Sab' };
 
 const defaultData = {
   userName: 'Dzili',
@@ -25,23 +25,97 @@ const defaultData = {
     { id: 302, name: 'Bahasa Inggris', sks: 2, grade: 3.5 }
   ],
   note: '',
-  sessions: 0
+  sessions: 0,
+  updatedAt: 0
 };
 
+let syncCfg = JSON.parse(localStorage.getItem('dzili_sync_cfg')) || { cloudUrl: '', roomId: 'dzili-01' };
 let state = JSON.parse(localStorage.getItem('dzili_data')) || defaultData;
 if (!state.ujian) state.ujian = defaultData.ujian;
 if (!state.gpaCourses) state.gpaCourses = defaultData.gpaCourses;
 if (!state.secretPin) state.secretPin = '2026';
 
-function persist() {
-  localStorage.setItem('dzili_data', JSON.stringify(state));
-  renderBento();
+let pushTimer = null;
+function setSyncBadge(text, cls) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.textContent = text;
+  el.className = `sync-badge ${cls || ''}`;
 }
 
-function checkIncomingGift() {
+function persist(skipCloud = false) {
+  if (!skipCloud) state.updatedAt = Date.now();
+  localStorage.setItem('dzili_data', JSON.stringify(state));
+  renderBento();
+  if (!skipCloud && syncCfg.cloudUrl) {
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(() => pushToCloud(), 700);
+  }
+}
+function getEndpoint() {
+  const base = (syncCfg.cloudUrl || '').trim().replace(/\/+$/, '');
+  const room = (syncCfg.roomId || 'dzili-01').trim().replace(/[^a-zA-Z0-9_-]/g, '') || 'dzili-01';
+  return base ? `${base}/dzili_rooms/${room}.json` : '';
+}
+
+async function pushToCloud() {
+  const url = getEndpoint();
+  if (!url) { setSyncBadge('💾 Lokal', 'offline'); return; }
+  setSyncBadge('⏳ Sync...', 'syncing');
+  try {
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state)
+    });
+    if (!res.ok) throw new Error();
+    setSyncBadge('☁️ Tersinkron', '');
+  } catch (e) {
+    setSyncBadge('📴 Offline', 'offline');
+  }
+}
+
+async function pullFromCloud(force = false) {
+  const url = getEndpoint();
+  if (!url) { setSyncBadge('💾 Lokal', 'offline'); return; }
+  setSyncBadge('⏳ Cek...', 'syncing');
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error();
+    const remote = await res.json();
+    if (remote && (force || (remote.updatedAt && remote.updatedAt > (state.updatedAt || 0)))) {
+      state = {
+        ...defaultData,
+        ...remote,
+        jadwal: Array.isArray(remote.jadwal) ? remote.jadwal : [],
+        tugas: Array.isArray(remote.tugas) ? remote.tugas : [],
+        ujian: Array.isArray(remote.ujian) ? remote.ujian : [],
+        gpaCourses: Array.isArray(remote.gpaCourses) ? remote.gpaCourses : []
+      };
+      persist(true);
+      renderAll();
+    } else if (!remote && state.updatedAt > 0) {
+      await pushToCloud();
+    }
+    setSyncBadge('☁️ Tersinkron', '');
+  } catch (e) {
+    setSyncBadge('📴 Offline', 'offline');
+  }
+}
+
+function checkIncomingLinks() {
   const hash = window.location.hash;
-  if (hash && hash.startsWith('#gift=')) {
-    try {
+  if (!hash) return;
+  try {
+    if (hash.startsWith('#sync=')) {
+      const cfg = JSON.parse(decodeURIComponent(atob(hash.slice(6))));
+      if (cfg.url) {
+        syncCfg = { cloudUrl: cfg.url, roomId: cfg.room || 'dzili-01' };
+        localStorage.setItem('dzili_sync_cfg', JSON.stringify(syncCfg));
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        setTimeout(() => { pullFromCloud(true); alert('Sinkronisasi 2 HP berhasil terhubung! ☁️'); }, 300);
+      }
+    } else if (hash.startsWith('#gift=')) {
       const payload = JSON.parse(decodeURIComponent(atob(hash.slice(6))));
       if (payload.msg) state.bannerMsg = payload.msg;
       if (payload.vTitle) {
@@ -50,14 +124,14 @@ function checkIncomingGift() {
       persist();
       history.replaceState(null, '', window.location.pathname + window.location.search);
       setTimeout(() => alert('Ada pesan & kejutan baru buat kamu di Dzili! ✨'), 350);
-    } catch (e) {}
-  }
+    }
+  } catch (e) {}
 }
-
 const jsDay = new Date().getDay();
-const todayName = jsDay === 0 ? 'Minggu' : DAYS[jsDay - 1];
+const todayName = (jsDay >= 1 && jsDay <= 6) ? DAYS[jsDay - 1] : 'Senin';
 let selectedDay = todayName;
 let editingJadwalId = null, editingTugasId = null, editingUjianId = null;
+
 function renderHeader() {
   const hour = new Date().getHours();
   let salam = 'Selamat Malam';
@@ -67,7 +141,7 @@ function renderHeader() {
 
   document.getElementById('greetingText').textContent = `${salam}, ${state.userName}!`;
   document.getElementById('todayDateText').textContent = new Date().toLocaleDateString('id-ID', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    weekday: 'long', day: 'numeric', month: 'short'
   });
   document.getElementById('dailyBanner').textContent = state.bannerMsg;
   renderVoucher();
@@ -78,14 +152,12 @@ function renderBento() {
   const todayClasses = state.jadwal.filter(j => j.hari === todayName).sort((a, b) => a.jam.localeCompare(b.jam));
   document.getElementById('bentoClassCount').textContent = todayClasses.length;
   document.getElementById('bentoClassSub').textContent = todayClasses.length > 0
-    ? `Mulai ${todayClasses[0].jam.split('-')[0].trim()}`
-    : `Hari ${todayName} libur kelas`;
+    ? `Mulai ${todayClasses[0].jam.split('-')[0].trim()}` : `Hari ${todayName} libur kelas`;
 
   const activeTasks = state.tugas.filter(t => !t.done).sort((a, b) => a.deadline.localeCompare(b.deadline));
   document.getElementById('bentoTaskCount').textContent = activeTasks.length;
   document.getElementById('bentoTaskSub').textContent = activeTasks.length > 0
-    ? `Terdekat: ${activeTasks[0].matkul}`
-    : 'Semua tugas beres!';
+    ? `Terdekat: ${activeTasks[0].matkul}` : 'Semua tugas beres!';
 }
 
 function renderVoucher() {
@@ -104,10 +176,9 @@ function toggleClaimVoucher() {
   if (!state.voucher) return;
   state.voucher.claimed = !state.voucher.claimed;
   persist(); renderVoucher();
-  if (state.voucher.claimed) alert('Voucher berhasil diklaim! Screenshot layar ini dan tunjukkan untuk menukarnya 😊');
+  if (state.voucher.claimed) alert('Voucher berhasil diklaim! Screenshot layar ini untuk menukarnya 😊');
 }
 
-// === KUNCI PIN & PANEL KEJUTAN ===
 let tapCount = 0, tapTimer = null;
 function handleSecretTap() {
   tapCount++;
@@ -121,8 +192,7 @@ function handleSecretTap() {
 }
 
 function verifyPin() {
-  const entered = document.getElementById('inputSecretPin').value.trim();
-  if (entered === (state.secretPin || '2026')) {
+  if (document.getElementById('inputSecretPin').value.trim() === (state.secretPin || '2026')) {
     closeModals();
     document.getElementById('secretBannerInput').value = state.bannerMsg || '';
     document.getElementById('secretVoucherTitle').value = state.voucher ? state.voucher.title : '';
@@ -130,42 +200,37 @@ function verifyPin() {
     document.getElementById('secretNewPin').value = '';
     openModal('modal-secret');
   } else {
-    alert('PIN salah!');
-    document.getElementById('inputSecretPin').value = '';
+    alert('PIN salah!'); document.getElementById('inputSecretPin').value = '';
   }
 }
-
-function saveNewPinIfAny() {
-  const newPin = document.getElementById('secretNewPin').value.trim();
-  if (newPin.length >= 4) state.secretPin = newPin;
-}
-
-function applySecretLocal() {
+function applyAndPushSecret() {
   const msg = document.getElementById('secretBannerInput').value.trim();
   const vTitle = document.getElementById('secretVoucherTitle').value.trim();
   const vDesc = document.getElementById('secretVoucherDesc').value.trim();
-  saveNewPinIfAny();
+  const newPin = document.getElementById('secretNewPin').value.trim();
+  if (newPin.length >= 4) state.secretPin = newPin;
   if (msg) state.bannerMsg = msg;
   state.voucher = vTitle ? { title: vTitle, desc: vDesc || 'Hadiah spesial buat kamu!', claimed: false } : null;
   persist(); renderHeader(); closeModals();
+  if (syncCfg.cloudUrl) {
+    pushToCloud();
+    alert('Kejutan tersimpan & otomatis terkirim ke HP Dzili via Cloud! ☁️✨');
+  } else {
+    alert('Tersimpan lokal. Aktifkan URL Firebase di Pengaturan agar terkirim otomatis ke HP Dzili.');
+  }
 }
 
 function copyGiftLink() {
   const msg = document.getElementById('secretBannerInput').value.trim();
   const vTitle = document.getElementById('secretVoucherTitle').value.trim();
   const vDesc = document.getElementById('secretVoucherDesc').value.trim();
-  saveNewPinIfAny(); persist();
   const encoded = btoa(encodeURIComponent(JSON.stringify({ msg, vTitle, vDesc })));
   const giftUrl = `${window.location.origin}${window.location.pathname}#gift=${encoded}`;
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(giftUrl).then(() => {
-      alert('Link kejutan berhasil disalin! Tinggal paste dan kirim ke dia.');
-      closeModals();
-    }).catch(() => prompt('Salin link kejutan ini:', giftUrl));
-  } else {
-    prompt('Salin link kejutan ini:', giftUrl);
-  }
+  navigator.clipboard?.writeText(giftUrl).then(() => {
+    alert('Link kejutan disalin!'); closeModals();
+  }).catch(() => prompt('Salin link ini:', giftUrl));
 }
+
 function renderDayPills() {
   document.getElementById('dayPills').innerHTML = DAYS.map(day => `
     <button class="day-pill ${day === selectedDay ? 'active' : ''}" onclick="selectDay('${day}')">${DAY_SHORT[day]}</button>
@@ -173,10 +238,8 @@ function renderDayPills() {
 }
 
 function selectDay(day) {
-  selectedDay = day;
-  document.getElementById('inputHari').value = day;
-  renderDayPills();
-  renderJadwal();
+  selectedDay = day; document.getElementById('inputHari').value = day;
+  renderDayPills(); renderJadwal();
 }
 
 function renderJadwal() {
@@ -189,10 +252,7 @@ function renderJadwal() {
   }
   list.innerHTML = items.map(item => `
     <div class="timeline-item">
-      <div class="timeline-track">
-        <div class="timeline-dot"></div>
-        <div class="timeline-line"></div>
-      </div>
+      <div class="timeline-track"><div class="timeline-dot"></div><div class="timeline-line"></div></div>
       <div class="card">
         <div class="card-main">
           <span class="badge">🕒 ${item.jam}</span>
@@ -209,46 +269,29 @@ function renderJadwal() {
 }
 
 function openAddJadwal() {
-  editingJadwalId = null;
-  document.getElementById('modalJadwalTitle').textContent = 'Tambah Mata Kuliah';
-  document.getElementById('inputHari').value = selectedDay;
-  document.getElementById('inputMatkul').value = '';
-  document.getElementById('inputJam').value = '';
-  document.getElementById('inputRuang').value = '';
+  editingJadwalId = null; document.getElementById('modalJadwalTitle').textContent = 'Tambah Mata Kuliah';
+  document.getElementById('inputHari').value = selectedDay; document.getElementById('inputMatkul').value = '';
+  document.getElementById('inputJam').value = ''; document.getElementById('inputRuang').value = '';
   openModal('modal-jadwal');
 }
-
 function editJadwal(id) {
-  const item = state.jadwal.find(i => i.id === id);
-  if (!item) return;
-  editingJadwalId = id;
-  document.getElementById('modalJadwalTitle').textContent = 'Edit Mata Kuliah';
-  document.getElementById('inputHari').value = item.hari;
-  document.getElementById('inputMatkul').value = item.matkul;
-  document.getElementById('inputJam').value = item.jam;
-  document.getElementById('inputRuang').value = item.ruang || '';
+  const item = state.jadwal.find(i => i.id === id); if (!item) return;
+  editingJadwalId = id; document.getElementById('modalJadwalTitle').textContent = 'Edit Mata Kuliah';
+  document.getElementById('inputHari').value = item.hari; document.getElementById('inputMatkul').value = item.matkul;
+  document.getElementById('inputJam').value = item.jam; document.getElementById('inputRuang').value = item.ruang || '';
   openModal('modal-jadwal');
 }
-
 function saveJadwal() {
-  const hari = document.getElementById('inputHari').value;
-  const matkul = document.getElementById('inputMatkul').value.trim();
-  const jam = document.getElementById('inputJam').value.trim();
-  const ruang = document.getElementById('inputRuang').value.trim();
+  const hari = document.getElementById('inputHari').value, matkul = document.getElementById('inputMatkul').value.trim();
+  const jam = document.getElementById('inputJam').value.trim(), ruang = document.getElementById('inputRuang').value.trim();
   if (!matkul || !jam) return alert('Nama mata kuliah dan jam wajib diisi.');
   if (editingJadwalId !== null) {
     const idx = state.jadwal.findIndex(i => i.id === editingJadwalId);
     if (idx !== -1) state.jadwal[idx] = { ...state.jadwal[idx], hari, matkul, jam, ruang };
-  } else {
-    state.jadwal.push({ id: Date.now(), hari, matkul, jam, ruang });
-  }
+  } else { state.jadwal.push({ id: Date.now(), hari, matkul, jam, ruang }); }
   persist(); selectDay(hari); closeModals();
 }
-
-function deleteJadwal(id) {
-  state.jadwal = state.jadwal.filter(i => i.id !== id);
-  persist(); renderJadwal();
-}
+function deleteJadwal(id) { state.jadwal = state.jadwal.filter(i => i.id !== id); persist(); renderJadwal(); }
 function getDeadlineBadge(deadlineStr, isDone) {
   if (isDone) return { text: 'Selesai', cls: 'done' };
   if (!deadlineStr) return { text: 'Tanpa deadline', cls: '' };
@@ -284,25 +327,16 @@ function renderTugas() {
 }
 
 function openAddTugas() {
-  editingTugasId = null;
-  document.getElementById('modalTugasTitle').textContent = 'Tambah Tugas Kuliah';
-  document.getElementById('inputTugasMatkul').value = '';
-  document.getElementById('inputTugasJudul').value = '';
-  document.getElementById('inputTugasDeadline').value = '';
-  openModal('modal-tugas');
+  editingTugasId = null; document.getElementById('modalTugasTitle').textContent = 'Tambah Tugas Kuliah';
+  document.getElementById('inputTugasMatkul').value = ''; document.getElementById('inputTugasJudul').value = '';
+  document.getElementById('inputTugasDeadline').value = ''; openModal('modal-tugas');
 }
-
 function editTugas(id) {
-  const item = state.tugas.find(t => t.id === id);
-  if (!item) return;
-  editingTugasId = id;
-  document.getElementById('modalTugasTitle').textContent = 'Edit Tugas Kuliah';
-  document.getElementById('inputTugasMatkul').value = item.matkul;
-  document.getElementById('inputTugasJudul').value = item.judul;
-  document.getElementById('inputTugasDeadline').value = item.deadline || '';
-  openModal('modal-tugas');
+  const item = state.tugas.find(t => t.id === id); if (!item) return;
+  editingTugasId = id; document.getElementById('modalTugasTitle').textContent = 'Edit Tugas Kuliah';
+  document.getElementById('inputTugasMatkul').value = item.matkul; document.getElementById('inputTugasJudul').value = item.judul;
+  document.getElementById('inputTugasDeadline').value = item.deadline || ''; openModal('modal-tugas');
 }
-
 function saveTugas() {
   const matkul = document.getElementById('inputTugasMatkul').value.trim();
   const judul = document.getElementById('inputTugasJudul').value.trim();
@@ -311,34 +345,19 @@ function saveTugas() {
   if (editingTugasId !== null) {
     const idx = state.tugas.findIndex(t => t.id === editingTugasId);
     if (idx !== -1) state.tugas[idx] = { ...state.tugas[idx], matkul, judul, deadline };
-  } else {
-    state.tugas.push({ id: Date.now(), matkul, judul, deadline, done: false });
-  }
+  } else { state.tugas.push({ id: Date.now(), matkul, judul, deadline, done: false }); }
   persist(); renderTugas(); closeModals();
 }
-
-function toggleTugas(id) {
-  const item = state.tugas.find(t => t.id === id);
-  if (item) item.done = !item.done;
-  persist(); renderTugas();
-}
-
-function deleteTugas(id) {
-  state.tugas = state.tugas.filter(t => t.id !== id);
-  persist(); renderTugas();
-}
+function toggleTugas(id) { const item = state.tugas.find(t => t.id === id); if (item) item.done = !item.done; persist(); renderTugas(); }
+function deleteTugas(id) { state.tugas = state.tugas.filter(t => t.id !== id); persist(); renderTugas(); }
 let timerSeconds = 25 * 60, currentModeMinutes = 25, timerInterval = null;
 function updateTimerUI() {
-  const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-  const s = String(timerSeconds % 60).padStart(2, '0');
-  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  document.getElementById('timerDisplay').textContent = `${String(Math.floor(timerSeconds/60)).padStart(2,'0')}:${String(timerSeconds%60).padStart(2,'0')}`;
 }
 function setTimerMode(mins, btn) {
-  clearInterval(timerInterval); timerInterval = null;
-  document.getElementById('timerStartBtn').textContent = 'Mulai';
+  clearInterval(timerInterval); timerInterval = null; document.getElementById('timerStartBtn').textContent = 'Mulai';
   currentModeMinutes = mins; timerSeconds = mins * 60;
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active'); updateTimerUI();
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateTimerUI();
 }
 function toggleTimer() {
   const btn = document.getElementById('timerStartBtn');
@@ -348,22 +367,14 @@ function toggleTimer() {
     timerSeconds--; updateTimerUI();
     if (timerSeconds <= 0) {
       clearInterval(timerInterval); timerInterval = null; btn.textContent = 'Mulai';
-      if (currentModeMinutes === 25) {
-        state.sessions++; persist();
-        document.getElementById('sessionCount').textContent = state.sessions;
-      }
+      if (currentModeMinutes === 25) { state.sessions++; persist(); document.getElementById('sessionCount').textContent = state.sessions; }
       alert('Waktu selesai! Kerja bagus, istirahat sebentar ya.'); resetTimer();
     }
   }, 1000);
 }
-function resetTimer() {
-  clearInterval(timerInterval); timerInterval = null;
-  document.getElementById('timerStartBtn').textContent = 'Mulai';
-  timerSeconds = currentModeMinutes * 60; updateTimerUI();
-}
+function resetTimer() { clearInterval(timerInterval); timerInterval = null; document.getElementById('timerStartBtn').textContent = 'Mulai'; timerSeconds = currentModeMinutes * 60; updateTimerUI(); }
 
 const noteEl = document.getElementById('quickNote');
-noteEl.value = state.note || '';
 noteEl.addEventListener('input', () => { state.note = noteEl.value; persist(); });
 
 function renderUjian() {
@@ -379,63 +390,28 @@ function renderUjian() {
     else if (diff <= 3) { badgeText = `H-${diff} • Segera!`; badgeCls = 'soon'; }
     return `
       <div class="card tugas-card">
-        <div class="card-main">
-          <span class="badge ${badgeCls}">⏳ ${badgeText}</span>
-          <div class="card-title">${u.nama}</div>
-          <div class="card-meta">📌 ${u.info || 'Info ruang belum diisi'}</div>
-        </div>
-        <div class="card-actions">
-          <button class="edit-btn" onclick="editUjian(${u.id})">✎</button>
-          <button class="del-btn" onclick="deleteUjian(${u.id})">✕</button>
-        </div>
-      </div>
-    `;
+        <div class="card-main"><span class="badge ${badgeCls}">⏳ ${badgeText}</span><div class="card-title">${u.nama}</div><div class="card-meta">📌 ${u.info || '-'}</div></div>
+        <div class="card-actions"><button class="edit-btn" onclick="editUjian(${u.id})">✎</button><button class="del-btn" onclick="deleteUjian(${u.id})">✕</button></div>
+      </div>`;
   }).join('');
 }
-
-function openAddUjian() {
-  editingUjianId = null; document.getElementById('modalUjianTitle').textContent = 'Tambah Jadwal Ujian';
-  document.getElementById('inputUjianNama').value = ''; document.getElementById('inputUjianTanggal').value = '';
-  document.getElementById('inputUjianInfo').value = ''; openModal('modal-ujian');
-}
-function editUjian(id) {
-  const item = state.ujian.find(u => u.id === id); if (!item) return;
-  editingUjianId = id; document.getElementById('modalUjianTitle').textContent = 'Edit Jadwal Ujian';
-  document.getElementById('inputUjianNama').value = item.nama; document.getElementById('inputUjianTanggal').value = item.tanggal;
-  document.getElementById('inputUjianInfo').value = item.info || ''; openModal('modal-ujian');
-}
+function openAddUjian() { editingUjianId = null; document.getElementById('modalUjianTitle').textContent = 'Tambah Jadwal Ujian'; document.getElementById('inputUjianNama').value = ''; document.getElementById('inputUjianTanggal').value = ''; document.getElementById('inputUjianInfo').value = ''; openModal('modal-ujian'); }
+function editUjian(id) { const u = state.ujian.find(x => x.id === id); if (!u) return; editingUjianId = id; document.getElementById('modalUjianTitle').textContent = 'Edit Jadwal Ujian'; document.getElementById('inputUjianNama').value = u.nama; document.getElementById('inputUjianTanggal').value = u.tanggal; document.getElementById('inputUjianInfo').value = u.info || ''; openModal('modal-ujian'); }
 function saveUjian() {
-  const nama = document.getElementById('inputUjianNama').value.trim();
-  const tanggal = document.getElementById('inputUjianTanggal').value;
-  const info = document.getElementById('inputUjianInfo').value.trim();
-  if (!nama || !tanggal) return alert('Nama ujian dan tanggal wajib diisi.');
-  if (editingUjianId !== null) {
-    const idx = state.ujian.findIndex(u => u.id === editingUjianId);
-    if (idx !== -1) state.ujian[idx] = { ...state.ujian[idx], nama, tanggal, info };
-  } else { state.ujian.push({ id: Date.now(), nama, tanggal, info }); }
+  const nama = document.getElementById('inputUjianNama').value.trim(), tanggal = document.getElementById('inputUjianTanggal').value, info = document.getElementById('inputUjianInfo').value.trim();
+  if (!nama || !tanggal) return alert('Nama ujian & tanggal wajib diisi.');
+  if (editingUjianId !== null) { const idx = state.ujian.findIndex(u => u.id === editingUjianId); if (idx !== -1) state.ujian[idx] = { ...state.ujian[idx], nama, tanggal, info }; }
+  else { state.ujian.push({ id: Date.now(), nama, tanggal, info }); }
   persist(); renderUjian(); closeModals();
 }
 function deleteUjian(id) { state.ujian = state.ujian.filter(u => u.id !== id); persist(); renderUjian(); }
 
-const GRADES = [
-  { label: 'A (4.0)', val: 4.0 }, { label: 'AB (3.5)', val: 3.5 }, { label: 'B (3.0)', val: 3.0 },
-  { label: 'BC (2.5)', val: 2.5 }, { label: 'C (2.0)', val: 2.0 }, { label: 'D (1.0)', val: 1.0 }, { label: 'E (0.0)', val: 0.0 }
-];
+const GRADES = [{ label: 'A (4.0)', val: 4.0 }, { label: 'AB (3.5)', val: 3.5 }, { label: 'B (3.0)', val: 3.0 }, { label: 'BC (2.5)', val: 2.5 }, { label: 'C (2.0)', val: 2.0 }, { label: 'D (1.0)', val: 1.0 }, { label: 'E (0.0)', val: 0.0 }];
 function renderGpa() {
   let totalSks = 0, totalPoints = 0;
   document.getElementById('gpaRowsContainer').innerHTML = state.gpaCourses.map(c => {
-    const sks = Number(c.sks) || 0, grade = Number(c.grade) || 0;
-    totalSks += sks; totalPoints += sks * grade;
-    return `
-      <div class="gpa-row">
-        <input type="text" value="${c.name}" placeholder="Nama Matkul" onchange="updateGpa(${c.id}, 'name', this.value)" />
-        <input type="number" min="1" max="6" value="${c.sks}" onchange="updateGpa(${c.id}, 'sks', this.value)" />
-        <select onchange="updateGpa(${c.id}, 'grade', this.value)">
-          ${GRADES.map(g => `<option value="${g.val}" ${Number(c.grade) === g.val ? 'selected' : ''}>${g.label}</option>`).join('')}
-        </select>
-        <button class="del-btn" onclick="deleteGpaRow(${c.id})" style="padding:2px;">✕</button>
-      </div>
-    `;
+    const sks = Number(c.sks) || 0, grade = Number(c.grade) || 0; totalSks += sks; totalPoints += sks * grade;
+    return `<div class="gpa-row"><input type="text" value="${c.name}" placeholder="Matkul" onchange="updateGpa(${c.id},'name',this.value)" /><input type="number" min="1" max="6" value="${c.sks}" onchange="updateGpa(${c.id},'sks',this.value)" /><select onchange="updateGpa(${c.id},'grade',this.value)">${GRADES.map(g => `<option value="${g.val}" ${Number(c.grade)===g.val?'selected':''}>${g.label}</option>`).join('')}</select><button class="del-btn" onclick="deleteGpaRow(${c.id})" style="padding:2px;">✕</button></div>`;
   }).join('');
   document.getElementById('totalSksText').textContent = totalSks;
   document.getElementById('ipsResultText').textContent = totalSks > 0 ? (totalPoints / totalSks).toFixed(2) : '0.00';
@@ -445,50 +421,59 @@ function updateGpa(id, field, val) { const r = state.gpaCourses.find(c => c.id =
 function deleteGpaRow(id) { state.gpaCourses = state.gpaCourses.filter(c => c.id !== id); persist(); renderGpa(); }
 
 function switchTab(tabName) {
-  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-  document.getElementById(`tab-${tabName}`).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navBtn = document.getElementById(`nav-${tabName}`);
-  if (navBtn) navBtn.classList.add('active');
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active')); document.getElementById(`tab-${tabName}`).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById(`nav-${tabName}`)?.classList.add('active');
 }
 function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModals() {
-  editingJadwalId = null; editingTugasId = null; editingUjianId = null;
-  document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
-}
+function closeModals() { editingJadwalId = null; editingTugasId = null; editingUjianId = null; document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open')); }
 function backdropClose(e, id) { if (e.target.id === id) closeModals(); }
+
 function openSettings() {
   document.getElementById('inputUserName').value = state.userName;
   document.getElementById('inputBannerMsg').value = state.bannerMsg;
+  document.getElementById('inputCloudUrl').value = syncCfg.cloudUrl || '';
+  document.getElementById('inputSyncRoom').value = syncCfg.roomId || 'dzili-01';
   openModal('modal-settings');
 }
 function saveSettings() {
   const name = document.getElementById('inputUserName').value.trim();
   const msg = document.getElementById('inputBannerMsg').value.trim();
+  const url = document.getElementById('inputCloudUrl').value.trim();
+  const room = document.getElementById('inputSyncRoom').value.trim() || 'dzili-01';
   if (name) state.userName = name;
   if (msg) state.bannerMsg = msg;
+  syncCfg = { cloudUrl: url, roomId: room };
+  localStorage.setItem('dzili_sync_cfg', JSON.stringify(syncCfg));
   persist(); renderHeader(); closeModals();
+  if (url) pullFromCloud(true);
+}
+function manualSyncNow() {
+  const url = document.getElementById('inputCloudUrl').value.trim();
+  const room = document.getElementById('inputSyncRoom').value.trim() || 'dzili-01';
+  if (!url) return alert('Isi URL Firebase Database terlebih dahulu.');
+  syncCfg = { cloudUrl: url, roomId: room };
+  localStorage.setItem('dzili_sync_cfg', JSON.stringify(syncCfg));
+  pullFromCloud(true);
+  alert('Sinkronisasi berhasil dijalankan!');
+}
+function copySyncLink() {
+  const url = document.getElementById('inputCloudUrl').value.trim();
+  const room = document.getElementById('inputSyncRoom').value.trim() || 'dzili-01';
+  if (!url) return alert('Isi URL Firebase Database terlebih dahulu.');
+  const encoded = btoa(encodeURIComponent(JSON.stringify({ url, room })));
+  const syncUrl = `${window.location.origin}${window.location.pathname}#sync=${encoded}`;
+  navigator.clipboard?.writeText(syncUrl).then(() => alert('Link Setup 2 HP disalin! Buka link ini di iPhone & HP keduanya.')).catch(() => prompt('Salin link ini:', syncUrl));
 }
 
-checkIncomingGift();
+function renderAll() {
+  noteEl.value = state.note || '';
+  document.getElementById('sessionCount').textContent = state.sessions || 0;
+  renderHeader(); renderDayPills(); renderJadwal(); renderTugas(); renderUjian(); renderGpa();
+}
+
+checkIncomingLinks();
 document.getElementById('inputHari').value = selectedDay;
-document.getElementById('sessionCount').textContent = state.sessions || 0;
-renderHeader(); renderDayPills(); renderJadwal(); renderTugas(); renderUjian(); renderGpa();
-
-function redeemGiftPrompt() {
-  const raw = prompt('Tempel link kejutan yang dikirim ke kamu:');
-  if (!raw) return;
-  const idx = raw.indexOf('#gift=');
-  if (idx === -1) return alert('Format link kejutan tidak valid.');
-  try {
-    const payload = JSON.parse(decodeURIComponent(atob(raw.slice(idx + 6).trim())));
-    if (payload.msg) state.bannerMsg = payload.msg;
-    if (payload.vTitle) {
-      state.voucher = { title: payload.vTitle, desc: payload.vDesc || 'Hadiah spesial buat kamu!', claimed: false };
-    }
-    persist(); renderAll(); closeModals();
-    alert('Pesan & kejutan berhasil dipasang! ✨');
-  } catch (e) {
-    alert('Gagal membaca link kejutan.');
-  }
-}
+renderAll();
+if (syncCfg.cloudUrl) pullFromCloud();
+document.addEventListener('visibilitychange', () => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); });
+setInterval(() => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); }, 15000);
