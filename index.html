@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Dzili</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Dzili" />
+  <meta name="theme-color" content="#FAF7F2" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div>
+      <h1 id="greetingText" onclick="handleSecretTap()">Halo, Dzili!</h1>
+      <p id="todayDateText">Memuat tanggal...</p>
+    </div>
+    <button class="icon-btn" onclick="openSettings()" title="Pengaturan">⚙️</button>
+  </header>
+
+  <main class="container">
+    <div class="banner-note" id="dailyBanner">
+      Semangat kuliahnya hari ini! Jangan lupa minum air putih dan istirahat cukup.
+    </div>
+
+    <div id="voucherContainer"></div>
+
+    <!-- KARTU RINGKASAN HARIAN (BENTO STATS) -->
+    <div class="bento-grid">
+      <div class="bento-card" onclick="switchTab('jadwal')">
+        <div class="bento-top">
+          <span class="bento-label">Kelas Hari Ini</span>
+          <span class="bento-dot"></span>
+        </div>
+        <div class="bento-num" id="bentoClassCount">0</div>
+        <div class="bento-sub" id="bentoClassSub">Tidak ada jadwal</div>
+      </div>
+      <div class="bento-card" onclick="switchTab('tugas')">
+        <div class="bento-top">
+          <span class="bento-label">Tugas Aktif</span>
+          <span class="bento-dot sage"></span>
+        </div>
+        <div class="bento-num" id="bentoTaskCount">0</div>
+        <div class="bento-sub" id="bentoTaskSub">Semua selesai</div>
+      </div>
+    </div>
+    <section id="tab-jadwal" class="tab-view active">
+      <div class="day-pills" id="dayPills"></div>
+      <div class="section-top">
+        <h2 id="selectedDayTitle">Jadwal Kuliah</h2>
+        <button class="add-btn" onclick="openAddJadwal()">+ Mata Kuliah</button>
+      </div>
+      <div id="jadwalList"></div>
+    </section>
+
+    <section id="tab-tugas" class="tab-view">
+      <div class="section-top">
+        <h2>Daftar Tugas</h2>
+        <button class="add-btn" onclick="openAddTugas()">+ Tugas Baru</button>
+      </div>
+      <div id="tugasList"></div>
+    </section>
+
+    <section id="tab-fokus" class="tab-view">
+      <div class="timer-box">
+        <div class="timer-modes">
+          <button class="mode-btn active" onclick="setTimerMode(25, this)">Fokus 25m</button>
+          <button class="mode-btn" onclick="setTimerMode(5, this)">Istirahat 5m</button>
+          <button class="mode-btn" onclick="setTimerMode(15, this)">Santai 15m</button>
+        </div>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-actions">
+          <button class="btn-primary" id="timerStartBtn" onclick="toggleTimer()">Mulai</button>
+          <button class="btn-secondary" onclick="resetTimer()">Reset</button>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:14px;">
+          Sesi selesai hari ini: <strong id="sessionCount">0</strong> sesi
+        </p>
+      </div>
+      <div class="section-top">
+        <h2>Catatan Cepat</h2>
+        <span style="font-size:12px; color:var(--muted);">Tersimpan otomatis</span>
+      </div>
+      <textarea id="quickNote" class="quick-note" placeholder="Tulis catatan mendadak, info ruang kelas, atau daftar bawaan besok..."></textarea>
+    </section>
+
+    <section id="tab-akademik" class="tab-view">
+      <div class="section-top">
+        <h2>Countdown Ujian</h2>
+        <button class="add-btn" onclick="openAddUjian()">+ Jadwal Ujian</button>
+      </div>
+      <div id="ujianList" style="margin-bottom: 22px;"></div>
+
+      <div class="section-top">
+        <h2>Simulasi IP Semester</h2>
+        <button class="add-btn" onclick="addGpaRow()">+ Matkul</button>
+      </div>
+      <div class="gpa-summary">
+        <div class="gpa-stat"><span>Total SKS</span><strong id="totalSksText">0</strong></div>
+        <div class="gpa-stat"><span>Estimasi IPS</span><strong id="ipsResultText">0.00</strong></div>
+      </div>
+      <div id="gpaRowsContainer"></div>
+    </section>
+  </main>
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-jadwal" onclick="switchTab('jadwal')">
+      <span class="ico">📅</span><span>Jadwal</span>
+    </button>
+    <button class="nav-item" id="nav-tugas" onclick="switchTab('tugas')">
+      <span class="ico">✅</span><span>Tugas</span>
+    </button>
+    <button class="nav-item" id="nav-fokus" onclick="switchTab('fokus')">
+      <span class="ico">⏱️</span><span>Fokus</span>
+    </button>
+    <button class="nav-item" id="nav-akademik" onclick="switchTab('akademik')">
+      <span class="ico">🎓</span><span>Akademik</span>
+    </button>
+  </nav>
+
+  <div class="modal-backdrop" id="modal-jadwal" onclick="backdropClose(event, 'modal-jadwal')">
+    <div class="modal-sheet">
+      <h3 id="modalJadwalTitle">Tambah Mata Kuliah</h3>
+      <div class="form-group">
+        <label>Hari</label>
+        <select id="inputHari">
+          <option value="Senin">Senin</option><option value="Selasa">Selasa</option>
+          <option value="Rabu">Rabu</option><option value="Kamis">Kamis</option>
+          <option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Nama Mata Kuliah</label><input type="text" id="inputMatkul" placeholder="Contoh: Algoritma & Pemrograman" /></div>
+      <div class="form-group"><label>Jam Kuliah</label><input type="text" id="inputJam" placeholder="Contoh: 08:00 - 09:40" /></div>
+      <div class="form-group"><label>Ruang / Dosen</label><input type="text" id="inputRuang" placeholder="Contoh: Gedung B R.302 - Pak Budi" /></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModals()">Batal</button>
+        <button class="btn-primary" onclick="saveJadwal()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-tugas" onclick="backdropClose(event, 'modal-tugas')">
+    <div class="modal-sheet">
+      <h3 id="modalTugasTitle">Tambah Tugas Kuliah</h3>
+      <div class="form-group"><label>Mata Kuliah</label><input type="text" id="inputTugasMatkul" placeholder="Contoh: Basis Data" /></div>
+      <div class="form-group"><label>Deskripsi Tugas</label><input type="text" id="inputTugasJudul" placeholder="Contoh: Buat ERD & Normalisasi" /></div>
+      <div class="form-group"><label>Deadline</label><input type="date" id="inputTugasDeadline" /></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModals()">Batal</button>
+        <button class="btn-primary" onclick="saveTugas()">Simpan</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="modal-ujian" onclick="backdropClose(event, 'modal-ujian')">
+    <div class="modal-sheet">
+      <h3 id="modalUjianTitle">Tambah Jadwal Ujian</h3>
+      <div class="form-group"><label>Jenis & Mata Kuliah</label><input type="text" id="inputUjianNama" placeholder="Contoh: UAS Struktur Data" /></div>
+      <div class="form-group"><label>Tanggal Ujian</label><input type="date" id="inputUjianTanggal" /></div>
+      <div class="form-group"><label>Jam & Ruang</label><input type="text" id="inputUjianInfo" placeholder="Contoh: 09:00 • Lab Komputer 2" /></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModals()">Batal</button>
+        <button class="btn-primary" onclick="saveUjian()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-settings" onclick="backdropClose(event, 'modal-settings')">
+    <div class="modal-sheet">
+      <h3>Personalisasi Dzili</h3>
+      <div class="form-group"><label>Nama Panggilan</label><input type="text" id="inputUserName" /></div>
+      <div class="form-group"><label>Pesan Penyemangat Utama</label><input type="text" id="inputBannerMsg" /></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModals()">Tutup</button>
+        <button class="btn-primary" onclick="saveSettings()">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VERIFIKASI PIN PENGIRIM -->
+  <div class="modal-backdrop" id="modal-pin" onclick="backdropClose(event, 'modal-pin')">
+    <div class="modal-sheet">
+      <h3>🔐 Akses Khusus Pengirim</h3>
+      <p style="font-size:12.5px; color:var(--muted); margin-bottom:12px;">Masukkan PIN rahasia untuk membuka panel kejutan.</p>
+      <div class="form-group">
+        <input type="password" inputmode="numeric" id="inputSecretPin" placeholder="Masukkan PIN..." style="text-align:center; font-size:20px; letter-spacing:6px;" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModals()">Batal</button>
+        <button class="btn-primary" onclick="verifyPin()">Buka Panel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PANEL KEJUTAN PENGIRIM -->
+  <div class="modal-backdrop" id="modal-secret" onclick="backdropClose(event, 'modal-secret')">
+    <div class="modal-sheet">
+      <h3>🎁 Panel Kejutan Pengirim</h3>
+      <div class="form-group"><label>Pesan Penyemangat</label><input type="text" id="secretBannerInput" /></div>
+      <div class="form-group"><label>Judul Voucher Hadiah</label><input type="text" id="secretVoucherTitle" placeholder="Contoh: 🎟️ Voucher Traktir Kopi" /></div>
+      <div class="form-group"><label>Keterangan Voucher</label><input type="text" id="secretVoucherDesc" placeholder="Contoh: Berlaku kapan aja" /></div>
+      <div class="form-group"><label>Ubah PIN Rahasia (Saat ini: 2026)</label><input type="text" inputmode="numeric" id="secretNewPin" placeholder="Kosongkan jika tidak diubah" /></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="applySecretLocal()">Pasang di HP Ini</button>
+        <button class="btn-primary" onclick="copyGiftLink()">Salin Link Kejutan</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "Dzili",
+  "short_name": "Dzili",
+  "description": "Jadwal kuliah, pengingat tugas, dan ruang fokus harian.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
