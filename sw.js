@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dzili-v7';
+const CACHE_NAME = 'dzili-v9';
 const ASSETS = ['./', './index.html', './style.css', './app.js', './manifest.json', './icon-180.png'];
 
 self.addEventListener('install', (e) => {
