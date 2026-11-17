@@ -252,3 +252,14 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
 .lightbox { display: none; position: fixed; inset: 0; background: rgba(20,18,16,0.92); z-index: 80; align-items: center; justify-content: center; padding: 16px; }
 .lightbox.open { display: flex; }
 .lightbox img { max-width: 100%; max-height: 86vh; border-radius: 14px; }
+
+.remind-toast {
+  display: none; position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 16px; right: 16px;
+  max-width: 488px; margin: 0 auto; z-index: 90; background: #2D2A26; color: #FAF7F2;
+  padding: 14px 16px; border-radius: 18px; box-shadow: 0 12px 28px rgba(0,0,0,0.24);
+  align-items: center; justify-content: space-between; gap: 12px;
+}
+.remind-toast.show { display: flex; }
+.remind-toast strong { display: block; font-size: 13.5px; color: #F2CC8F; margin-bottom: 2px; }
+.remind-toast span { font-size: 12.5px; line-height: 1.4; display: block; }
+.remind-toast button { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }

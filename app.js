@@ -220,15 +220,15 @@ function renderJadwal() {
   const list = document.getElementById('jadwalList');
   const items = state.jadwal.filter(i => i.hari === selectedDay).sort((a, b) => a.jam.localeCompare(b.jam));
   if (!items.length) { list.innerHTML = `<div class="empty-state">Tidak ada jadwal kuliah di hari ${selectedDay}.</div>`; return; }
-  list.innerHTML = items.map(i => `<div class="timeline-item"><div class="timeline-track"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="card"><div class="card-main"><span class="badge">${i.jam}</span><div class="card-title">${i.matkul}</div><div class="card-meta">${i.ruang || '-'}</div></div><div class="card-actions"><button class="edit-btn" onclick="editJadwal(${i.id})">✎</button><button class="del-btn" onclick="deleteJadwal(${i.id})">✕</button></div></div></div>`).join('');
+  list.innerHTML = items.map(i => `<div class="timeline-item"><div class="timeline-track"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="card"><div class="card-main"><span class="badge">${i.jam}</span>${i.remind ? ` <span class="badge done">🔔 ${i.remind}m</span>` : ''}<div class="card-title">${i.matkul}</div><div class="card-meta">${i.ruang || '-'}</div></div><div class="card-actions"><button class="edit-btn" onclick="exportJadwalIcs(${i.id})" title="Alarm Kalender HP">📅</button><button class="edit-btn" onclick="editJadwal(${i.id})">✎</button><button class="del-btn" onclick="deleteJadwal(${i.id})">✕</button></div></div></div>`).join('');
 }
-function openAddJadwal() { editingJadwalId = null; document.getElementById('modalJadwalTitle').textContent = 'Tambah Mata Kuliah'; document.getElementById('inputHari').value = selectedDay; document.getElementById('inputMatkul').value = ''; document.getElementById('inputJam').value = ''; document.getElementById('inputRuang').value = ''; openModal('modal-jadwal'); }
-function editJadwal(id) { const i = state.jadwal.find(x => x.id === id); if (!i) return; editingJadwalId = id; document.getElementById('modalJadwalTitle').textContent = 'Edit Mata Kuliah'; document.getElementById('inputHari').value = i.hari; document.getElementById('inputMatkul').value = i.matkul; document.getElementById('inputJam').value = i.jam; document.getElementById('inputRuang').value = i.ruang || ''; openModal('modal-jadwal'); }
+function openAddJadwal() { editingJadwalId = null; document.getElementById('modalJadwalTitle').textContent = 'Tambah Mata Kuliah'; document.getElementById('inputHari').value = selectedDay; document.getElementById('inputMatkul').value = ''; document.getElementById('inputJam').value = ''; document.getElementById('inputRuang').value = ''; document.getElementById('inputJadwalRemind').value = '15'; openModal('modal-jadwal'); }
+function editJadwal(id) { const i = state.jadwal.find(x => x.id === id); if (!i) return; editingJadwalId = id; document.getElementById('modalJadwalTitle').textContent = 'Edit Mata Kuliah'; document.getElementById('inputHari').value = i.hari; document.getElementById('inputMatkul').value = i.matkul; document.getElementById('inputJam').value = i.jam; document.getElementById('inputRuang').value = i.ruang || ''; document.getElementById('inputJadwalRemind').value = String(i.remind || 0); openModal('modal-jadwal'); }
 function saveJadwal() {
-  const hari = document.getElementById('inputHari').value, matkul = document.getElementById('inputMatkul').value.trim(), jam = document.getElementById('inputJam').value.trim(), ruang = document.getElementById('inputRuang').value.trim();
+  const hari = document.getElementById('inputHari').value, matkul = document.getElementById('inputMatkul').value.trim(), jam = document.getElementById('inputJam').value.trim(), ruang = document.getElementById('inputRuang').value.trim(), remind = Number(document.getElementById('inputJadwalRemind').value) || 0;
   if (!matkul || !jam) return alert('Nama mata kuliah dan jam wajib diisi.');
-  if (editingJadwalId !== null) { const idx = state.jadwal.findIndex(x => x.id === editingJadwalId); if (idx !== -1) state.jadwal[idx] = { ...state.jadwal[idx], hari, matkul, jam, ruang }; }
-  else { state.jadwal.push({ id: Date.now(), hari, matkul, jam, ruang }); }
+  if (editingJadwalId !== null) { const idx = state.jadwal.findIndex(x => x.id === editingJadwalId); if (idx !== -1) state.jadwal[idx] = { ...state.jadwal[idx], hari, matkul, jam, ruang, remind }; }
+  else { state.jadwal.push({ id: Date.now(), hari, matkul, jam, ruang, remind }); }
   persist(); selectDay(hari); closeModals();
 }
 function deleteJadwal(id) { state.jadwal = state.jadwal.filter(i => i.id !== id); persist(); renderJadwal(); }
@@ -246,16 +246,16 @@ function renderTugas() {
   if (!sorted.length) { list.innerHTML = `<div class="empty-state">Belum ada tugas tercatat.</div>`; return; }
   list.innerHTML = sorted.map(t => {
     const b = getDeadlineBadge(t.deadline, t.done);
-    return `<div class="card tugas-card"><div class="check-circle ${t.done ? 'checked' : ''}" onclick="toggleTugas(${t.id})">${t.done ? '✓' : ''}</div><div class="card-main"><span class="badge ${b.cls}">${b.text}</span><div class="card-title ${t.done ? 'completed' : ''}">${t.judul}</div><div class="card-meta">${t.matkul}</div>${t.photo ? `<img class="thumb-img" src="${t.photo}" onclick="openLightbox(this.src)" />` : ''}</div><div class="card-actions"><button class="edit-btn" onclick="editTugas(${t.id})">✎</button><button class="del-btn" onclick="deleteTugas(${t.id})">✕</button></div></div>`;
+    return `<div class="card tugas-card"><div class="check-circle ${t.done ? 'checked' : ''}" onclick="toggleTugas(${t.id})">${t.done ? '✓' : ''}</div><div class="card-main"><span class="badge ${b.cls}">${b.text}</span>${t.remind && t.remind !== 'none' ? ` <span class="badge math">🔔 Pengingat</span>` : ''}<div class="card-title ${t.done ? 'completed' : ''}">${t.judul}</div><div class="card-meta">${t.matkul}</div>${t.photo ? `<img class="thumb-img" src="${t.photo}" onclick="openLightbox(this.src)" />` : ''}</div><div class="card-actions"><button class="edit-btn" onclick="exportTugasIcs(${t.id})" title="Alarm Kalender HP">📅</button><button class="edit-btn" onclick="editTugas(${t.id})">✎</button><button class="del-btn" onclick="deleteTugas(${t.id})">✕</button></div></div>`;
   }).join('');
 }
-function openAddTugas() { editingTugasId = null; tempTugasPhoto = ''; document.getElementById('modalTugasTitle').textContent = 'Tambah Tugas Kuliah'; document.getElementById('inputTugasMatkul').value = ''; document.getElementById('inputTugasJudul').value = ''; document.getElementById('inputTugasDeadline').value = ''; renderPhotoPreview('tugas'); renderMathPad('tugasMathPad', 'inputTugasJudul'); openModal('modal-tugas'); }
-function editTugas(id) { const t = state.tugas.find(x => x.id === id); if (!t) return; editingTugasId = id; tempTugasPhoto = t.photo || ''; document.getElementById('modalTugasTitle').textContent = 'Edit Tugas Kuliah'; document.getElementById('inputTugasMatkul').value = t.matkul; document.getElementById('inputTugasJudul').value = t.judul; document.getElementById('inputTugasDeadline').value = t.deadline || ''; renderPhotoPreview('tugas'); renderMathPad('tugasMathPad', 'inputTugasJudul'); openModal('modal-tugas'); }
+function openAddTugas() { editingTugasId = null; tempTugasPhoto = ''; document.getElementById('modalTugasTitle').textContent = 'Tambah Tugas Kuliah'; document.getElementById('inputTugasMatkul').value = ''; document.getElementById('inputTugasJudul').value = ''; document.getElementById('inputTugasDeadline').value = ''; document.getElementById('inputTugasRemind').value = 'h1'; renderPhotoPreview('tugas'); renderMathPad('tugasMathPad', 'inputTugasJudul'); openModal('modal-tugas'); }
+function editTugas(id) { const t = state.tugas.find(x => x.id === id); if (!t) return; editingTugasId = id; tempTugasPhoto = t.photo || ''; document.getElementById('modalTugasTitle').textContent = 'Edit Tugas Kuliah'; document.getElementById('inputTugasMatkul').value = t.matkul; document.getElementById('inputTugasJudul').value = t.judul; document.getElementById('inputTugasDeadline').value = t.deadline || ''; document.getElementById('inputTugasRemind').value = t.remind || 'none'; renderPhotoPreview('tugas'); renderMathPad('tugasMathPad', 'inputTugasJudul'); openModal('modal-tugas'); }
 function saveTugas() {
-  const matkul = document.getElementById('inputTugasMatkul').value.trim(), judul = document.getElementById('inputTugasJudul').value.trim(), deadline = document.getElementById('inputTugasDeadline').value;
+  const matkul = document.getElementById('inputTugasMatkul').value.trim(), judul = document.getElementById('inputTugasJudul').value.trim(), deadline = document.getElementById('inputTugasDeadline').value, remind = document.getElementById('inputTugasRemind').value || 'none';
   if (!matkul || !judul) return alert('Mata kuliah dan deskripsi wajib diisi.');
-  if (editingTugasId !== null) { const idx = state.tugas.findIndex(x => x.id === editingTugasId); if (idx !== -1) state.tugas[idx] = { ...state.tugas[idx], matkul, judul, deadline, photo: tempTugasPhoto }; }
-  else { state.tugas.push({ id: Date.now(), matkul, judul, deadline, photo: tempTugasPhoto, done: false }); }
+  if (editingTugasId !== null) { const idx = state.tugas.findIndex(x => x.id === editingTugasId); if (idx !== -1) state.tugas[idx] = { ...state.tugas[idx], matkul, judul, deadline, remind, photo: tempTugasPhoto }; }
+  else { state.tugas.push({ id: Date.now(), matkul, judul, deadline, remind, photo: tempTugasPhoto, done: false }); }
   persist(); renderTugas(); closeModals();
 }
 function toggleTugas(id) { const t = state.tugas.find(x => x.id === id); if (t) t.done = !t.done; persist(); renderTugas(); }
@@ -436,3 +436,135 @@ function renderAll() {
 checkIncomingLinks(); document.getElementById('inputHari').value = selectedDay; renderAll(); if (syncCfg.cloudUrl) pullFromCloud();
 document.addEventListener('visibilitychange', () => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); });
 setInterval(() => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); }, 15000);
+
+// === SISTEM NOTIFIKASI & ALARM KALENDER ===
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return alert('Browser ini tidak mendukung notifikasi web. Gunakan tombol 📅 di kartu matkul/tugas untuk alarm Kalender HP.');
+  const res = await Notification.requestPermission();
+  updateNotifBtnLabel();
+  if (res === 'granted') {
+    triggerReminderAlert('Notifikasi Dzili Aktif!', 'Pengingat jadwal kuliah dan deadline tugas siap berjalan.');
+  } else {
+    alert('Izin notifikasi ditolak. Aktifkan lewat Pengaturan HP atau gunakan tombol 📅 di tiap matkul/tugas.');
+  }
+}
+
+function updateNotifBtnLabel() {
+  const btn = document.getElementById('btnEnableNotif');
+  if (!btn || !('Notification' in window)) return;
+  btn.textContent = Notification.permission === 'granted' ? '🔔 Notifikasi HP Aktif ✓' : '🔔 Aktifkan Notifikasi HP';
+}
+
+function playSoftChime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [523.25, 659.25, 783.99].forEach((freq, idx) => {
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.08, ctx.currentTime + idx * 0.14);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.14 + 0.45);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + idx * 0.14); osc.stop(ctx.currentTime + idx * 0.14 + 0.46);
+    });
+  } catch (e) {}
+}
+
+function triggerReminderAlert(title, body) {
+  playSoftChime();
+  const toast = document.getElementById('remindToast');
+  if (toast) {
+    toast.innerHTML = `<div><strong>🔔 ${title}</strong><span>${body}</span></div><button onclick="document.getElementById('remindToast').classList.remove('show')">Oke</button>`;
+    toast.classList.add('show');
+  }
+  if ('Notification' in window && Notification.permission === 'granted') {
+    navigator.serviceWorker?.ready.then(reg => {
+      reg.showNotification(title, { body, icon: './icon-180.png', badge: './icon-180.png', tag: title });
+    }).catch(() => { try { new Notification(title, { body, icon: './icon-180.png' }); } catch (e) {} });
+  }
+}
+
+function checkReminders() {
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  let log = JSON.parse(localStorage.getItem('dzili_notified') || '{}');
+  let changed = false;
+
+  state.jadwal.filter(j => j.hari === todayName && Number(j.remind) > 0).forEach(j => {
+    const m = (j.jam || '').match(/(\d{1,2})[:.](\d{2})/);
+    if (!m) return;
+    const startMins = parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+    const diff = startMins - nowMins;
+    const key = `j_${j.id}_${todayStr}_${j.remind}`;
+    if (diff >= 0 && diff <= Number(j.remind) && !log[key]) {
+      log[key] = true; changed = true;
+      triggerReminderAlert(`Kuliah ${j.matkul}`, `Mulai ${diff === 0 ? 'sekarang' : diff + ' menit lagi'} (${j.jam}) • ${j.ruang || ''}`);
+    }
+  });
+
+  const todayZero = new Date(); todayZero.setHours(0,0,0,0);
+  state.tugas.filter(t => !t.done && t.deadline && t.remind && t.remind !== 'none').forEach(t => {
+    const diffDays = Math.round((new Date(t.deadline + 'T00:00:00') - todayZero) / 86400000);
+    const shouldAlert = (t.remind === 'h0' && diffDays === 0) ||
+                        (t.remind === 'h1' && (diffDays === 1 || diffDays === 0)) ||
+                        (t.remind === 'h3' && (diffDays === 3 || diffDays === 1 || diffDays === 0));
+    const key = `t_${t.id}_${todayStr}_${diffDays}`;
+    if (shouldAlert && now.getHours() >= 7 && !log[key]) {
+      log[key] = true; changed = true;
+      const waktu = diffDays === 0 ? 'HARI INI!' : `H-${diffDays} (${t.deadline})`;
+      triggerReminderAlert(`Pengingat Tugas: ${t.matkul}`, `${t.judul} — Deadline ${waktu}`);
+    }
+  });
+
+  if (changed) localStorage.setItem('dzili_notified', JSON.stringify(log));
+}
+
+function downloadIcsFile(filename, content) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+}
+
+function exportJadwalIcs(id) {
+  const j = state.jadwal.find(x => x.id === id); if (!j) return;
+  const dayMap = { Senin: [1,'MO'], Selasa: [2,'TU'], Rabu: [3,'WE'], Kamis: [4,'TH'], Jumat: [5,'FR'], Sabtu: [6,'SA'], Minggu: [0,'SU'] };
+  const [targetDow, byDay] = dayMap[j.hari] || [1,'MO'];
+  const times = (j.jam || '08:00').match(/(\d{1,2})[:.](\d{2})/g) || ['08:00'];
+  const [sh, sm] = times[0].split(/[:.]/).map(Number);
+  const [eh, em] = times[1] ? times[1].split(/[:.]/).map(Number) : [sh + 1, sm];
+  const d = new Date();
+  const addDays = (targetDow - d.getDay() + 7) % 7;
+  d.setDate(d.getDate() + addDays);
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+  const mins = Number(j.remind) || 15;
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Dzili//Planner//ID',
+    'BEGIN:VEVENT', `UID:dzili-j-${j.id}@dzili.app`,
+    `DTSTART:${ymd}T${pad(sh)}${pad(sm)}00`, `DTEND:${ymd}T${pad(eh)}${pad(em)}00`,
+    `RRULE:FREQ=WEEKLY;BYDAY=${byDay}`,
+    `SUMMARY:Kuliah ${j.matkul}`, `LOCATION:${j.ruang || ''}`,
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Pengingat Kuliah', `TRIGGER:-PT${mins}M`, 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  downloadIcsFile(`Kuliah-${j.matkul.replace(/\s+/g,'-')}.ics`, ics);
+}
+
+function exportTugasIcs(id) {
+  const t = state.tugas.find(x => x.id === id); if (!t || !t.deadline) return alert('Isi tanggal deadline tugas terlebih dahulu.');
+  const ymd = t.deadline.replace(/-/g, '');
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Dzili//Planner//ID',
+    'BEGIN:VEVENT', `UID:dzili-t-${t.id}@dzili.app`,
+    `DTSTART:${ymd}T073000`, `DTEND:${ymd}T080000`,
+    `SUMMARY:Deadline Tugas ${t.matkul}: ${t.judul}`,
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Deadline Tugas', 'TRIGGER:-PT0M', 'END:VALARM',
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:H-1 Tugas', 'TRIGGER:-P1D', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  downloadIcsFile(`Tugas-${t.matkul.replace(/\s+/g,'-')}.ics`, ics);
+}
+
+updateNotifBtnLabel();
+setTimeout(checkReminders, 1500);
+setInterval(checkReminders, 30000);

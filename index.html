@@ -30,6 +30,7 @@
       </button>
     </div>
   </header>
+  <div id="remindToast" class="remind-toast"></div>
 
   <main class="container">
     <div class="banner-note" id="dailyBanner">Semangat kuliahnya hari ini!</div>
@@ -118,6 +119,7 @@
       <div class="form-group"><label>Nama Mata Kuliah</label><input type="text" id="inputMatkul" placeholder="Contoh: Kalkulus Lanjut" /></div>
       <div class="form-group"><label>Jam Kuliah</label><input type="text" id="inputJam" placeholder="Contoh: 08:00 - 09:40" /></div>
       <div class="form-group"><label>Ruang / Dosen</label><input type="text" id="inputRuang" placeholder="Contoh: Gedung MIPA R.201" /></div>
+      <div class="form-group"><label>Pengingat Matkul</label><select id="inputJadwalRemind"><option value="0">Tidak aktif</option><option value="15">15 menit sebelum mulai</option><option value="30">30 menit sebelum mulai</option><option value="60">1 jam sebelum mulai</option></select></div>
       <div class="modal-actions"><button class="btn-secondary" onclick="closeModals()">Batal</button><button class="btn-primary" onclick="saveJadwal()">Simpan</button></div>
     </div>
   </div>
@@ -141,6 +143,7 @@
         </div>
         <div id="tugasPhotoPreview"></div>
       </div>
+      <div class="form-group"><label>Pengingat Deadline</label><select id="inputTugasRemind"><option value="none">Tidak aktif</option><option value="h0">Hari-H (07:30 pagi)</option><option value="h1">H-1 & Hari-H (07:30 pagi)</option><option value="h3">H-3, H-1 & Hari-H</option></select></div>
       <div class="modal-actions"><button class="btn-secondary" onclick="closeModals()">Batal</button><button class="btn-primary" onclick="saveTugas()">Simpan</button></div>
     </div>
   </div>
@@ -254,6 +257,7 @@
       <div class="form-group"><label>Kode Ruang Sinkronisasi (Sama di 2 HP)</label><input type="text" id="inputSyncRoom" placeholder="dzili-01" /></div>
       <div class="sync-tools"><button class="btn-outline" onclick="manualSyncNow()">🔄 Sync Sekarang</button><button class="btn-outline" onclick="copySyncLink()">🔗 Link Setup HP ke-2</button></div>
       <button class="btn-outline" style="width:100%; margin-top:8px;" onclick="redeemGiftPrompt()">🎁 Tempel Link Kejutan</button>
+      <button class="btn-outline" id="btnEnableNotif" style="width:100%; margin-top:8px;" onclick="requestNotifPermission()">🔔 Aktifkan Notifikasi HP</button>
       <div class="modal-actions"><button class="btn-secondary" onclick="closeModals()">Tutup</button><button class="btn-primary" onclick="saveSettings()">Simpan</button></div>
     </div>
   </div>
