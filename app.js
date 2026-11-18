@@ -399,14 +399,14 @@ function verifyPin() {
   if (document.getElementById('inputSecretPin').value.trim() === (state.secretPin || '2026')) {
     closeModals(); document.getElementById('secretBannerInput').value = state.bannerMsg || '';
     document.getElementById('secretVoucherTitle').value = state.voucher ? state.voucher.title : '';
-    document.getElementById('secretVoucherDesc').value = state.voucher ? state.voucher.desc : '';
+    document.getElementById('secretVoucherDesc').value = state.voucher ? state.voucher.desc : ''; document.getElementById('secretFortuneInput').value = state.customFortune || '';
     document.getElementById('secretNewPin').value = ''; openModal('modal-secret');
   } else { alert('PIN salah!'); document.getElementById('inputSecretPin').value = ''; }
 }
 function applyAndPushSecret() {
   const msg = document.getElementById('secretBannerInput').value.trim(), vTitle = document.getElementById('secretVoucherTitle').value.trim(), vDesc = document.getElementById('secretVoucherDesc').value.trim(), newPin = document.getElementById('secretNewPin').value.trim();
   if (newPin.length >= 4) state.secretPin = newPin; if (msg) state.bannerMsg = msg;
-  state.voucher = vTitle ? { title: vTitle, desc: vDesc || 'Hadiah spesial buat kamu!', claimed: false } : null;
+  state.voucher = vTitle ? { title: vTitle, desc: vDesc || 'Hadiah spesial buat kamu!', claimed: false } : null; state.customFortune = document.getElementById('secretFortuneInput').value.trim();
   persist(); renderHeader(); closeModals();
   if (syncCfg.cloudUrl) { pushToCloud(); alert('Kejutan tersimpan & otomatis terkirim ke HP Dzili!'); }
 }
@@ -568,3 +568,91 @@ function exportTugasIcs(id) {
 updateNotifBtnLabel();
 setTimeout(checkReminders, 1500);
 setInterval(checkReminders, 30000);
+
+// === FORTUNE COOKIE HIBURAN ===
+const FORTUNES = [
+  { tag: 'Ramalan Kuliah', text: 'Hari ini dosen akan selesai menjelaskan 10 menit lebih awal. Aamiin paling kencang!' },
+  { tag: 'Tebak-Tebakan', text: 'Kenapa buku matematika selalu kelihatan sedih? Karena punya banyak masalah. Untung kamu jago nyelesainnya!' },
+  { tag: 'Pesan Manis', text: 'Rumus kebahagiaan hari ini: Istirahat cukup + Minum air putih + Senyum manis kamu.' },
+  { tag: 'Hoki Hari Ini', text: 'Kamu akan menemukan jawaban soal yang sempat bikin bingung tepat setelah minum sesuatu yang segar.' },
+  { tag: 'Receh Dikit', text: 'Apa bedanya kamu sama integral tentu? Kalau integral tentu ada batasnya, kalau cantiknya kamu tak terhingga.' },
+  { tag: 'Mood Booster', text: 'Nggak apa-apa jalan pelan, yang penting nggak mundur. Kamu sudah hebat banget sejauh ini!' },
+  { tag: 'Ramalan Jajan', text: 'Seseorang di sekitar sini diam-diam ingin mentraktir kamu kopi atau matcha minggu ini.' },
+  { tag: 'Tebak-Tebakan', text: 'Angka berapa yang paling romantis? Angka 2, soalnya kalau sendiri sepi, kalau berdua jadi asyik.' },
+  { tag: 'Pengingat Lembut', text: 'Bahu tegang? Tarik napas 4 detik, embuskan pelan. Tugasnya nggak akan kabur kok, santai dulu 2 menit.' },
+  { tag: 'Hoki Akademik', text: 'Materi yang baru saja kamu baca punya peluang 87,4% muncul di kuis atau ujian nanti!' },
+  { tag: 'Receh Dikit', text: 'Sudut apa yang paling hangat? Bukan sudut 90 derajat, tapi sudut bibir kamu pas lagi senyum.' },
+  { tag: 'Ramalan Hari Ini', text: 'Hari ini antrean makan siangmu bakal lancar dan dapat tempat duduk paling nyaman.' },
+  { tag: 'Tebak-Tebakan', text: 'Kenapa garis sejajar nggak pernah ketemu? Soalnya mereka belum install aplikasi Dzili.' },
+  { tag: 'Pesan Spesial', text: 'Kalau hari ini terasa berat, ingat: ada seseorang yang selalu bangga sama setiap usaha kecilmu.' },
+  { tag: 'Hoki Hari Ini', text: 'Baterai HP dan baterai semangatmu akan awet sampai kelas terakhir selesai!' }
+];
+
+let cookieTaps = 0, cookieOpened = false, currentFortune = null;
+
+function playCookieSound(cracked) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = cracked ? 'triangle' : 'sine';
+    osc.frequency.setValueAtTime(cracked ? 420 : 280, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(cracked ? 880 : 190, ctx.currentTime + (cracked ? 0.25 : 0.1));
+    gain.gain.setValueAtTime(0.09, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (cracked ? 0.26 : 0.11));
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + (cracked ? 0.27 : 0.12));
+  } catch (e) {}
+}
+
+function tapFortuneCookie() {
+  if (cookieOpened) return;
+  cookieTaps++;
+  const svg = document.getElementById('cookieSvg');
+  if (cookieTaps < 3) {
+    playCookieSound(false);
+    if (svg) { svg.classList.remove('shake'); void svg.offsetWidth; svg.classList.add('shake'); }
+    const hint = document.getElementById('cookieHint');
+    if (hint) hint.textContent = cookieTaps === 1 ? 'Krek! Ketuk 2x lagi...' : 'Hampir pecah! Sekali lagi...';
+    return;
+  }
+  playCookieSound(true);
+  cookieOpened = true;
+  if (state.customFortune && state.customFortune.trim()) {
+    currentFortune = { tag: '✨ Pesan Rahasia Spesial', text: state.customFortune.trim() };
+  } else {
+    currentFortune = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
+  }
+  renderFortuneCookie();
+}
+
+function resetFortuneCookie() {
+  cookieTaps = 0; cookieOpened = false; currentFortune = null;
+  renderFortuneCookie();
+}
+
+function renderFortuneCookie() {
+  const box = document.getElementById('fortuneCookieBox');
+  if (!box) return;
+  if (!cookieOpened) {
+    box.innerHTML = `
+      <div class="cookie-stage" onclick="tapFortuneCookie()">
+        <svg id="cookieSvg" class="cookie-svg" viewBox="0 0 120 96">
+          <path d="M22 64 C14 40, 38 14, 64 16 C88 18, 108 42, 98 66 C90 80, 72 72, 60 56 C48 72, 30 80, 22 64 Z" fill="#F2CC8F" stroke="#D9A05B" stroke-width="3"/>
+          <path d="M44 48 Q60 36 76 48" fill="none" stroke="#C6883E" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="38" cy="36" r="2" fill="#D9A05B"/><circle cx="82" cy="38" r="2" fill="#D9A05B"/>
+        </svg>
+        <div class="cookie-hint" id="cookieHint">Ketuk kuenya 3x untuk melihat isi keberuntunganmu</div>
+      </div>`;
+  } else {
+    const nums = [Math.floor(Math.random()*9)+1, Math.floor(Math.random()*20)+10, ['π', 'e', 'φ', '∞'][Math.floor(Math.random()*4)]];
+    box.innerHTML = `
+      <div class="fortune-paper">
+        <span class="fortune-tag">${currentFortune.tag}</span>
+        <div class="fortune-text">"${currentFortune.text}"</div>
+        <div class="fortune-lucky">Angka hoki: ${nums.join(' • ')}</div>
+      </div>
+      <button class="btn-secondary" style="padding:8px 16px; font-size:12.5px;" onclick="resetFortuneCookie()">Buka Kue Lain</button>`;
+  }
+}
+
+renderFortuneCookie();

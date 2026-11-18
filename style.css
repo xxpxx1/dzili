@@ -263,3 +263,39 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
 .remind-toast strong { display: block; font-size: 13.5px; color: #F2CC8F; margin-bottom: 2px; }
 .remind-toast span { font-size: 12.5px; line-height: 1.4; display: block; }
 .remind-toast button { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+/* === FORTUNE COOKIE === */
+.cookie-box {
+  background: var(--card); border: 1px solid var(--border); border-radius: 22px;
+  padding: 18px 16px; text-align: center; margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgba(45, 42, 38, 0.03);
+}
+.cookie-stage {
+  min-height: 118px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; cursor: pointer; user-select: none;
+}
+.cookie-svg { width: 92px; height: 74px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.cookie-svg.shake { animation: cookieWobble 0.35s ease; }
+@keyframes cookieWobble {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-10deg) scale(1.06); }
+  60% { transform: rotate(9deg) scale(1.06); }
+}
+.cookie-hint { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 500; }
+.fortune-paper {
+  background: #FFFDF7; border: 1.5px solid #E8C78E; border-radius: 12px;
+  padding: 13px 15px; margin: 6px 0 12px; position: relative;
+  box-shadow: 0 4px 12px rgba(226, 168, 86, 0.14);
+  animation: paperPop 0.35s ease;
+}
+@keyframes paperPop {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.fortune-tag {
+  display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px;
+  padding: 2px 8px; border-radius: 6px; background: var(--primary-soft); color: var(--primary);
+  margin-bottom: 6px;
+}
+.fortune-text { font-family: "Georgia", serif; font-size: 14px; line-height: 1.55; color: var(--text); }
+.fortune-lucky { font-size: 11px; color: var(--muted); margin-top: 8px; letter-spacing: 0.5px; }
