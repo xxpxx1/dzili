@@ -62,6 +62,17 @@ body {
   margin-bottom: 12px; font-size: 13.5px; line-height: 1.5;
   box-shadow: 0 8px 20px rgba(224, 122, 95, 0.22);
 }
+
+.remind-toast {
+  display: none; position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 16px; right: 16px;
+  max-width: 488px; margin: 0 auto; z-index: 90; background: #2D2A26; color: #FAF7F2;
+  padding: 14px 16px; border-radius: 18px; box-shadow: 0 12px 28px rgba(0,0,0,0.24);
+  align-items: center; justify-content: space-between; gap: 12px;
+}
+.remind-toast.show { display: flex; }
+.remind-toast strong { display: block; font-size: 13.5px; color: #F2CC8F; margin-bottom: 2px; }
+.remind-toast span { font-size: 12.5px; line-height: 1.4; display: block; }
+.remind-toast button { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
 .bento-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
 .bento-card {
   background: var(--card); border: 1px solid var(--border);
@@ -128,9 +139,7 @@ body {
 .del-btn { background: none; border: none; color: #B5ADA3; font-size: 16px; padding: 5px; cursor: pointer; }
 .check-circle { width: 24px; height: 24px; margin-top: 2px; border-radius: 50%; border: 2px solid #D3CBBF; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 13px; color: #fff; }
 .check-circle.checked { background: var(--sage); border-color: var(--sage); }
-
 .thumb-img { width: 64px; height: 64px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); margin-top: 8px; cursor: zoom-in; display: block; }
-/* === BUKU BINDER DIGITAL === */
 .binder-sheet {
   position: relative; background: #FFFDF8; border: 1px solid var(--border);
   border-radius: 18px; padding: 14px 15px 14px 34px; margin-bottom: 12px;
@@ -143,64 +152,48 @@ body {
   background-image: radial-gradient(circle, #DED6C8 3.5px, transparent 4px);
   background-size: 10px 26px; background-repeat: repeat-y;
 }
-.binder-sheet::after {
-  content: ""; position: absolute; left: 25px; top: 0; bottom: 0; width: 1px; background: rgba(224, 122, 95, 0.35);
-}
+.binder-sheet::after { content: ""; position: absolute; left: 25px; top: 0; bottom: 0; width: 1px; background: rgba(224, 122, 95, 0.35); }
 .binder-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
 .binder-body { font-size: 13.5px; line-height: 1.65; color: var(--text); white-space: pre-wrap; word-break: break-word; }
-.math-highlight {
-  background: #F4F7F5; border-left: 3px solid var(--sage); padding: 7px 10px;
-  border-radius: 8px; margin: 6px 0; font-size: 13px; color: #264636;
-}
+.math-highlight { background: #F4F7F5; border-left: 3px solid var(--sage); padding: 7px 10px; border-radius: 8px; margin: 6px 0; font-size: 13px; color: #264636; }
 
-/* === MATH KEYPAD & PHOTO TOOLS === */
 .photo-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-.tool-chip {
-  background: var(--bg); border: 1px solid var(--border); color: var(--text);
-  padding: 7px 11px; border-radius: 11px; font-size: 12px; font-weight: 600;
-  cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-}
+.tool-chip { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 7px 11px; border-radius: 11px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
 .tool-chip.accent { background: var(--sage-soft); color: #2F5D46; border-color: rgba(129,178,154,0.4); }
 .preview-box { position: relative; display: inline-block; margin-bottom: 10px; }
 .preview-box img { max-height: 130px; border-radius: 12px; border: 1px solid var(--border); display: block; }
-.preview-del {
-  position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%;
-  background: var(--danger); color: #fff; border: none; font-size: 12px; cursor: pointer;
-}
+.preview-del { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; background: var(--danger); color: #fff; border: none; font-size: 12px; cursor: pointer; }
 .ocr-status { font-size: 11.5px; color: var(--primary); font-weight: 600; margin-bottom: 8px; }
 
 .math-pad { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 8px; margin-top: 8px; }
 .math-tabs { display: flex; gap: 5px; margin-bottom: 7px; overflow-x: auto; scrollbar-width: none; }
-.math-tab {
-  padding: 4px 9px; border-radius: 8px; border: 1px solid var(--border); background: var(--card);
-  font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; white-space: nowrap;
-}
+.math-tab { padding: 4px 9px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; white-space: nowrap; }
 .math-tab.active { background: var(--text); color: #FAF7F2; border-color: var(--text); }
 .math-keys { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
-.math-key {
-  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-  padding: 7px 0; font-size: 15px; font-weight: 600; color: var(--text);
-  text-align: center; cursor: pointer; user-select: none;
-}
+.math-key { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 7px 0; font-size: 15px; font-weight: 600; color: var(--text); text-align: center; cursor: pointer; user-select: none; }
 .math-key:active { background: var(--primary-soft); color: var(--primary); }
 
-/* === SCIENTIFIC CALCULATOR === */
-.calc-screen {
-  background: var(--bg); border: 1px solid var(--border); border-radius: 16px;
-  padding: 12px 14px; text-align: right; margin-bottom: 12px;
-}
+.calc-screen { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; text-align: right; margin-bottom: 12px; }
 .calc-expr { font-size: 13px; color: var(--muted); min-height: 18px; word-break: break-all; }
 .calc-res { font-size: 28px; font-weight: 800; color: var(--text); margin-top: 4px; font-variant-numeric: tabular-nums; }
 .calc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
-.c-btn {
-  padding: 11px 4px; border-radius: 12px; border: 1px solid var(--border);
-  background: var(--card); font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer;
-}
+.c-btn { padding: 11px 4px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; }
 .c-btn.fn { background: var(--bg); color: var(--muted); font-size: 12.5px; }
 .c-btn.op { background: var(--primary-soft); color: var(--primary); border-color: rgba(224,122,95,0.25); }
 .c-btn.eq { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-/* === TABS, TIMER, GPA, MODALS & SVG NAV === */
+.cookie-box { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 18px 16px; text-align: center; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(45, 42, 38, 0.03); }
+.cookie-stage { min-height: 114px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+.cookie-svg { width: 92px; height: 74px; transition: transform 0.25s ease; }
+.cookie-svg.shake { animation: cookieWobble 0.35s ease; }
+@keyframes cookieWobble { 0%, 100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-10deg) scale(1.06); } 60% { transform: rotate(9deg) scale(1.06); } }
+.cookie-hint { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 500; }
+.fortune-paper { background: #FFFDF7; border: 1.5px solid #E8C78E; border-radius: 12px; padding: 13px 15px; margin: 4px 0 12px; box-shadow: 0 4px 12px rgba(226, 168, 86, 0.14); animation: paperPop 0.35s ease; }
+@keyframes paperPop { from { opacity: 0; transform: translateY(8px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.fortune-tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--primary-soft); color: var(--primary); margin-bottom: 6px; }
+.fortune-text { font-family: "Georgia", serif; font-size: 14px; line-height: 1.55; color: var(--text); }
+.fortune-lucky { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
 .tab-view { display: none; }
 .tab-view.active { display: block; }
 .timer-box { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 24px 18px; text-align: center; margin-bottom: 16px; }
@@ -224,14 +217,10 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
   bottom: calc(14px + env(safe-area-inset-bottom));
   background: rgba(255, 253, 249, 0.92); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--border); border-radius: 28px;
-  display: flex; padding: 6px 6px; z-index: 30;
+  display: flex; padding: 6px; z-index: 30;
   box-shadow: 0 10px 28px rgba(45, 42, 38, 0.12);
 }
-.nav-item {
-  flex: 1; background: none; border: none; border-radius: 22px; padding: 7px 2px;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-  font-size: 10.5px; font-weight: 600; color: var(--muted); cursor: pointer; user-select: none;
-}
+.nav-item { flex: 1; background: none; border: none; border-radius: 22px; padding: 7px 2px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10.5px; font-weight: 600; color: var(--muted); cursor: pointer; user-select: none; }
 .nav-item svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.15s ease; }
 .nav-item.active { background: var(--primary-soft); color: var(--primary); }
 .nav-item.active svg { stroke-width: 2.2; transform: translateY(-1px); }
@@ -252,50 +241,3 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
 .lightbox { display: none; position: fixed; inset: 0; background: rgba(20,18,16,0.92); z-index: 80; align-items: center; justify-content: center; padding: 16px; }
 .lightbox.open { display: flex; }
 .lightbox img { max-width: 100%; max-height: 86vh; border-radius: 14px; }
-
-.remind-toast {
-  display: none; position: fixed; top: calc(12px + env(safe-area-inset-top)); left: 16px; right: 16px;
-  max-width: 488px; margin: 0 auto; z-index: 90; background: #2D2A26; color: #FAF7F2;
-  padding: 14px 16px; border-radius: 18px; box-shadow: 0 12px 28px rgba(0,0,0,0.24);
-  align-items: center; justify-content: space-between; gap: 12px;
-}
-.remind-toast.show { display: flex; }
-.remind-toast strong { display: block; font-size: 13.5px; color: #F2CC8F; margin-bottom: 2px; }
-.remind-toast span { font-size: 12.5px; line-height: 1.4; display: block; }
-.remind-toast button { background: var(--primary); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
-
-/* === FORTUNE COOKIE === */
-.cookie-box {
-  background: var(--card); border: 1px solid var(--border); border-radius: 22px;
-  padding: 18px 16px; text-align: center; margin-bottom: 18px;
-  box-shadow: 0 4px 14px rgba(45, 42, 38, 0.03);
-}
-.cookie-stage {
-  min-height: 118px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; cursor: pointer; user-select: none;
-}
-.cookie-svg { width: 92px; height: 74px; transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.cookie-svg.shake { animation: cookieWobble 0.35s ease; }
-@keyframes cookieWobble {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-10deg) scale(1.06); }
-  60% { transform: rotate(9deg) scale(1.06); }
-}
-.cookie-hint { font-size: 12px; color: var(--muted); margin-top: 6px; font-weight: 500; }
-.fortune-paper {
-  background: #FFFDF7; border: 1.5px solid #E8C78E; border-radius: 12px;
-  padding: 13px 15px; margin: 6px 0 12px; position: relative;
-  box-shadow: 0 4px 12px rgba(226, 168, 86, 0.14);
-  animation: paperPop 0.35s ease;
-}
-@keyframes paperPop {
-  from { opacity: 0; transform: translateY(8px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.fortune-tag {
-  display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px;
-  padding: 2px 8px; border-radius: 6px; background: var(--primary-soft); color: var(--primary);
-  margin-bottom: 6px;
-}
-.fortune-text { font-family: "Georgia", serif; font-size: 14px; line-height: 1.55; color: var(--text); }
-.fortune-lucky { font-size: 11px; color: var(--muted); margin-top: 8px; letter-spacing: 0.5px; }

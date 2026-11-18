@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#FAF7F2" />
   <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=12" />
 </head>
 <body>
   <header class="header">
@@ -68,17 +68,16 @@
     <section id="tab-fokus" class="tab-view">
       <div class="timer-box">
         <div class="timer-modes">
-          <button class="mode-btn active" onclick="setTimerMode(25, this)">Fokus 25m</button>
-          <button class="mode-btn" onclick="setTimerMode(5, this)">Istirahat 5m</button>
-          <button class="mode-btn" onclick="setTimerMode(15, this)">Santai 15m</button>
+          <button class="mode-btn active" data-mins="25" onclick="setTimerMode(25, this)">Fokus 25m</button>
+          <button class="mode-btn" data-mins="5" onclick="setTimerMode(5, this)">Istirahat 5m</button>
+          <button class="mode-btn" data-mins="15" onclick="setTimerMode(15, this)">Santai 15m</button>
         </div>
         <div class="timer-display" id="timerDisplay">25:00</div>
         <div class="timer-actions"><button class="btn-primary" id="timerStartBtn" onclick="toggleTimer()">Mulai</button><button class="btn-secondary" onclick="resetTimer()">Reset</button></div>
         <p style="font-size:12px; color:var(--muted); margin-top:14px;">Sesi selesai hari ini: <strong id="sessionCount">0</strong> sesi</p>
       </div>
-            <div class="section-top"><h2>Kue Keberuntungan</h2><span style="font-size:12px; color:var(--muted);">Pojok istirahat</span></div>
+      <div class="section-top"><h2>Kue Keberuntungan</h2><span style="font-size:12px; color:var(--muted);">Pojok istirahat</span></div>
       <div class="cookie-box" id="fortuneCookieBox"></div>
-
       <div class="section-top"><h2>Coretan Cepat</h2><span style="font-size:12px; color:var(--muted);">Tersimpan otomatis</span></div>
       <textarea id="quickNote" class="quick-note" placeholder="Tulis coretan hitungan cepat atau pengingat..."></textarea>
     </section>
@@ -114,7 +113,6 @@
       <span>Akademik</span>
     </button>
   </nav>
-  <!-- MODAL JADWAL -->
   <div class="modal-backdrop" id="modal-jadwal" onclick="backdropClose(event, 'modal-jadwal')">
     <div class="modal-sheet">
       <h3 id="modalJadwalTitle">Tambah Mata Kuliah</h3>
@@ -127,7 +125,6 @@
     </div>
   </div>
 
-  <!-- MODAL TUGAS + FOTO + MATH KEYPAD -->
   <div class="modal-backdrop" id="modal-tugas" onclick="backdropClose(event, 'modal-tugas')">
     <div class="modal-sheet">
       <h3 id="modalTugasTitle">Tambah Tugas Kuliah</h3>
@@ -151,22 +148,18 @@
     </div>
   </div>
 
-  <!-- MODAL BUKU BINDER + OCR + MATH KEYPAD -->
   <div class="modal-backdrop" id="modal-binder" onclick="backdropClose(event, 'modal-binder')">
     <div class="modal-sheet">
       <h3 id="modalBinderTitle">Lembar Binder Baru</h3>
       <div class="form-group">
         <label>Kategori Mata Kuliah</label>
         <select id="inputBinderCat">
-          <option value="Kalkulus">Kalkulus</option>
-          <option value="Aljabar">Aljabar</option>
-          <option value="Statistika">Statistika</option>
-          <option value="Geometri">Geometri</option>
-          <option value="Matematika Diskrit">Matematika Diskrit</option>
-          <option value="Umum">Umum</option>
+          <option value="Kalkulus">Kalkulus</option><option value="Aljabar">Aljabar</option>
+          <option value="Statistika">Statistika</option><option value="Geometri">Geometri</option>
+          <option value="Matematika Diskrit">Matematika Diskrit</option><option value="Umum">Umum</option>
         </select>
       </div>
-      <div class="form-group"><label>Judul Materi / Bab</label><input type="text" id="inputBinderTitle" placeholder="Contoh: Integral Lipat Dua & Teorema Green" /></div>
+      <div class="form-group"><label>Judul Materi / Bab</label><input type="text" id="inputBinderTitle" placeholder="Contoh: Integral Lipat Dua" /></div>
       <div class="form-group">
         <label>Foto Catatan / Papan Tulis & Scan Tulisan (OCR)</label>
         <div class="photo-bar">
@@ -190,7 +183,6 @@
       <div class="modal-actions"><button class="btn-secondary" onclick="closeModals()">Batal</button><button class="btn-primary" onclick="saveBinder()">Simpan ke Binder</button></div>
     </div>
   </div>
-  <!-- MODAL KALKULATOR ILMIAH -->
   <div class="modal-backdrop" id="modal-calc" onclick="backdropClose(event, 'modal-calc')">
     <div class="modal-sheet">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -239,7 +231,6 @@
     </div>
   </div>
 
-  <!-- MODAL UJIAN, SETTINGS, PIN, SECRET & LIGHTBOX -->
   <div class="modal-backdrop" id="modal-ujian" onclick="backdropClose(event, 'modal-ujian')">
     <div class="modal-sheet">
       <h3 id="modalUjianTitle">Tambah Jadwal Ujian</h3>
@@ -289,6 +280,6 @@
     <img id="lightboxImg" src="" alt="Preview" />
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=12"></script>
 </body>
 </html>
