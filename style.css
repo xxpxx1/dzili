@@ -241,3 +241,12 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
 .lightbox { display: none; position: fixed; inset: 0; background: rgba(20,18,16,0.92); z-index: 80; align-items: center; justify-content: center; padding: 16px; }
 .lightbox.open { display: flex; }
 .lightbox img { max-width: 100%; max-height: 86vh; border-radius: 14px; }
+
+.cookie-quota-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11.5px; color: var(--muted); background: var(--bg);
+  padding: 6px 12px; border-radius: 12px; margin-bottom: 10px;
+}
+.cookie-quota-bar strong { color: var(--primary); }
+.cookie-sleep { padding: 14px 8px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.cookie-sleep strong { display: block; color: var(--text); font-size: 14.5px; margin-bottom: 4px; }

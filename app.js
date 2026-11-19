@@ -12,20 +12,69 @@ const MATH_SYMBOLS = {
 };
 
 const FORTUNES = [
+  // Ramalan Kuliah & Kampus
   { tag: 'Ramalan Kuliah', text: 'Hari ini dosen akan selesai menjelaskan 10 menit lebih awal. Aamiin paling kencang!' },
-  { tag: 'Tebak-Tebakan', text: 'Kenapa buku matematika selalu kelihatan sedih? Karena punya banyak masalah. Untung kamu jago nyelesainnya!' },
-  { tag: 'Pesan Manis', text: 'Rumus kebahagiaan hari ini: Istirahat cukup + Minum air putih + Senyum manis kamu.' },
-  { tag: 'Hoki Hari Ini', text: 'Kamu akan menemukan jawaban soal yang sempat bikin bingung tepat setelah minum sesuatu yang segar.' },
-  { tag: 'Receh Dikit', text: 'Apa bedanya kamu sama integral tentu? Kalau integral tentu ada batasnya, kalau cantiknya kamu tak terhingga.' },
-  { tag: 'Mood Booster', text: 'Nggak apa-apa jalan pelan, yang penting nggak mundur. Kamu sudah hebat banget sejauh ini!' },
+  { tag: 'Ramalan Kuliah', text: 'Dosen yang biasanya killer hari ini lagi mode baik hati dan nggak jadi ngasih kuis dadakan.' },
+  { tag: 'Ramalan Kuliah', text: 'Kursi favoritmu di kelas masih kosong dan dingin AC-nya pas banget hari ini.' },
+  { tag: 'Ramalan Kuliah', text: 'Kelompok presentasimu bakal dapat pertanyaan yang kebetulan banget baru saja kamu baca!' },
+  { tag: 'Ramalan Kuliah', text: 'Jam kosong tak terduga akan muncul di saat baterai energimu tinggal 15%.' },
+  { tag: 'Ramalan Kuliah', text: 'Catatan yang kamu tulis rapi hari ini bakal menyelamatkanmu pas H-1 ujian nanti.' },
   { tag: 'Ramalan Jajan', text: 'Seseorang di sekitar sini diam-diam ingin mentraktir kamu kopi atau matcha minggu ini.' },
-  { tag: 'Tebak-Tebakan', text: 'Angka berapa yang paling romantis? Angka 2, soalnya kalau sendiri sepi, kalau berdua jadi asyik.' },
-  { tag: 'Pengingat Lembut', text: 'Bahu tegang? Tarik napas 4 detik, embuskan pelan. Tugasnya nggak akan kabur kok, santai dulu 2 menit.' },
+  { tag: 'Ramalan Jajan', text: 'Jajanan yang lagi kamu pengenin sejak kemarin bakal ketemu di jalan pulang nanti.' },
+  { tag: 'Ramalan Hari Ini', text: 'Antrean makan siangmu hari ini bakal lancar jaya dan porsinya lebih banyak dari biasanya.' },
+  { tag: 'Ramalan Hari Ini', text: 'Cuaca hari ini bersahabat banget buat pulang kuliah tanpa drama kehujanan.' },
   { tag: 'Hoki Akademik', text: 'Materi yang baru saja kamu baca punya peluang 87,4% muncul di kuis atau ujian nanti!' },
-  { tag: 'Receh Dikit', text: 'Sudut apa yang paling hangat? Bukan sudut 90 derajat, tapi sudut bibir kamu pas lagi senyum.' },
-  { tag: 'Ramalan Hari Ini', text: 'Hari ini antrean makan siangmu bakal lancar dan dapat tempat duduk paling nyaman.' },
-  { tag: 'Tebak-Tebakan', text: 'Kenapa garis sejajar nggak pernah ketemu? Soalnya mereka belum install aplikasi Dzili.' },
-  { tag: 'Pesan Spesial', text: 'Kalau hari ini terasa berat, ingat: ada seseorang yang selalu bangga sama setiap usaha kecilmu.' }
+  { tag: 'Hoki Hari Ini', text: 'Kamu akan menemukan jawaban soal yang sempat bikin bingung tepat setelah minum sesuatu yang segar.' },
+  { tag: 'Hoki Hari Ini', text: 'Baterai HP dan baterai semangatmu akan awet sampai kelas terakhir selesai!' },
+  { tag: 'Hoki Hari Ini', text: 'Notifikasi yang bikin senyum-senyum sendiri bakal masuk ke HP-mu hari ini.' },
+
+  // Tebak-Tebakan & Humor Matematika
+  { tag: 'Humor Math', text: 'Kenapa buku matematika selalu kelihatan sedih? Karena punya banyak masalah. Untung kamu jago nyelesainnya!' },
+  { tag: 'Humor Math', text: 'Apa bedanya kamu sama integral tentu? Kalau integral tentu ada batasnya, kalau cantiknya kamu tak terhingga.' },
+  { tag: 'Humor Math', text: 'Sudut apa yang paling hangat? Bukan sudut 90 derajat, tapi sudut bibir kamu pas lagi senyum.' },
+  { tag: 'Humor Math', text: 'Kenapa garis sejajar nggak pernah ketemu? Soalnya mereka belum install aplikasi Dzili.' },
+  { tag: 'Humor Math', text: 'Kenapa angka 6 takut sama angka 7? Karena seven eight nine (7 8 9)!' },
+  { tag: 'Humor Math', text: 'Apa yang dibilang angka 0 ke angka 8? "Ikat pinggangnya keren banget, Bro!"' },
+  { tag: 'Humor Math', text: 'Kenapa tanaman di jurusan matematika nggak pernah tumbuh normal? Karena akarnya kuadrat semua.' },
+  { tag: 'Humor Math', text: 'Cintaku ke kamu itu kayak nilai Pi (π): nggak pernah berhenti dan nggak bakal habis dibagi apa pun.' },
+  { tag: 'Tebak-Tebakan', text: 'Angka berapa yang paling romantis? Angka 2, soalnya kalau sendiri sepi, kalau berdua jadi asyik.' },
+  { tag: 'Tebak-Tebakan', text: 'Kopi apa yang paling pahit? Kopilih dia daripada aku. Bercanda deng, yang manis cuma kamu!' },
+  { tag: 'Tebak-Tebakan', text: 'Hewan apa yang paling sering telat masuk kelas pagi? Kaki seribu, kelamaan pakai sepatunya.' },
+  { tag: 'Tebak-Tebakan', text: 'Kenapa zombie kalau nyerang selalu rame-rame? Kalau sendirian namanya zomblo.' },
+  { tag: 'Tebak-Tebakan', text: 'Ikan apa yang paling sering berhenti mendadak? Ikan pause.' },
+  { tag: 'Tebak-Tebakan', text: 'Awan apa yang bikin seneng? Awanna be with you terus setiap hari.' },
+  { tag: 'Tebak-Tebakan', text: 'Benda apa yang kalau dipotong malah makin tinggi? Celana panjang!' },
+  { tag: 'Tebak-Tebakan', text: 'Sayur apa yang jago nyanyi? Kol-play!' },
+
+  // Cerita Mini Lucu (Relatable Kampus & Sehari-hari)
+  { tag: 'Cerita Mini', text: 'Niat hati buka HP cuma mau cek jam kuliah 5 detik. Eh, tahu-tahu sudah 40 menit nonton video kucing nyanyi.' },
+  { tag: 'Cerita Mini', text: 'Momen paling menegangkan di kelas: dosen bilang "Coba yang pojok jawab", lalu seluruh kelas mendadak pura-pura sibuk nyatet.' },
+  { tag: 'Cerita Mini', text: 'Definisi percaya diri tingkat dewa: ngerjain soal hitungan 3 halaman penuh tanpa kalkulator, pas dicek ternyata salah tanda minus di baris pertama.' },
+  { tag: 'Cerita Mini', text: 'Tadi malam sudah pasang 5 alarm buat kelas pagi. Pas pagi bunyi, bukannya bangun malah dimatiin sambil bilang "5 menit lagi" dalam mimpi.' },
+  { tag: 'Cerita Mini', text: 'Di catatan binder tulisannya rapi estetik pakai stabilo pastel. Pas masuk halaman ke-4 dosen ngebut, tulisannya berubah jadi sandi rumput.' },
+  { tag: 'Cerita Mini', text: 'Status baterai HP 10%: panik cari colokan. Status baterai otak 10%: masih sempat mikir "habis ini enaknya jajan apa ya?"' },
+  { tag: 'Cerita Mini', text: 'Bilangnya ke teman "Aku belum belajar sama sekali nih", pas nilai keluar ternyata dapat A. Semoga kejadian ini menular ke kamu!' },
+  { tag: 'Cerita Mini', text: 'Hukum kekekalan tugas kuliah: satu tugas selesai dicentang, dua tugas baru langsung muncul di grup kelas.' },
+  { tag: 'Cerita Mini', text: 'Persiapan belajar: rapikan meja 20 menit, bikin minum 10 menit, pilih lagu 15 menit, belajarnya 5 menit lalu ngantuk.' },
+  { tag: 'Cerita Mini', text: 'Kalau ketemu soal ujian yang bentuknya aneh banget, tarik napas, baca bismillah, dan ingat: dosennya juga manusia yang suka ngopi.' },
+  { tag: 'Cerita Mini', text: 'Misteri terbesar mahasiswa: pulpen baru beli kemarin langsung hilang, tapi pulpen nemu di jalan awet sampai lulus.' },
+  { tag: 'Cerita Mini', text: 'Katanya matematika itu ilmu pasti, tapi kenapa pas ditanya "Mau makan di mana?" jawabannya selalu "Terserah"?' },
+
+  // Mood Booster & Penyemangat Manis
+  { tag: 'Mood Booster', text: 'Nggak apa-apa jalan pelan, yang penting nggak mundur. Kamu sudah hebat banget sejauh ini!' },
+  { tag: 'Mood Booster', text: 'Kalau hari ini terasa berat, ingat: ada seseorang yang selalu bangga sama setiap usaha kecilmu.' },
+  { tag: 'Mood Booster', text: 'Jangan lupa minum air putih! Otak yang encer butuh hidrasi, bukan cuma kafein dan harapan.' },
+  { tag: 'Mood Booster', text: 'Bahu tegang? Tarik napas 4 detik, embuskan pelan. Tugasnya nggak akan kabur kok, santai dulu 2 menit.' },
+  { tag: 'Mood Booster', text: 'Kamu itu kombinasi langka: pinter ngitung rumus, tapi juga jago bikin hari orang lain jadi lebih cerah.' },
+  { tag: 'Mood Booster', text: 'Setiap halaman catatan yang kamu tulis hari ini adalah investasi buat versi kamu yang sukses di masa depan.' },
+  { tag: 'Pesan Manis', text: 'Rumus kebahagiaan hari ini: Istirahat cukup + Minum air putih + Senyum manis kamu.' },
+  { tag: 'Pesan Manis', text: 'Capek boleh, nyerah jangan. Kalau butuh tempat cerita atau butuh teman jajan, tinggal kabari ya!' },
+  { tag: 'Pesan Manis', text: 'Terima kasih sudah bertahan dan berjuang melewati hari ini dengan keren. Selamat istirahat nanti malam!' },
+  { tag: 'Pesan Manis', text: 'Dari sekian banyak probabilitas di dunia, ketemu dan kenal kamu tetap jadi hasil perhitungan terbaik.' },
+  { tag: 'Pesan Manis', text: 'Semangat terus kuliahnya, Bu Matematikawan! Dunia butuh lebih banyak orang hebat dan baik hati kayak kamu.' },
+  { tag: 'Pengingat Lembut', text: 'Matamu sudah kerja keras menatap layar dan buku hari ini. Kedip-kedip sebentar dan lihat yang hijau-hijau ya.' },
+  { tag: 'Pengingat Lembut', text: 'Nilai bagus itu bonus, yang paling penting kamu tetap sehat, bahagia, dan nggak telat makan.' },
+  { tag: 'Pengingat Lembut', text: 'Satu langkah kecil hari ini jauh lebih berarti daripada rencana sempurna yang nggak pernah dimulai.' }
 ];
 
 const defaultData = {
@@ -361,8 +410,29 @@ function resetTimer() {
   saveTimerState();
   updateTimerUI();
 }
-// === FORTUNE COOKIE HIBURAN ===
+// === FORTUNE COOKIE HIBURAN (LIMIT 6/HARI = 2 SESI x 3 KUE) ===
+const MAX_PER_SESSION = 3;
 let cookieTaps = 0, cookieOpened = false, currentFortune = null;
+
+function getCookieSessionInfo() {
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const isSession1 = now.getHours() < 15; // Sesi 1: 00.00-14.59, Sesi 2: 15.00-23.59
+  const sessionKey = isSession1 ? 's1' : 's2';
+  const sessionLabel = isSession1 ? 'Sesi Pagi–Siang' : 'Sesi Sore–Malam';
+  const nextResetText = isSession1 ? 'Sesi Sore–Malam dibuka pukul 15.00' : 'Toples diisi ulang besok pagi pukul 00.00';
+
+  let q = JSON.parse(localStorage.getItem('dzili_cookie_quota') || 'null');
+  if (!q || q.date !== today) {
+    const prevSeen = (q && Array.isArray(q.seen)) ? q.seen : [];
+    const prevCustom = (q && q.lastCustom) ? q.lastCustom : '';
+    q = { date: today, s1: 0, s2: 0, seen: prevSeen, lastCustom: prevCustom };
+    localStorage.setItem('dzili_cookie_quota', JSON.stringify(q));
+  }
+  const used = q[sessionKey] || 0;
+  const remaining = Math.max(0, MAX_PER_SESSION - used);
+  return { q, sessionKey, sessionLabel, nextResetText, used, remaining, totalToday: (q.s1 || 0) + (q.s2 || 0) };
+}
 
 function playCookieSound(cracked) {
   try {
@@ -378,8 +448,27 @@ function playCookieSound(cracked) {
   } catch (e) {}
 }
 
+function pickUniqueFortune(q) {
+  const custom = (state.customFortune || '').trim();
+  if (custom && q.lastCustom !== custom) {
+    q.lastCustom = custom;
+    return { tag: 'Pesan Rahasia Spesial', text: custom };
+  }
+  if (!Array.isArray(q.seen) || q.seen.length >= FORTUNES.length) q.seen = [];
+  const available = [];
+  for (let i = 0; i < FORTUNES.length; i++) {
+    if (!q.seen.includes(i)) available.push(i);
+  }
+  const chosenIdx = available[Math.floor(Math.random() * available.length)];
+  q.seen.push(chosenIdx);
+  return FORTUNES[chosenIdx];
+}
+
 function tapFortuneCookie() {
   if (cookieOpened) return;
+  const info = getCookieSessionInfo();
+  if (info.remaining <= 0) { renderFortuneCookie(); return; }
+
   cookieTaps++;
   const svg = document.getElementById('cookieSvg');
   if (cookieTaps < 3) {
@@ -389,41 +478,62 @@ function tapFortuneCookie() {
     if (hint) hint.textContent = cookieTaps === 1 ? 'Krek! Ketuk 2x lagi...' : 'Hampir pecah! Sekali lagi...';
     return;
   }
+
   playCookieSound(true);
   cookieOpened = true;
-  if (state.customFortune && state.customFortune.trim()) {
-    currentFortune = { tag: 'Pesan Rahasia Spesial', text: state.customFortune.trim() };
-  } else {
-    currentFortune = FORTUNES[Math.floor(Math.random() * FORTUNES.length)];
-  }
+  info.q[info.sessionKey] = (info.q[info.sessionKey] || 0) + 1;
+  currentFortune = pickUniqueFortune(info.q);
+  localStorage.setItem('dzili_cookie_quota', JSON.stringify(info.q));
   renderFortuneCookie();
 }
 
-function resetFortuneCookie() { cookieTaps = 0; cookieOpened = false; currentFortune = null; renderFortuneCookie(); }
+function resetFortuneCookie() {
+  cookieTaps = 0; cookieOpened = false; currentFortune = null;
+  renderFortuneCookie();
+}
 
 function renderFortuneCookie() {
   const box = document.getElementById('fortuneCookieBox');
   if (!box) return;
-  if (!cookieOpened) {
-    box.innerHTML = `
-      <div class="cookie-stage" onclick="tapFortuneCookie()">
-        <svg id="cookieSvg" class="cookie-svg" viewBox="0 0 120 96">
-          <path d="M22 64 C14 40, 38 14, 64 16 C88 18, 108 42, 98 66 C90 80, 72 72, 60 56 C48 72, 30 80, 22 64 Z" fill="#F2CC8F" stroke="#D9A05B" stroke-width="3"/>
-          <path d="M44 48 Q60 36 76 48" fill="none" stroke="#C6883E" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="38" cy="36" r="2" fill="#D9A05B"/><circle cx="82" cy="38" r="2" fill="#D9A05B"/>
-        </svg>
-        <div class="cookie-hint" id="cookieHint">Ketuk kuenya 3x untuk melihat isi keberuntunganmu</div>
-      </div>`;
-  } else {
+  const info = getCookieSessionInfo();
+  const quotaHeader = `<div class="cookie-quota-bar"><span>${info.sessionLabel}</span><span>Sisa sesi ini: <strong>${info.remaining}/3 kue</strong></span></div>`;
+
+  if (cookieOpened && currentFortune) {
     const nums = [Math.floor(Math.random()*9)+1, Math.floor(Math.random()*20)+10, ['π', 'e', 'φ', '∞'][Math.floor(Math.random()*4)]];
+    const nextBtn = info.remaining > 0
+      ? `<button class="btn-secondary" style="padding:8px 16px; font-size:12.5px;" onclick="resetFortuneCookie()">Buka Kue Lain (${info.remaining} tersisa)</button>`
+      : `<div style="font-size:12px; color:var(--muted); margin-top:4px;">Kuota sesi ini sudah habis. ${info.nextResetText}.</div>`;
     box.innerHTML = `
+      ${quotaHeader}
       <div class="fortune-paper">
         <span class="fortune-tag">${currentFortune.tag}</span>
         <div class="fortune-text">"${currentFortune.text}"</div>
         <div class="fortune-lucky">Angka hoki: ${nums.join(' • ')}</div>
       </div>
-      <button class="btn-secondary" style="padding:8px 16px; font-size:12.5px;" onclick="resetFortuneCookie()">Buka Kue Lain</button>`;
+      ${nextBtn}`;
+    return;
   }
+
+  if (info.remaining <= 0) {
+    box.innerHTML = `
+      ${quotaHeader}
+      <div class="cookie-sleep">
+        <strong>Toples Kue Sesi Ini Kosong</strong>
+        Kamu sudah membuka 3/3 kue keberuntungan di ${info.sessionLabel.toLowerCase()}.<br>${info.nextResetText}.
+      </div>`;
+    return;
+  }
+
+  box.innerHTML = `
+    ${quotaHeader}
+    <div class="cookie-stage" onclick="tapFortuneCookie()">
+      <svg id="cookieSvg" class="cookie-svg" viewBox="0 0 120 96">
+        <path d="M22 64 C14 40, 38 14, 64 16 C88 18, 108 42, 98 66 C90 80, 72 72, 60 56 C48 72, 30 80, 22 64 Z" fill="#F2CC8F" stroke="#D9A05B" stroke-width="3"/>
+        <path d="M44 48 Q60 36 76 48" fill="none" stroke="#C6883E" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="38" cy="36" r="2" fill="#D9A05B"/><circle cx="82" cy="38" r="2" fill="#D9A05B"/>
+      </svg>
+      <div class="cookie-hint" id="cookieHint">Ketuk kuenya 3x untuk melihat isi keberuntunganmu</div>
+    </div>`;
 }
 
 // === KALKULATOR ILMIAH, UJIAN & GPA ===
