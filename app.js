@@ -92,6 +92,15 @@ if (!state.ujian) state.ujian = [];
 if (!state.gpaCourses) state.gpaCourses = [];
 if (!state.secretPin) state.secretPin = '2026';
 
+let isCloudBooting = Boolean(syncCfg.cloudUrl);
+function renderSkeletonCards(count = 2) {
+  return Array.from({ length: count }).map(() => `
+    <div class="skeleton-card">
+      <div class="skeleton-line w-30"></div>
+      <div class="skeleton-line w-75"></div>
+      <div class="skeleton-line w-50"></div>
+    </div>`).join('');
+}
 let pushTimer = null;
 function setSyncBadge(text, cls) {
   const el = document.getElementById('syncStatus'); if (!el) return;
@@ -116,6 +125,7 @@ async function pushToCloud() {
     if (!res.ok) throw new Error();
     setSyncBadge('☁️ Tersinkron', '');
   } catch (e) { setSyncBadge('Offline', 'offline'); }
+  if (isCloudBooting) { isCloudBooting = false; renderAll(); }
 }
 async function pullFromCloud(force = false) {
   const url = getEndpoint(); if (!url) { setSyncBadge('Lokal', 'offline'); return; }
@@ -129,6 +139,7 @@ async function pullFromCloud(force = false) {
     } else if (!remote && state.updatedAt > 0) { await pushToCloud(); }
     setSyncBadge('☁️ Tersinkron', '');
   } catch (e) { setSyncBadge('Offline', 'offline'); }
+  if (isCloudBooting) { isCloudBooting = false; renderAll(); }
 }
 function checkIncomingLinks() {
   const hash = window.location.hash; if (!hash) return;
@@ -169,10 +180,14 @@ function renderHeader() {
 
 function renderBento() {
   const tc = state.jadwal.filter(j => j.hari === todayName).sort((a, b) => a.jam.localeCompare(b.jam));
-  document.getElementById('bentoClassCount').textContent = tc.length;
+  const ccEl = document.getElementById('bentoClassCount');
+  if (ccEl.textContent !== String(tc.length)) { ccEl.classList.remove('bento-pop'); void ccEl.offsetWidth; ccEl.classList.add('bento-pop'); }
+  ccEl.textContent = tc.length;
   document.getElementById('bentoClassSub').textContent = tc.length > 0 ? `Mulai ${tc[0].jam.split('-')[0].trim()}` : `Hari ${todayName} libur kelas`;
   const at = state.tugas.filter(t => !t.done).sort((a, b) => a.deadline.localeCompare(b.deadline));
-  document.getElementById('bentoTaskCount').textContent = at.length;
+  const tcEl = document.getElementById('bentoTaskCount');
+  if (tcEl.textContent !== String(at.length)) { tcEl.classList.remove('bento-pop'); void tcEl.offsetWidth; tcEl.classList.add('bento-pop'); }
+  tcEl.textContent = at.length;
   document.getElementById('bentoTaskSub').textContent = at.length > 0 ? `Terdekat: ${at[0].matkul}` : 'Semua tugas beres!';
 }
 
@@ -254,6 +269,7 @@ function selectDay(d) { selectedDay = d; document.getElementById('inputHari').va
 function renderJadwal() {
   document.getElementById('selectedDayTitle').textContent = `Jadwal Hari ${selectedDay}`;
   const list = document.getElementById('jadwalList');
+  if (isCloudBooting) { list.innerHTML = renderSkeletonCards(2); return; }
   const items = state.jadwal.filter(i => i.hari === selectedDay).sort((a, b) => a.jam.localeCompare(b.jam));
   if (!items.length) { list.innerHTML = `<div class="empty-state">Tidak ada jadwal kuliah di hari ${selectedDay}.</div>`; return; }
   list.innerHTML = items.map(i => `<div class="timeline-item"><div class="timeline-track"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="card"><div class="card-main"><span class="badge">${i.jam}</span>${i.remind ? ` <span class="badge done">🔔 ${i.remind}m</span>` : ''}<div class="card-title">${i.matkul}</div><div class="card-meta">${i.ruang || '-'}</div></div><div class="card-actions"><button class="edit-btn" onclick="exportJadwalIcs(${i.id})" title="Alarm Kalender">📅</button><button class="edit-btn" onclick="editJadwal(${i.id})">✎</button><button class="del-btn" onclick="deleteJadwal(${i.id})">✕</button></div></div></div>`).join('');
@@ -277,6 +293,7 @@ function getDeadlineBadge(d, done) {
 }
 function renderTugas() {
   const list = document.getElementById('tugasList');
+  if (isCloudBooting) { list.innerHTML = renderSkeletonCards(2); return; }
   const sorted = [...state.tugas].sort((a, b) => a.done - b.done || a.deadline.localeCompare(b.deadline));
   if (!sorted.length) { list.innerHTML = `<div class="empty-state">Belum ada tugas tercatat.</div>`; return; }
   list.innerHTML = sorted.map(t => {
@@ -307,6 +324,7 @@ function formatBinderText(txt) {
 }
 function renderBinder() {
   const list = document.getElementById('binderList');
+  if (isCloudBooting) { list.innerHTML = renderSkeletonCards(2); return; }
   const items = selectedBinderCat === 'Semua' ? state.binder : state.binder.filter(b => b.cat === selectedBinderCat);
   if (!items.length) { list.innerHTML = `<div class="empty-state">Belum ada catatan di binder.<br>Tekan <b>+ Lembar Baru</b> untuk mencatat rumus atau foto papan tulis.</div>`; return; }
   list.innerHTML = [...items].reverse().map(b => `
@@ -717,8 +735,8 @@ if (timerState.running) startTimerLoop();
 updateNotifBtnLabel();
 setTimeout(checkReminders, 1500);
 setInterval(checkReminders, 30000);
-if (syncCfg.cloudUrl) pullFromCloud();
+if (syncCfg.cloudUrl) { pullFromCloud(); setTimeout(() => { if (isCloudBooting) { isCloudBooting = false; renderAll(); } }, 2200); }
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) { tickTimer(); if (syncCfg.cloudUrl) pullFromCloud(); }
+  if (!document.hidden) { tickTimer(); if (syncCfg.cloudUrl) { pullFromCloud(); setTimeout(() => { if (isCloudBooting) { isCloudBooting = false; renderAll(); } }, 2200); } }
 });
 setInterval(() => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); }, 15000);
