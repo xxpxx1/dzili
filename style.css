@@ -407,3 +407,37 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
     transition-duration: 0.01ms !important;
   }
 }
+
+/* === UI/UX PRO MAX POLISH (v15) === */
+.card, .bento-card, .binder-sheet, .timer-box, .gpa-summary {
+  box-shadow: 0 3px 12px rgba(45, 42, 38, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.icon-act {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.16s var(--spring), background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.icon-act svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.icon-act:active { transform: scale(0.88); }
+.icon-act.danger:hover, .icon-act.danger:active { background: #FDE8E8; color: var(--danger); border-color: rgba(217, 83, 79, 0.3); }
+@media (hover: hover) {
+  .icon-act:hover { background: var(--primary-soft); color: var(--primary); border-color: rgba(224, 122, 95, 0.3); }
+}
+
+.badge, .card-meta { font-variant-numeric: tabular-nums; }
+
+.empty-state {
+  background: rgba(255, 253, 249, 0.6); border: 1.5px dashed var(--border);
+  border-radius: 20px; padding: 28px 18px; text-align: center;
+}
+.empty-ico {
+  width: 44px; height: 44px; border-radius: 14px; margin: 0 auto 10px;
+  background: var(--primary-soft); color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.empty-ico svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.empty-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.empty-sub { font-size: 12.5px; color: var(--muted); line-height: 1.45; }

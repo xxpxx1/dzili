@@ -2,6 +2,12 @@ if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').
 
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 const DAY_SHORT = { Senin: 'Sen', Selasa: 'Sel', Rabu: 'Rab', Kamis: 'Kam', Jumat: 'Jum', Sabtu: 'Sab', Minggu: 'Min' };
+const ICO_CAL = '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+const ICO_EDIT = '<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const ICO_DEL = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+function renderEmptyState(title, sub) {
+  return `<div class="empty-state"><div class="empty-ico"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 10.7l-5 3.6 1.9 5.7-4.9-3.5-4.9 3.5 1.9-5.7-5-3.6 6.1-1.9z"/></svg></div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`;
+}
 const BINDER_CATS = ['Semua', 'Kalkulus', 'Aljabar', 'Statistika', 'Geometri', 'Matematika Diskrit', 'Umum'];
 
 const MATH_SYMBOLS = {
@@ -271,8 +277,8 @@ function renderJadwal() {
   const list = document.getElementById('jadwalList');
   if (isCloudBooting) { list.innerHTML = renderSkeletonCards(2); return; }
   const items = state.jadwal.filter(i => i.hari === selectedDay).sort((a, b) => a.jam.localeCompare(b.jam));
-  if (!items.length) { list.innerHTML = `<div class="empty-state">Tidak ada jadwal kuliah di hari ${selectedDay}.</div>`; return; }
-  list.innerHTML = items.map(i => `<div class="timeline-item"><div class="timeline-track"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="card"><div class="card-main"><span class="badge">${i.jam}</span>${i.remind ? ` <span class="badge done">🔔 ${i.remind}m</span>` : ''}<div class="card-title">${i.matkul}</div><div class="card-meta">${i.ruang || '-'}</div></div><div class="card-actions"><button class="edit-btn" onclick="exportJadwalIcs(${i.id})" title="Alarm Kalender">📅</button><button class="edit-btn" onclick="editJadwal(${i.id})">✎</button><button class="del-btn" onclick="deleteJadwal(${i.id})">✕</button></div></div></div>`).join('');
+  if (!items.length) { list.innerHTML = renderEmptyState(`Kosong di Hari ${selectedDay}`, "Nikmati waktu istirahatmu atau cicil materi kuliah."); return; }
+  list.innerHTML = items.map(i => `<div class="timeline-item"><div class="timeline-track"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="card"><div class="card-main"><span class="badge">${i.jam}</span>${i.remind ? ` <span class="badge done">🔔 ${i.remind}m</span>` : ''}<div class="card-title">${i.matkul}</div><div class="card-meta">${i.ruang || '-'}</div></div><div class="card-actions"><button class="icon-act" onclick="exportJadwalIcs(${i.id})" title="Alarm Kalender">${ICO_CAL}</button><button class="icon-act" onclick="editJadwal(${i.id})" title="Edit">${ICO_EDIT}</button><button class="icon-act danger" onclick="deleteJadwal(${i.id})" title="Hapus">${ICO_DEL}</button></div></div></div>`).join('');
 }
 function openAddJadwal() { editingJadwalId = null; document.getElementById('modalJadwalTitle').textContent = 'Tambah Mata Kuliah'; document.getElementById('inputHari').value = selectedDay; document.getElementById('inputMatkul').value = ''; document.getElementById('inputJam').value = ''; document.getElementById('inputRuang').value = ''; document.getElementById('inputJadwalRemind').value = '15'; openModal('modal-jadwal'); }
 function editJadwal(id) { const i = state.jadwal.find(x => x.id === id); if (!i) return; editingJadwalId = id; document.getElementById('modalJadwalTitle').textContent = 'Edit Mata Kuliah'; document.getElementById('inputHari').value = i.hari; document.getElementById('inputMatkul').value = i.matkul; document.getElementById('inputJam').value = i.jam; document.getElementById('inputRuang').value = i.ruang || ''; document.getElementById('inputJadwalRemind').value = String(i.remind || 0); openModal('modal-jadwal'); }
@@ -295,10 +301,10 @@ function renderTugas() {
   const list = document.getElementById('tugasList');
   if (isCloudBooting) { list.innerHTML = renderSkeletonCards(2); return; }
   const sorted = [...state.tugas].sort((a, b) => a.done - b.done || a.deadline.localeCompare(b.deadline));
-  if (!sorted.length) { list.innerHTML = `<div class="empty-state">Belum ada tugas tercatat.</div>`; return; }
+  if (!sorted.length) { list.innerHTML = renderEmptyState("Semua Tugas Beres", "Tekan + Tugas Baru jika ada PR atau proyek baru."); return; }
   list.innerHTML = sorted.map(t => {
     const b = getDeadlineBadge(t.deadline, t.done);
-    return `<div class="card tugas-card"><div class="check-circle ${t.done ? 'checked' : ''}" onclick="toggleTugas(${t.id})">${t.done ? '✓' : ''}</div><div class="card-main"><span class="badge ${b.cls}">${b.text}</span>${t.remind && t.remind !== 'none' ? ` <span class="badge math">🔔 Pengingat</span>` : ''}<div class="card-title ${t.done ? 'completed' : ''}">${t.judul}</div><div class="card-meta">${t.matkul}</div>${t.photo ? `<img class="thumb-img" src="${t.photo}" onclick="openLightbox(this.src)" />` : ''}</div><div class="card-actions"><button class="edit-btn" onclick="exportTugasIcs(${t.id})" title="Alarm Kalender">📅</button><button class="edit-btn" onclick="editTugas(${t.id})">✎</button><button class="del-btn" onclick="deleteTugas(${t.id})">✕</button></div></div>`;
+    return `<div class="card tugas-card"><div class="check-circle ${t.done ? 'checked' : ''}" onclick="toggleTugas(${t.id})">${t.done ? '✓' : ''}</div><div class="card-main"><span class="badge ${b.cls}">${b.text}</span>${t.remind && t.remind !== 'none' ? ` <span class="badge math">🔔 Pengingat</span>` : ''}<div class="card-title ${t.done ? 'completed' : ''}">${t.judul}</div><div class="card-meta">${t.matkul}</div>${t.photo ? `<img class="thumb-img" src="${t.photo}" onclick="openLightbox(this.src)" />` : ''}</div><div class="card-actions"><button class="icon-act" onclick="exportTugasIcs(${t.id})" title="Alarm Kalender">${ICO_CAL}</button><button class="icon-act" onclick="editTugas(${t.id})" title="Edit">${ICO_EDIT}</button><button class="icon-act danger" onclick="deleteTugas(${t.id})" title="Hapus">${ICO_DEL}</button></div></div>`;
   }).join('');
 }
 function openAddTugas() { editingTugasId = null; tempTugasPhoto = ''; document.getElementById('modalTugasTitle').textContent = 'Tambah Tugas Kuliah'; document.getElementById('inputTugasMatkul').value = ''; document.getElementById('inputTugasJudul').value = ''; document.getElementById('inputTugasDeadline').value = ''; document.getElementById('inputTugasRemind').value = 'h1'; renderPhotoPreview('tugas'); renderMathPad('tugasMathPad', 'inputTugasJudul'); openModal('modal-tugas'); }
@@ -326,7 +332,7 @@ function renderBinder() {
   const list = document.getElementById('binderList');
   if (isCloudBooting) { list.innerHTML = renderSkeletonCards(2); return; }
   const items = selectedBinderCat === 'Semua' ? state.binder : state.binder.filter(b => b.cat === selectedBinderCat);
-  if (!items.length) { list.innerHTML = `<div class="empty-state">Belum ada catatan di binder.<br>Tekan <b>+ Lembar Baru</b> untuk mencatat rumus atau foto papan tulis.</div>`; return; }
+  if (!items.length) { list.innerHTML = renderEmptyState("Binder Masih Kosong", "Tekan + Lembar Baru untuk mencatat rumus atau scan papan tulis."); return; }
   list.innerHTML = [...items].reverse().map(b => `
     <div class="binder-sheet">
       <div class="binder-header">
@@ -334,7 +340,7 @@ function renderBinder() {
           <span class="badge math">${b.cat}</span> <span style="font-size:11px; color:var(--muted);">${b.date || ''}</span>
           <div class="card-title" style="margin-top:2px;">${b.title}</div>
         </div>
-        <div class="card-actions"><button class="edit-btn" onclick="editBinder(${b.id})">✎</button><button class="del-btn" onclick="deleteBinder(${b.id})">✕</button></div>
+        <div class="card-actions"><button class="icon-act" onclick="editBinder(${b.id})" title="Edit">${ICO_EDIT}</button><button class="icon-act danger" onclick="deleteBinder(${b.id})" title="Hapus">${ICO_DEL}</button></div>
       </div>
       <div class="binder-body">${formatBinderText(b.body)}</div>
       ${b.photo ? `<img class="thumb-img" src="${b.photo}" onclick="openLightbox(this.src)" />` : ''}
@@ -579,9 +585,9 @@ noteEl.addEventListener('input', () => { state.note = noteEl.value; persist(); }
 
 function renderUjian() {
   const list = document.getElementById('ujianList'), sorted = [...state.ujian].sort((a, b) => a.tanggal.localeCompare(b.tanggal));
-  if (!sorted.length) { list.innerHTML = `<div class="empty-state">Belum ada jadwal ujian.</div>`; return; }
+  if (!sorted.length) { list.innerHTML = renderEmptyState("Belum Ada Jadwal Ujian", "Tambahkan jadwal UTS/UAS agar hitung mundurnya aktif."); return; }
   const today = new Date(); today.setHours(0,0,0,0);
-  list.innerHTML = sorted.map(u => { const diff = Math.round((new Date(u.tanggal + 'T00:00:00') - today) / 86400000); let bt = `H-${diff} (${u.tanggal})`, bc = ''; if (diff < 0) { bt = 'Selesai'; bc = 'done'; } else if (diff === 0) { bt = 'HARI INI!'; bc = 'urgent'; } else if (diff <= 3) { bt = `H-${diff} • Segera!`; bc = 'soon'; } return `<div class="card tugas-card"><div class="card-main"><span class="badge ${bc}">${bt}</span><div class="card-title">${u.nama}</div><div class="card-meta">${u.info || '-'}</div></div><div class="card-actions"><button class="edit-btn" onclick="editUjian(${u.id})">✎</button><button class="del-btn" onclick="deleteUjian(${u.id})">✕</button></div></div>`; }).join('');
+  list.innerHTML = sorted.map(u => { const diff = Math.round((new Date(u.tanggal + 'T00:00:00') - today) / 86400000); let bt = `H-${diff} (${u.tanggal})`, bc = ''; if (diff < 0) { bt = 'Selesai'; bc = 'done'; } else if (diff === 0) { bt = 'HARI INI!'; bc = 'urgent'; } else if (diff <= 3) { bt = `H-${diff} • Segera!`; bc = 'soon'; } return `<div class="card tugas-card"><div class="card-main"><span class="badge ${bc}">${bt}</span><div class="card-title">${u.nama}</div><div class="card-meta">${u.info || '-'}</div></div><div class="card-actions"><button class="icon-act" onclick="editUjian(${u.id})" title="Edit">${ICO_EDIT}</button><button class="icon-act danger" onclick="deleteUjian(${u.id})" title="Hapus">${ICO_DEL}</button></div></div>`; }).join('');
 }
 function openAddUjian() { editingUjianId = null; document.getElementById('modalUjianTitle').textContent = 'Tambah Jadwal Ujian'; document.getElementById('inputUjianNama').value = ''; document.getElementById('inputUjianTanggal').value = ''; document.getElementById('inputUjianInfo').value = ''; openModal('modal-ujian'); }
 function editUjian(id) { const u = state.ujian.find(x => x.id === id); if (!u) return; editingUjianId = id; document.getElementById('modalUjianTitle').textContent = 'Edit Jadwal Ujian'; document.getElementById('inputUjianNama').value = u.nama; document.getElementById('inputUjianTanggal').value = u.tanggal; document.getElementById('inputUjianInfo').value = u.info || ''; openModal('modal-ujian'); }
@@ -597,7 +603,7 @@ function deleteUjian(id) { state.ujian = state.ujian.filter(u => u.id !== id); p
 const GRADES = [{ label: 'A (4.0)', val: 4.0 }, { label: 'AB (3.5)', val: 3.5 }, { label: 'B (3.0)', val: 3.0 }, { label: 'BC (2.5)', val: 2.5 }, { label: 'C (2.0)', val: 2.0 }, { label: 'D (1.0)', val: 1.0 }, { label: 'E (0.0)', val: 0.0 }];
 function renderGpa() {
   let sks = 0, pts = 0;
-  document.getElementById('gpaRowsContainer').innerHTML = state.gpaCourses.map(c => { const s = Number(c.sks)||0, g = Number(c.grade)||0; sks += s; pts += s * g; return `<div class="gpa-row"><input type="text" value="${c.name}" placeholder="Matkul" onchange="updateGpa(${c.id},'name',this.value)" /><input type="number" min="1" max="6" value="${c.sks}" onchange="updateGpa(${c.id},'sks',this.value)" /><select onchange="updateGpa(${c.id},'grade',this.value)">${GRADES.map(x => `<option value="${x.val}" ${Number(c.grade)===x.val?'selected':''}>${x.label}</option>`).join('')}</select><button class="del-btn" onclick="deleteGpaRow(${c.id})" style="padding:2px;">✕</button></div>`; }).join('');
+  document.getElementById('gpaRowsContainer').innerHTML = state.gpaCourses.map(c => { const s = Number(c.sks)||0, g = Number(c.grade)||0; sks += s; pts += s * g; return `<div class="gpa-row"><input type="text" value="${c.name}" placeholder="Matkul" onchange="updateGpa(${c.id},'name',this.value)" /><input type="number" min="1" max="6" value="${c.sks}" onchange="updateGpa(${c.id},'sks',this.value)" /><select onchange="updateGpa(${c.id},'grade',this.value)">${GRADES.map(x => `<option value="${x.val}" ${Number(c.grade)===x.val?'selected':''}>${x.label}</option>`).join('')}</select><button class="icon-act danger" style="width:30px;height:30px;" onclick="deleteGpaRow(${c.id})" title="Hapus">${ICO_DEL}</button></div>`; }).join('');
   document.getElementById('totalSksText').textContent = sks; document.getElementById('ipsResultText').textContent = sks > 0 ? (pts / sks).toFixed(2) : '0.00';
 }
 function addGpaRow() { state.gpaCourses.push({ id: Date.now(), name: '', sks: 3, grade: 4.0 }); persist(); renderGpa(); }
