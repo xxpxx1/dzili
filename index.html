@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#FFE8EF" />
   <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css?v=22" />
+  <link rel="stylesheet" href="style.css?v=25" />
 </head>
 <body>
   <section id="dziliLandingView" class="landing-shell">
@@ -181,6 +181,38 @@
     if (meta) meta.setAttribute('content', '#1E1017');
     window.scrollTo(0, 0);
   };
+
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.lp-pill-open, .lp-cta-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.enterDziliApp();
+      });
+    });
+    var shuffleBtn = document.querySelector('.lp-shuffle-btn');
+    if (shuffleBtn) {
+      shuffleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.nextLandingFormula();
+      });
+    }
+    var copyBtn = document.querySelector('.lp-card-action-ico');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.copyLandingFormula();
+      });
+    }
+    var statBoxes = document.querySelectorAll('.lp-stat-box');
+    var tabs = ['jadwal', 'binder', 'fokus'];
+    statBoxes.forEach(function(box, i) {
+      box.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.enterDziliApp(tabs[i]);
+      });
+    });
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', window.renderLandingFormula);
@@ -462,6 +494,6 @@
     <img id="lightboxImg" src="" alt="Preview" />
   </div>
 
-  <script src="app.js?v=22"></script>
+  <script src="app.js?v=25"></script>
 </body>
 </html>

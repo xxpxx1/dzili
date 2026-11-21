@@ -525,6 +525,7 @@ body {
 
 /* === DZILI LANDING PAGE (BEGIN CONCEPT x DZILI ROSE IDENTITY) === */
 .landing-shell {
+  z-index: 40;
   min-height: 100vh;
   background:
     radial-gradient(circle at 78% 20%, rgba(246, 194, 112, 0.22) 0%, transparent 46%),
