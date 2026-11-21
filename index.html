@@ -117,6 +117,78 @@
       </div>
     </div>
   </section>
+  <script>
+(function() {
+  const FORMULAS = [
+    { title: 'Identitas Euler', expr: 'e^(iπ) + 1 = 0', cat: 'Analisis', meaning: 'Lima konstanta fundamental dalam satu persamaan', note: '“Menghubungkan e, i, π, 1, dan 0 secara harmonis.”' },
+    { title: 'Teorema Pythagoras', expr: 'a² + b² = c²', cat: 'Geometri', meaning: 'Relasi sisi segitiga siku-siku pada bidang Euclid', note: '“Dasar perhitungan jarak dan vektor di ruang berdimensi n.”' },
+    { title: 'Deret Geometri Tak Hingga', expr: 'S∞ = a / (1 − r)', cat: 'Kalkulus', meaning: 'Konvergen saat nilai mutlak rasio |r| < 1', note: '“Penjumlahan tak hingga yang menghasilkan nilai berhingga.”' },
+    { title: 'Teorema Dasar Kalkulus', expr: '∫ₐᵇ f(x) dx = F(b) − F(a)', cat: 'Kalkulus', meaning: 'Menghubungkan turunan dan integral tentu', note: '“Luas di bawah kurva cukup dihitung dari antiturunannya.”' },
+    { title: 'Identitas Trigonometri', expr: 'sin²θ + cos²θ = 1', cat: 'Trigonometri', meaning: 'Proyeksi koordinat titik pada lingkaran satuan', note: '“Berlaku untuk setiap sudut θ di bilangan real.”' },
+    { title: 'Rumus Kombinasi', expr: 'C(n, k) = n! / (k!(n − k)!)', cat: 'Diskrit', meaning: 'Banyak cara memilih k objek tanpa urutan', note: '“Fondasi peluang dan koefisien ekspansi binomial.”' }
+  ];
+  let idx = 0;
+
+  window.renderLandingFormula = function() {
+    const item = FORMULAS[idx];
+    const t = document.getElementById('lpFormulaTitle');
+    if (!t) return;
+    document.getElementById('lpFormulaIndex').textContent = (idx + 1) + ' / ' + FORMULAS.length;
+    t.textContent = item.title;
+    document.getElementById('lpFormulaExpr').textContent = item.expr;
+    document.getElementById('lpFormulaCat').textContent = item.cat;
+    document.getElementById('lpFormulaMeaning').textContent = item.meaning;
+    document.getElementById('lpFormulaNote').textContent = item.note;
+  };
+
+  window.nextLandingFormula = function() {
+    idx = (idx + 1) % FORMULAS.length;
+    window.renderLandingFormula();
+  };
+
+  window.copyLandingFormula = function() {
+    const item = FORMULAS[idx];
+    const txt = item.title + ': ' + item.expr;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).catch(function(){});
+    }
+    const btn = document.querySelector('.lp-card-action-ico');
+    if (btn) {
+      btn.style.background = 'rgba(221, 49, 99, 0.45)';
+      setTimeout(function(){ btn.style.background = ''; }, 450);
+    }
+  };
+
+  window.enterDziliApp = function(targetTab) {
+    const lp = document.getElementById('dziliLandingView');
+    const app = document.getElementById('dziliAppView');
+    if (lp) lp.style.display = 'none';
+    if (app) app.style.display = 'block';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', '#FFE8EF');
+    if (targetTab && typeof window.switchTab === 'function') {
+      window.switchTab(targetTab);
+    }
+    window.scrollTo(0, 0);
+  };
+
+  window.openDziliLanding = function() {
+    const lp = document.getElementById('dziliLandingView');
+    const app = document.getElementById('dziliAppView');
+    if (app) app.style.display = 'none';
+    if (lp) lp.style.display = 'flex';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', '#1E1017');
+    window.scrollTo(0, 0);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.renderLandingFormula);
+  } else {
+    window.renderLandingFormula();
+  }
+})();
+</script>
 
   <div id="dziliAppView" style="display:none;">
   <header class="header">
