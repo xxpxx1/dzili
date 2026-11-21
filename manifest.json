@@ -4,8 +4,8 @@
   "description": "Jadwal kuliah, pengingat tugas, dan ruang fokus harian.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#FAF7F2",
-  "theme_color": "#FAF7F2",
+  "background_color": "#EADADA",
+  "theme_color": "#EADADA",
   "orientation": "portrait",
   "icons": [
     {
