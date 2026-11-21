@@ -1,5 +1,5 @@
-const CACHE_NAME = 'dzili-v15';
-const ASSETS = ['./', './index.html', './style.css?v=15', './app.js?v=15', './manifest.json', './icon-180.png'];
+const CACHE_NAME = 'dzili-v16';
+const ASSETS = ['./', './index.html', './style.css?v=16', './app.js?v=16', './manifest.json', './icon-180.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS))); self.skipWaiting(); });
 self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))); self.clients.claim(); });
 self.addEventListener('fetch', (e) => {

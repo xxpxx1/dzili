@@ -242,202 +242,145 @@ textarea.quick-note, textarea.binder-input { width: 100%; min-height: 125px; bor
 .lightbox.open { display: flex; }
 .lightbox img { max-width: 100%; max-height: 86vh; border-radius: 14px; }
 
-.cookie-quota-bar {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 11.5px; color: var(--muted); background: var(--bg);
-  padding: 6px 12px; border-radius: 12px; margin-bottom: 10px;
-}
-.cookie-quota-bar strong { color: var(--primary); }
-.cookie-sleep { padding: 14px 8px; color: var(--muted); font-size: 13px; line-height: 1.55; }
-.cookie-sleep strong { display: block; color: var(--text); font-size: 14.5px; margin-bottom: 4px; }
-
-/* === MICRO-INTERACTIONS, SHIMMER & IOS SPRING POLISH === */
+/* === DZILI EDITORIAL iOS POLISH (UI/UX PRO MAX + UNSLOP) === */
 :root {
+  --bg: #F5F1EA;
+  --card: #FFFDF9;
+  --border: rgba(45, 42, 38, 0.08);
+  --text: #1E1C19;
+  --muted: #787168;
+  --primary: #D96B43;
+  --primary-soft: rgba(217, 107, 67, 0.11);
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* 1. Tactile Button & Chip Animations */
-.btn-primary, .btn-secondary, .add-btn, .btn-outline, .icon-btn,
-.day-pill, .tool-chip, .c-btn, .claim-btn, .mode-btn, .math-tab, .math-key {
-  transition: transform 0.18s var(--spring), background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.btn-primary:active, .btn-secondary:active, .add-btn:active, .btn-outline:active,
-.icon-btn:active, .day-pill:active, .tool-chip:active, .c-btn:active,
-.claim-btn:active, .mode-btn:active, .math-tab:active, .math-key:active {
-  transform: scale(0.93);
-}
-.edit-btn, .del-btn {
-  transition: transform 0.16s var(--spring), opacity 0.16s ease;
-}
-.edit-btn:active, .del-btn:active {
-  transform: scale(0.84);
-  opacity: 0.7;
+body {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
 }
 
-/* 2. Bottom Navigation & Tab Transition */
-.nav-item {
-  position: relative;
-  transition: background-color 0.24s ease, color 0.24s ease, transform 0.18s var(--spring);
-}
-.nav-item:active {
-  transform: scale(0.91);
-}
-.nav-item.active svg {
-  animation: navIconPop 0.36s var(--spring);
-}
-@keyframes navIconPop {
-  0% { transform: scale(0.85) translateY(1px); }
-  55% { transform: scale(1.14) translateY(-2px); }
-  100% { transform: scale(1) translateY(-1px); }
+h1, h2, h3, .header-title, .section-title {
+  letter-spacing: -0.025em;
+  font-weight: 700;
 }
 
-.tab-view.active {
-  animation: tabFadeSlide 0.28s var(--ease-out-expo);
-}
-@keyframes tabFadeSlide {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* 3. Card Hover, Touch Press & Staggered Cascade */
-.card, .binder-sheet, .voucher-card, .cookie-box, .timer-box, .gpa-summary, .gpa-row {
-  transition: transform 0.22s var(--ease-out-expo), box-shadow 0.22s ease, border-color 0.22s ease;
-}
-.card:active, .binder-sheet:active, .voucher-card:active {
-  transform: scale(0.985);
-}
-@media (hover: hover) {
-  .bento-card:hover, .card:hover, .binder-sheet:hover, .voucher-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(45, 42, 38, 0.07);
-    border-color: #DCD2C4;
-  }
-  .btn-primary:hover {
-    box-shadow: 0 6px 16px rgba(224, 122, 95, 0.32);
-  }
-  .icon-btn:hover {
-    background: var(--primary-soft);
-    color: var(--primary);
-  }
-}
-
-.timeline-item, .tugas-card, .binder-sheet {
-  animation: cardCascade 0.34s var(--ease-out-expo) both;
-}
-.timeline-item:nth-child(2), .tugas-card:nth-child(2), .binder-sheet:nth-child(2) { animation-delay: 0.04s; }
-.timeline-item:nth-child(3), .tugas-card:nth-child(3), .binder-sheet:nth-child(3) { animation-delay: 0.08s; }
-.timeline-item:nth-child(4), .tugas-card:nth-child(4), .binder-sheet:nth-child(4) { animation-delay: 0.12s; }
-.timeline-item:nth-child(5), .tugas-card:nth-child(5), .binder-sheet:nth-child(5) { animation-delay: 0.16s; }
-.timeline-item:nth-child(n+6), .tugas-card:nth-child(n+6), .binder-sheet:nth-child(n+6) { animation-delay: 0.2s; }
-
-@keyframes cardCascade {
-  from { opacity: 0; transform: translateY(10px) scale(0.99); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* 4. Celebratory Check Circle & Bento Counter Pop */
-.check-circle {
-  transition: transform 0.2s var(--spring), background-color 0.2s ease, border-color 0.2s ease;
-}
-.check-circle:active { transform: scale(0.85); }
-.check-circle.checked { animation: checkBounce 0.36s var(--spring); }
-@keyframes checkBounce {
-  0% { transform: scale(0.75); }
-  50% { transform: scale(1.22); }
-  100% { transform: scale(1); }
-}
-
-.bento-pop { animation: numPop 0.35s var(--spring); }
-@keyframes numPop {
-  0% { transform: scale(0.88); }
-  50% { transform: scale(1.12); color: var(--primary); }
-  100% { transform: scale(1); }
-}
-
-/* 5. Smooth iOS Bottom-Sheet Modals */
-.modal-backdrop {
-  display: flex;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.24s ease, visibility 0.24s ease;
-}
-.modal-backdrop.open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-.modal-sheet {
-  transform: translateY(32px);
-  transition: transform 0.32s var(--ease-out-expo);
-}
-.modal-backdrop.open .modal-sheet {
-  transform: translateY(0);
-}
-
-/* 6. Warm Skeleton Shimmer Loading */
-.skeleton-card {
+/* Hilangkan kesan kotak kaku: kedalaman halus khas sheet iOS */
+.card, .bento-card, .binder-sheet, .voucher-card, .cookie-box, .timer-box, .gpa-summary, .gpa-row {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px;
-  margin-bottom: 10px;
-}
-.skeleton-line {
-  height: 12px;
-  border-radius: 8px;
-  margin-bottom: 9px;
-  background: linear-gradient(90deg, #F1ECE3 25%, #FAF7F2 50%, #F1ECE3 75%);
-  background-size: 200% 100%;
-  animation: shimmerWave 1.35s infinite linear;
-}
-.skeleton-line.w-30 { width: 30%; height: 18px; border-radius: 7px; }
-.skeleton-line.w-75 { width: 75%; height: 15px; }
-.skeleton-line.w-50 { width: 50%; margin-bottom: 0; }
-
-@keyframes shimmerWave {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(30, 28, 25, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s var(--ease-out-expo), box-shadow 0.2s ease;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+/* Bento lebih ringkas & editorial (tidak teriak dengan angka raksasa) */
+.bento-grid { gap: 10px; }
+.bento-card { padding: 13px 15px; text-align: left; }
+.bento-num, .bento-val { font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
 
-/* === UI/UX PRO MAX POLISH (v15) === */
-.card, .bento-card, .binder-sheet, .timer-box, .gpa-summary {
-  box-shadow: 0 3px 12px rgba(45, 42, 38, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.85);
-}
+/* Cegah auto-zoom iOS Safari saat mengetik di form */
+input, select, textarea { font-size: 16px !important; }
 
+/* Ikon SVG seragam menggantikan emoji mentah */
+.ui-ico {
+  width: 18px; height: 18px; stroke: currentColor; fill: none;
+  stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+  vertical-align: -3px; flex-shrink: 0;
+}
+.nav-item svg {
+  width: 21px; height: 21px; stroke-width: 1.85;
+  transition: transform 0.25s var(--spring);
+}
+.nav-item.active svg { transform: translateY(-1px) scale(1.06); }
+
+/* Tombol aksi kartu ergonomis (34px touch target, jarak aman 6px) */
 .card-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .icon-act {
   width: 34px; height: 34px; border-radius: 10px;
   background: var(--bg); border: 1px solid var(--border); color: var(--muted);
   display: inline-flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: transform 0.16s var(--spring), background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer; transition: transform 0.16s var(--spring), background-color 0.18s ease, color 0.18s ease;
 }
 .icon-act svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .icon-act:active { transform: scale(0.88); }
-.icon-act.danger:hover, .icon-act.danger:active { background: #FDE8E8; color: var(--danger); border-color: rgba(217, 83, 79, 0.3); }
-@media (hover: hover) {
-  .icon-act:hover { background: var(--primary-soft); color: var(--primary); border-color: rgba(224, 122, 95, 0.3); }
+.icon-act.danger:active { background: #FDE8E8; color: var(--danger); }
+
+/* Interaksi sentuh & transisi tab */
+.btn-primary, .btn-secondary, .add-btn, .btn-outline, .icon-btn,
+.day-pill, .tool-chip, .c-btn, .claim-btn, .mode-btn, .math-tab, .math-key {
+  transition: transform 0.16s var(--spring), background-color 0.18s ease;
+}
+.btn-primary:active, .btn-secondary:active, .add-btn:active, .btn-outline:active,
+.icon-btn:active, .day-pill:active, .tool-chip:active, .c-btn:active,
+.claim-btn:active, .mode-btn:active, .math-tab:active, .math-key:active {
+  transform: scale(0.94);
+}
+.tab-view.active { animation: tabSlide 0.24s var(--ease-out-expo); }
+@keyframes tabSlide {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.badge, .card-meta { font-variant-numeric: tabular-nums; }
+@media (hover: hover) {
+  .card:hover, .binder-sheet:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(30, 28, 25, 0.06); }
+  .icon-act:hover { background: var(--primary-soft); color: var(--primary); }
+  .icon-act.danger:hover { background: #FDE8E8; color: var(--danger); }
+}
+
+/* Cookie quota & empty state tenang */
+.cookie-quota-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11.5px; color: var(--muted); background: var(--bg);
+  padding: 6px 12px; border-radius: 10px; margin-bottom: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.cookie-quota-bar strong { color: var(--primary); font-weight: 600; }
+.cookie-sleep { padding: 14px 8px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.cookie-sleep strong { display: block; color: var(--text); font-size: 14px; margin-bottom: 4px; }
 
 .empty-state {
-  background: rgba(255, 253, 249, 0.6); border: 1.5px dashed var(--border);
-  border-radius: 20px; padding: 28px 18px; text-align: center;
+  background: transparent; border: 1.5px dashed rgba(45, 42, 38, 0.14);
+  border-radius: 16px; padding: 28px 18px; text-align: center;
 }
 .empty-ico {
-  width: 44px; height: 44px; border-radius: 14px; margin: 0 auto 10px;
+  width: 40px; height: 40px; border-radius: 12px; margin: 0 auto 10px;
   background: var(--primary-soft); color: var(--primary);
   display: flex; align-items: center; justify-content: center;
 }
-.empty-ico svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.empty-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.empty-ico svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.empty-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
 .empty-sub { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+
+.badge, .card-meta, .timer-display { font-variant-numeric: tabular-nums; }
+
+/* Bottom-sheet modal mulus & aman untuk layar pendek */
+.modal-backdrop { display: flex; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.22s ease, visibility 0.22s ease; }
+.modal-backdrop.open { opacity: 1; visibility: visible; pointer-events: auto; }
+.modal-sheet { max-height: 90vh; overflow-y: auto; transform: translateY(28px); transition: transform 0.28s var(--ease-out-expo); }
+.modal-backdrop.open .modal-sheet { transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* === COMPACT HORIZONTAL SUMMARY STRIP === */
+.summary-strip {
+  display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  margin: 0 0 14px; padding: 2px 0;
+}
+.summary-strip::-webkit-scrollbar { display: none; }
+.summary-pill {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 9px 12px; font-size: 12.5px; color: var(--muted);
+  text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 1px 4px rgba(30, 28, 25, 0.03);
+  transition: transform 0.16s var(--spring), border-color 0.18s ease;
+}
+.summary-pill:active { transform: scale(0.96); }
+.summary-pill strong { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+.summary-pill span:last-child { overflow: hidden; text-overflow: ellipsis; }
+.tool-chip { display: inline-flex; align-items: center; gap: 6px; }

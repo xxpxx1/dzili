@@ -129,7 +129,7 @@ async function pushToCloud() {
   try {
     const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(state) });
     if (!res.ok) throw new Error();
-    setSyncBadge('☁️ Tersinkron', '');
+    setSyncBadge('Tersimpan', '');
   } catch (e) { setSyncBadge('Offline', 'offline'); }
   if (isCloudBooting) { isCloudBooting = false; renderAll(); }
 }
@@ -143,7 +143,7 @@ async function pullFromCloud(force = false) {
       state = { ...defaultData, ...remote, jadwal: remote.jadwal || [], tugas: remote.tugas || [], binder: remote.binder || [], ujian: remote.ujian || [], gpaCourses: remote.gpaCourses || [] };
       persist(true); renderAll();
     } else if (!remote && state.updatedAt > 0) { await pushToCloud(); }
-    setSyncBadge('☁️ Tersinkron', '');
+    setSyncBadge('Tersimpan', '');
   } catch (e) { setSyncBadge('Offline', 'offline'); }
   if (isCloudBooting) { isCloudBooting = false; renderAll(); }
 }
@@ -444,7 +444,7 @@ function getCookieSessionInfo() {
   const isSession1 = now.getHours() < 15; // Sesi 1: 00.00-14.59, Sesi 2: 15.00-23.59
   const sessionKey = isSession1 ? 's1' : 's2';
   const sessionLabel = isSession1 ? 'Sesi Pagi–Siang' : 'Sesi Sore–Malam';
-  const nextResetText = isSession1 ? 'Sesi Sore–Malam dibuka pukul 15.00' : 'Toples diisi ulang besok pagi pukul 00.00';
+  const nextResetText = isSession1 ? 'Sesi berikutnya pukul 15.00' : 'Terisi lagi pukul 00.00';
 
   let q = JSON.parse(localStorage.getItem('dzili_cookie_quota') || 'null');
   if (!q || q.date !== today) {
@@ -499,7 +499,7 @@ function tapFortuneCookie() {
     playCookieSound(false);
     if (svg) { svg.classList.remove('shake'); void svg.offsetWidth; svg.classList.add('shake'); }
     const hint = document.getElementById('cookieHint');
-    if (hint) hint.textContent = cookieTaps === 1 ? 'Krek! Ketuk 2x lagi...' : 'Hampir pecah! Sekali lagi...';
+    if (hint) hint.textContent = cookieTaps === 1 ? 'Ketuk 2 kali lagi...' : 'Sekali lagi...';
     return;
   }
 
@@ -525,8 +525,8 @@ function renderFortuneCookie() {
   if (cookieOpened && currentFortune) {
     const nums = [Math.floor(Math.random()*9)+1, Math.floor(Math.random()*20)+10, ['π', 'e', 'φ', '∞'][Math.floor(Math.random()*4)]];
     const nextBtn = info.remaining > 0
-      ? `<button class="btn-secondary" style="padding:8px 16px; font-size:12.5px;" onclick="resetFortuneCookie()">Buka Kue Lain (${info.remaining} tersisa)</button>`
-      : `<div style="font-size:12px; color:var(--muted); margin-top:4px;">Kuota sesi ini sudah habis. ${info.nextResetText}.</div>`;
+      ? `<button class="btn-secondary" style="padding:8px 16px; font-size:12.5px;" onclick="resetFortuneCookie()">Buka lagi (sisa ${info.remaining})</button>`
+      : `<div style="font-size:12px; color:var(--muted); margin-top:4px;">${info.nextResetText}.</div>`;
     box.innerHTML = `
       ${quotaHeader}
       <div class="fortune-paper">
@@ -542,7 +542,7 @@ function renderFortuneCookie() {
     box.innerHTML = `
       ${quotaHeader}
       <div class="cookie-sleep">
-        <strong>Toples Kue Sesi Ini Kosong</strong>
+        <strong>Jatah sesi ini habis</strong>
         Kamu sudah membuka 3/3 kue keberuntungan di ${info.sessionLabel.toLowerCase()}.<br>${info.nextResetText}.
       </div>`;
     return;
@@ -556,7 +556,7 @@ function renderFortuneCookie() {
         <path d="M44 48 Q60 36 76 48" fill="none" stroke="#C6883E" stroke-width="2.5" stroke-linecap="round"/>
         <circle cx="38" cy="36" r="2" fill="#D9A05B"/><circle cx="82" cy="38" r="2" fill="#D9A05B"/>
       </svg>
-      <div class="cookie-hint" id="cookieHint">Ketuk kuenya 3x untuk melihat isi keberuntunganmu</div>
+      <div class="cookie-hint" id="cookieHint">Ketuk 3 kali untuk membuka</div>
     </div>`;
 }
 
@@ -649,14 +649,14 @@ function switchTab(t) { document.querySelectorAll('.tab-view').forEach(v => v.cl
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModals() { editingJadwalId = null; editingTugasId = null; editingBinderId = null; editingUjianId = null; document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open')); }
 function backdropClose(e, id) { if (e.target.id === id) closeModals(); }
-function openSettings() { document.getElementById('inputUserName').value = state.userName; document.getElementById('inputBannerMsg').value = state.bannerMsg; document.getElementById('inputCloudUrl').value = syncCfg.cloudUrl || ''; document.getElementById('inputSyncRoom').value = syncCfg.roomId || 'dzili-01'; updateNotifBtnLabel(); openModal('modal-settings'); }
+function openSettings() { document.getElementById('inputUserName').value = state.userName; document.getElementById('inputBannerMsg').value = state.bannerMsg; if(document.getElementById('inputCloudUrl')) document.getElementById('inputCloudUrl').value = syncCfg.cloudUrl || ''; if(document.getElementById('inputSyncRoom')) document.getElementById('inputSyncRoom').value = syncCfg.roomId || 'dzili-01'; updateNotifBtnLabel(); openModal('modal-settings'); }
 function saveSettings() {
-  const name = document.getElementById('inputUserName').value.trim(), msg = document.getElementById('inputBannerMsg').value.trim(), url = document.getElementById('inputCloudUrl').value.trim(), room = document.getElementById('inputSyncRoom').value.trim() || 'dzili-01';
+  const name = document.getElementById('inputUserName').value.trim(), msg = document.getElementById('inputBannerMsg').value.trim(), url = if(document.getElementById('inputCloudUrl')) (document.getElementById('inputCloudUrl')?.value.trim() || ''), room = if(document.getElementById('inputSyncRoom')) (document.getElementById('inputSyncRoom')?.value.trim() || 'dzili-01') || 'dzili-01';
   if (name) state.userName = name; if (msg) state.bannerMsg = msg; syncCfg = { cloudUrl: url, roomId: room }; localStorage.setItem('dzili_sync_cfg', JSON.stringify(syncCfg));
   persist(); renderHeader(); closeModals(); if (url) pullFromCloud(true);
 }
-function manualSyncNow() { const url = document.getElementById('inputCloudUrl').value.trim(), room = document.getElementById('inputSyncRoom').value.trim() || 'dzili-01'; if (!url) return alert('Isi URL Firebase terlebih dahulu.'); syncCfg = { cloudUrl: url, roomId: room }; localStorage.setItem('dzili_sync_cfg', JSON.stringify(syncCfg)); pullFromCloud(true); alert('Sinkronisasi dijalankan!'); }
-function copySyncLink() { const url = document.getElementById('inputCloudUrl').value.trim(), room = document.getElementById('inputSyncRoom').value.trim() || 'dzili-01'; if (!url) return alert('Isi URL Firebase terlebih dahulu.'); const syncUrl = `${window.location.origin}${window.location.pathname}#sync=${btoa(encodeURIComponent(JSON.stringify({ url, room })))}`; navigator.clipboard?.writeText(syncUrl).then(() => alert('Link Setup 2 HP disalin!')).catch(() => prompt('Salin link ini:', syncUrl)); }
+function manualSyncNow() { const url = if(document.getElementById('inputCloudUrl')) (document.getElementById('inputCloudUrl')?.value.trim() || ''), room = if(document.getElementById('inputSyncRoom')) (document.getElementById('inputSyncRoom')?.value.trim() || 'dzili-01') || 'dzili-01'; if (!url) return alert('Isi URL Firebase terlebih dahulu.'); syncCfg = { cloudUrl: url, roomId: room }; localStorage.setItem('dzili_sync_cfg', JSON.stringify(syncCfg)); pullFromCloud(true); alert('Sinkronisasi dijalankan!'); }
+function copySyncLink() { const url = if(document.getElementById('inputCloudUrl')) (document.getElementById('inputCloudUrl')?.value.trim() || ''), room = if(document.getElementById('inputSyncRoom')) (document.getElementById('inputSyncRoom')?.value.trim() || 'dzili-01') || 'dzili-01'; if (!url) return alert('Isi URL Firebase terlebih dahulu.'); const syncUrl = `${window.location.origin}${window.location.pathname}#sync=${btoa(encodeURIComponent(JSON.stringify({ url, room })))}`; navigator.clipboard?.writeText(syncUrl).then(() => alert('Link Setup 2 HP disalin!')).catch(() => prompt('Salin link ini:', syncUrl)); }
 function redeemGiftPrompt() { const raw = prompt('Tempel link kejutan:'); if (!raw) return; const idx = raw.indexOf('#gift='); if (idx === -1) return alert('Format link tidak valid.'); try { const p = JSON.parse(decodeURIComponent(atob(raw.slice(idx + 6).trim()))); if (p.msg) state.bannerMsg = p.msg; if (p.fortune !== undefined) state.customFortune = p.fortune; if (p.vTitle) state.voucher = { title: p.vTitle, desc: p.vDesc || 'Hadiah spesial!', claimed: false }; persist(); renderAll(); closeModals(); alert('Kejutan berhasil dipasang!'); } catch (e) { alert('Gagal membaca link.'); } }
 
 async function requestNotifPermission() {

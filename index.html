@@ -10,7 +10,7 @@
   <meta name="theme-color" content="#FAF7F2" />
   <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="style.css?v=15" />
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
   <header class="header">
@@ -18,7 +18,7 @@
       <h1 id="greetingText" onclick="handleSecretTap()">Halo, Dzili!</h1>
       <div class="header-meta">
         <p id="todayDateText">Memuat...</p>
-        <span id="syncStatus" class="sync-badge offline">Lokal</span>
+        
       </div>
     </div>
     <div class="header-actions">
@@ -36,17 +36,15 @@
     <div class="banner-note" id="dailyBanner">Semangat kuliahnya hari ini!</div>
     <div id="voucherContainer"></div>
 
-    <div class="bento-grid">
-      <div class="bento-card" onclick="switchTab('jadwal')">
-        <div class="bento-top"><span class="bento-label">Kelas Hari Ini</span><span class="bento-dot"></span></div>
-        <div class="bento-num" id="bentoClassCount">0</div>
-        <div class="bento-sub" id="bentoClassSub">Tidak ada jadwal</div>
-      </div>
-      <div class="bento-card" onclick="switchTab('tugas')">
-        <div class="bento-top"><span class="bento-label">Tugas Aktif</span><span class="bento-dot sage"></span></div>
-        <div class="bento-num" id="bentoTaskCount">0</div>
-        <div class="bento-sub" id="bentoTaskSub">Semua selesai</div>
-      </div>
+    <div class="summary-strip">
+      <button type="button" class="summary-pill" onclick="switchTab('jadwal')">
+        <span class="bento-dot"></span>
+        <span><strong id="bentoClassCount">0</strong> kelas · <span id="bentoClassSub">Tidak ada jadwal</span></span>
+      </button>
+      <button type="button" class="summary-pill" onclick="switchTab('tugas')">
+        <span class="bento-dot sage"></span>
+        <span><strong id="bentoTaskCount">0</strong> tugas · <span id="bentoTaskSub">Semua selesai</span></span>
+      </button>
     </div>
     <section id="tab-jadwal" class="tab-view active">
       <div class="day-pills" id="dayPills"></div>
@@ -55,13 +53,13 @@
     </section>
 
     <section id="tab-tugas" class="tab-view">
-      <div class="section-top"><h2>Daftar & Dokumentasi Tugas</h2><button class="add-btn" onclick="openAddTugas()">+ Tugas Baru</button></div>
+      <div class="section-top"><h2>Tugas</h2><button class="add-btn" onclick="openAddTugas()">+ Tugas Baru</button></div>
       <div id="tugasList"></div>
     </section>
 
     <section id="tab-binder" class="tab-view">
       <div class="day-pills" id="binderFilterPills"></div>
-      <div class="section-top"><h2>Buku Binder Kuliah</h2><button class="add-btn" onclick="openAddBinder()">+ Lembar Baru</button></div>
+      <div class="section-top"><h2>Binder</h2><button class="add-btn" onclick="openAddBinder()">+ Lembar Baru</button></div>
       <div id="binderList"></div>
     </section>
 
@@ -83,9 +81,9 @@
     </section>
 
     <section id="tab-akademik" class="tab-view">
-      <div class="section-top"><h2>Countdown Ujian</h2><button class="add-btn" onclick="openAddUjian()">+ Jadwal Ujian</button></div>
+      <div class="section-top"><h2>Jadwal Ujian</h2><button class="add-btn" onclick="openAddUjian()">+ Jadwal Ujian</button></div>
       <div id="ujianList" style="margin-bottom: 22px;"></div>
-      <div class="section-top"><h2>Simulasi IP Semester</h2><button class="add-btn" onclick="addGpaRow()">+ Matkul</button></div>
+      <div class="section-top"><h2>Hitung IPS</h2><button class="add-btn" onclick="addGpaRow()">+ Matkul</button></div>
       <div class="gpa-summary"><div class="gpa-stat"><span>Total SKS</span><strong id="totalSksText">0</strong></div><div class="gpa-stat"><span>Estimasi IPS</span><strong id="ipsResultText">0.00</strong></div></div>
       <div id="gpaRowsContainer"></div>
     </section>
@@ -138,8 +136,8 @@
       <div class="form-group">
         <label>Dokumentasi Foto Tugas (Opsional)</label>
         <div class="photo-bar">
-          <label class="tool-chip">📷 Foto Langsung<input type="file" accept="image/*" capture="environment" hidden onchange="handlePhotoPick(event, 'tugas')" /></label>
-          <label class="tool-chip">🖼️ Pilih Galeri<input type="file" accept="image/*" hidden onchange="handlePhotoPick(event, 'tugas')" /></label>
+          <label class="tool-chip"><svg class="ui-ico" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Kamera<input type="file" accept="image/*" capture="environment" hidden onchange="handlePhotoPick(event, 'tugas')" /></label>
+          <label class="tool-chip"><svg class="ui-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Galeri<input type="file" accept="image/*" hidden onchange="handlePhotoPick(event, 'tugas')" /></label>
         </div>
         <div id="tugasPhotoPreview"></div>
       </div>
@@ -163,9 +161,9 @@
       <div class="form-group">
         <label>Foto Catatan / Papan Tulis & Scan Tulisan (OCR)</label>
         <div class="photo-bar">
-          <label class="tool-chip">📷 Kamera<input type="file" accept="image/*" capture="environment" hidden onchange="handlePhotoPick(event, 'binder')" /></label>
-          <label class="tool-chip">🖼️ Galeri<input type="file" accept="image/*" hidden onchange="handlePhotoPick(event, 'binder')" /></label>
-          <button type="button" class="tool-chip accent" id="btnRunOcr" style="display:none;" onclick="runOcrOnBinder()">🔍 Scan Tulisan ke Catatan</button>
+          <label class="tool-chip"><svg class="ui-ico" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Kamera<input type="file" accept="image/*" capture="environment" hidden onchange="handlePhotoPick(event, 'binder')" /></label>
+          <label class="tool-chip"><svg class="ui-ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Galeri<input type="file" accept="image/*" hidden onchange="handlePhotoPick(event, 'binder')" /></label>
+          <button type="button" class="tool-chip accent" id="btnRunOcr" style="display:none;" onclick="runOcrOnBinder()"><svg class="ui-ico" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg> Ambil Teks dari Foto</button>
         </div>
         <div id="ocrStatus" class="ocr-status"></div>
         <div id="binderPhotoPreview"></div>
@@ -258,7 +256,7 @@
 
   <div class="modal-backdrop" id="modal-pin" onclick="backdropClose(event, 'modal-pin')">
     <div class="modal-sheet">
-      <h3>Akses Khusus Pengirim</h3>
+      <h3>Mode Pengirim</h3>
       <div class="form-group"><input type="password" inputmode="numeric" id="inputSecretPin" placeholder="PIN" style="text-align:center; font-size:20px; letter-spacing:6px;" /></div>
       <div class="modal-actions"><button class="btn-secondary" onclick="closeModals()">Batal</button><button class="btn-primary" onclick="verifyPin()">Buka Panel</button></div>
     </div>
@@ -266,13 +264,13 @@
 
   <div class="modal-backdrop" id="modal-secret" onclick="backdropClose(event, 'modal-secret')">
     <div class="modal-sheet">
-      <h3>Panel Kejutan Pengirim</h3>
+      <h3>Kirim Kejutan</h3>
       <div class="form-group"><label>Pesan Penyemangat</label><input type="text" id="secretBannerInput" /></div>
       <div class="form-group"><label>Judul Voucher Hadiah</label><input type="text" id="secretVoucherTitle" /></div>
       <div class="form-group"><label>Keterangan Voucher</label><input type="text" id="secretVoucherDesc" /></div>
       <div class="form-group"><label>Isi Rahasia Fortune Cookie (Opsional)</label><input type="text" id="secretFortuneInput" placeholder="Muncul saat dia memecahkan kue..." /></div>
       <div class="form-group"><label>Ubah PIN Rahasia (Default: 2026)</label><input type="text" inputmode="numeric" id="secretNewPin" placeholder="Kosongkan jika tidak diubah" /></div>
-      <div class="modal-actions"><button class="btn-secondary" onclick="copyGiftLink()">Salin Link</button><button class="btn-primary" onclick="applyAndPushSecret()">Kirim ke HP Dzili</button></div>
+      <div class="modal-actions"><button class="btn-secondary" onclick="copyGiftLink()">Salin Link</button><button class="btn-primary" onclick="applyAndPushSecret()">Terapkan</button></div>
     </div>
   </div>
 
@@ -280,6 +278,6 @@
     <img id="lightboxImg" src="" alt="Preview" />
   </div>
 
-  <script src="app.js?v=15"></script>
+  <script src="app.js?v=16"></script>
 </body>
 </html>
