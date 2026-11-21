@@ -385,20 +385,21 @@ input, select, textarea { font-size: 16px !important; }
 .summary-pill span:last-child { overflow: hidden; text-overflow: ellipsis; }
 .tool-chip { display: inline-flex; align-items: center; gap: 6px; }
 
-/* === VIBRANT SUNSET PINK THEME === */
+/* === ROSE BERRY PINK THEME === */
 :root {
-  --bg: #EADADA;
-  --card: #FFFDFD;
-  --border: rgba(77, 58, 77, 0.11);
-  --text: #4D3A4D;
-  --muted: #7C667B;
-  --primary: #BE5CA9;
-  --primary-dark: #9E468B;
-  --primary-soft: rgba(213, 156, 197, 0.30);
-  --tertiary: #D59CC5;
-  --plum: #4D3A4D;
-  --sage: #D59CC5;
-  --danger: #C94A6A;
+  --bg: #FFE8EF;
+  --card: #FFFDFE;
+  --border: rgba(221, 49, 99, 0.14);
+  --text: #3B1724;
+  --muted: #845666;
+  --primary: #DD3163;
+  --primary-dark: #BE2350;
+  --primary-soft: rgba(255, 162, 191, 0.34);
+  --coral: #FE546F;
+  --flamingo: #FF6E97;
+  --pastel: #FFA2BF;
+  --sage: #FF6E97;
+  --danger: #C81E4E;
 }
 
 body {
@@ -407,51 +408,51 @@ body {
 }
 
 .header h1, h1, h2, h3 {
-  color: var(--plum);
+  color: var(--text);
 }
 
 .banner-note {
-  background: linear-gradient(135deg, #BE5CA9 0%, #D59CC5 100%);
+  background: linear-gradient(135deg, #DD3163 0%, #FE546F 100%);
   color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(190, 92, 169, 0.24);
+  box-shadow: 0 4px 14px rgba(221, 49, 99, 0.24);
 }
 
 .card, .bento-card, .binder-sheet, .voucher-card, .cookie-box, .timer-box, .gpa-summary, .gpa-row, .summary-pill, .bottom-nav, .modal-sheet {
   background: var(--card);
   border-color: var(--border);
-  box-shadow: 0 2px 10px rgba(77, 58, 77, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(221, 49, 99, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 .bento-dot { background: var(--primary); }
-.bento-dot.sage { background: var(--tertiary); }
+.bento-dot.sage { background: var(--flamingo); }
 
 .day-pill {
-  background: rgba(255, 253, 253, 0.72);
+  background: rgba(255, 253, 254, 0.78);
   border-color: var(--border);
   color: var(--muted);
 }
 .day-pill.active {
-  background: var(--plum);
-  border-color: var(--plum);
+  background: var(--primary);
+  border-color: var(--primary);
   color: #FFFFFF;
 }
 
 .add-btn, .badge, .tool-chip.accent {
   background: var(--primary-soft);
-  color: var(--plum);
-  border-color: rgba(190, 92, 169, 0.25);
+  color: var(--primary);
+  border-color: rgba(255, 110, 151, 0.32);
 }
 
 .btn-primary {
   background: var(--primary);
   color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(190, 92, 169, 0.26);
+  box-shadow: 0 4px 12px rgba(221, 49, 99, 0.26);
 }
 
 .btn-secondary, .btn-outline, .icon-btn, .icon-act {
-  background: #F6ECEF;
+  background: #FFF2F6;
   border-color: var(--border);
-  color: var(--plum);
+  color: var(--text);
 }
 
 .nav-item { color: var(--muted); }
@@ -460,28 +461,28 @@ body {
   color: var(--primary);
 }
 
-.check-circle { border-color: var(--tertiary); }
+.check-circle { border-color: var(--pastel); }
 .check-circle.checked {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: var(--flamingo);
+  border-color: var(--flamingo);
 }
 
 .mode-btn.active {
-  background: var(--plum);
+  background: var(--primary);
   color: #FFFFFF;
 }
 
 .calc-screen {
-  background: #F6ECEF;
+  background: #FFF2F6;
   border: 1px solid var(--border);
 }
 .c-btn {
-  background: #FFFDFD;
-  color: var(--plum);
+  background: #FFFDFE;
+  color: var(--text);
   border-color: var(--border);
 }
 .c-btn.fn {
-  background: #F6ECEF;
+  background: #FFF2F6;
   color: var(--muted);
 }
 .c-btn.op {
@@ -489,13 +490,13 @@ body {
   color: var(--primary);
 }
 .c-btn.eq {
-  background: var(--plum);
+  background: var(--primary);
   color: #FFFFFF;
 }
 
 .empty-state {
-  background: rgba(255, 253, 253, 0.45);
-  border-color: rgba(77, 58, 77, 0.20);
+  background: rgba(255, 253, 254, 0.52);
+  border-color: rgba(255, 110, 151, 0.35);
 }
 .empty-ico {
   background: var(--primary-soft);
@@ -503,18 +504,18 @@ body {
 }
 
 .skeleton-line {
-  background: linear-gradient(90deg, #EADADA 25%, #F8F1F3 50%, #EADADA 75%);
+  background: linear-gradient(90deg, #FFD6E3 25%, #FFF2F6 50%, #FFD6E3 75%);
   background-size: 200% 100%;
 }
 
 @media (hover: hover) {
   .card:hover, .binder-sheet:hover, .summary-pill:hover {
-    box-shadow: 0 6px 18px rgba(77, 58, 77, 0.09);
-    border-color: rgba(190, 92, 169, 0.35);
+    box-shadow: 0 6px 18px rgba(221, 49, 99, 0.10);
+    border-color: rgba(254, 84, 111, 0.42);
   }
   .btn-primary:hover {
-    background: var(--primary-dark);
-    box-shadow: 0 6px 16px rgba(190, 92, 169, 0.34);
+    background: var(--coral);
+    box-shadow: 0 6px 16px rgba(254, 84, 111, 0.32);
   }
   .icon-btn:hover, .icon-act:hover {
     background: var(--primary-soft);
