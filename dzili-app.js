@@ -4,6 +4,7 @@ import { mountBinderLibrary } from "./binder-library.js";
 import { mountFocusProductivity } from "./fokus-produktivitas.js";
 import { mountAcademicSemester } from "./akademik-semester.js";
 import { createScientificCalculatorModal } from "./kalkulator-ilmiah.js";
+import { createSettingsModal, loadDziliPrefs } from "./pengaturan-dzili.js";
 
 const TABS = [
   { id: "jadwal", label: "Jadwal", mount: mountScheduleDashboard },
@@ -22,10 +23,11 @@ function make(tag, className = "", text = "") {
 
 export function mountDziliWorkspace(rootEl, options = {}) {
   if (!rootEl) return null;
-  const studentName =
+  const prefs = loadDziliPrefs();
+  let studentName =
     typeof options.studentName === "string" && options.studentName.trim()
       ? options.studentName.trim().slice(0, 40)
-      : "Dzili";
+      : prefs.studentName;
 
   rootEl.textContent = "";
   rootEl.className = "dzili-shell";
@@ -34,17 +36,19 @@ export function mountDziliWorkspace(rootEl, options = {}) {
 
   const topBar = make("header", "dzili-topbar");
   const greetBox = make("div", "dzili-greet");
+  const greetTitle = make("h2", "", `Selamat Malam, ${studentName}!`);
   const dateStr = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
     month: "short"
   });
-  greetBox.append(make("h2", "", `Selamat Malam, ${studentName}!`), make("small", "", dateStr));
+  greetBox.append(greetTitle, make("small", "", dateStr));
 
   const actionIcons = make("div", "dzili-top-actions");
+
   const homeLink = make("a", "dzili-icon-btn", "⌂");
   homeLink.href = "./index.html";
-  homeLink.title = "Beranda / Landing Page";
+  homeLink.title = "Beranda";
   homeLink.setAttribute("aria-label", "Kembali ke Beranda");
 
   const calcBtn = make("button", "dzili-icon-btn", "🧮");
@@ -53,7 +57,12 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   calcBtn.setAttribute("aria-label", "Buka Kalkulator Ilmiah");
   calcBtn.addEventListener("click", () => calcModal.open());
 
-  actionIcons.append(homeLink, calcBtn);
+  const settingsBtn = make("button", "dzili-icon-btn", "⚙");
+  settingsBtn.type = "button";
+  settingsBtn.title = "Pengaturan";
+  settingsBtn.setAttribute("aria-label", "Buka Pengaturan");
+
+  actionIcons.append(homeLink, calcBtn, settingsBtn);
   topBar.append(greetBox, actionIcons);
 
   const banner = make(
@@ -103,6 +112,15 @@ export function mountDziliWorkspace(rootEl, options = {}) {
     navBtns.forEach((b) => b.classList.toggle("is-active", b.dataset.tab === target.id));
     window.scrollTo({ top: 0, behavior: "instant" });
   }
+
+  const settingsModal = createSettingsModal((updated) => {
+    studentName = updated.studentName;
+    greetTitle.textContent = `Selamat Malam, ${studentName}!`;
+    Object.values(mounted).forEach((m) => {
+      if (m && typeof m.refresh === "function") m.refresh();
+    });
+  });
+  settingsBtn.addEventListener("click", () => settingsModal.open());
 
   rootEl.append(topBar, banner, stage, nav);
   const initialParam = new URLSearchParams(window.location.search).get("tab");

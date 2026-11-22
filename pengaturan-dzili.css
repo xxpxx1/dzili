@@ -1,0 +1,43 @@
+.dzili-set-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 20, 32, 0.36);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 65;
+}
+.dzili-set-box {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, #fff8fa 0%, #ffeef4 100%);
+  border: 1px solid #f6c7d6;
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 14px 32px rgba(43, 20, 32, 0.18);
+  display: grid;
+  gap: 12px;
+}
+.dzili-set-form {
+  display: grid;
+  gap: 8px;
+}
+.dzili-set-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #4d1e34;
+}
+.dzili-set-status {
+  margin: 0;
+  font-size: 12px;
+  color: #c41e4d;
+  min-height: 16px;
+}
+.dzili-set-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
