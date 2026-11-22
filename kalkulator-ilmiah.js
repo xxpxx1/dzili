@@ -12,7 +12,7 @@ function factorial(n) {
   return r;
 }
 
-function evalSafeMath(rawExpr, degMode = true) {
+export function evalSafeMath(rawExpr, degMode = true) {
   const src = String(rawExpr || "").trim();
   if (!src) return "0";
   if (!/^[0-9+\-*/^().%!eEπa-zA-Z\s]+$/.test(src)) return "Error";
@@ -26,6 +26,13 @@ function evalSafeMath(rawExpr, degMode = true) {
     .replace(/\be\b/g, `(${Math.E})`);
 
   expr = expr.replace(/(\d+(?:\.\d+)?)\s*!/g, (_, num) => String(factorial(Number(num))));
+  expr = expr.replace(/√\(/g, "sqrt(").replace(/\|([^|]+)\|/g, "abs($1)");
+
+  if (!/^[0-9+\-*/().*\s,a-zA-Z]+$/.test(expr)) return "Error";
+  if (/[;=#[\]{}\\]/.test(expr)) return "Error";
+
+  const tokens = expr.match(/[a-zA-Z_]+|\d+(?:\.\d+)?(?:e[+-]?\d+)?|\*\*|[+\-*/(),%]/gi);
+  if (!tokens) return "Error";
 
   const toAngle = (x) => (degMode ? (x * Math.PI) / 180 : x);
   const fnMap = {
@@ -41,17 +48,6 @@ function evalSafeMath(rawExpr, degMode = true) {
     sqrt: (x) => (x >= 0 ? Math.sqrt(x) : NaN),
     abs: (x) => Math.abs(x)
   };
-
-  expr = expr
-    .replace(/√\(/g, "sqrt(")
-    .replace(/\|([^|]+)\|/g, "abs($1)");
-
-  const tokenRe = /\b(sin|cos|tan|ln|log|sqrt|abs)\s*\(/g;
-  if (!/^[0-9+\-*/().*\s,a-zA-Z]+$/.test(expr)) return "Error";
-  if (/[;=#[\]{}\\]/.test(expr)) return "Error";
-
-  const tokens = expr.match(/[a-zA-Z_]+|\d+(?:\.\d+)?(?:e[+-]?\d+)?|\*\*|[+\-*/(),%]/gi);
-  if (!tokens) return "Error";
 
   const prec = { "+": 1, "-": 1, "*": 2, "/": 2, "%": 2, "**": 3 };
   const rightAssoc = { "**": true };
@@ -89,20 +85,19 @@ function evalSafeMath(rawExpr, degMode = true) {
       if (isUnary) {
         output.push({ type: "num", val: 0 });
       }
-      const opVal = t;
       while (ops.length) {
         const top = ops[ops.length - 1];
         if (top.type === "fn") {
           output.push(ops.pop());
         } else if (top.type === "op") {
-          const p1 = prec[opVal];
+          const p1 = prec[t];
           const p2 = prec[top.val];
-          if (p2 > p1 || (p1 === p2 && !rightAssoc[opVal])) {
+          if (p2 > p1 || (p1 === p2 && !rightAssoc[t])) {
             output.push(ops.pop());
           } else break;
         } else break;
       }
-      ops.push({ type: "op", val: opVal });
+      ops.push({ type: "op", val: t });
       prevToken = "op";
     } else {
       return "Error";

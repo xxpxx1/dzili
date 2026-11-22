@@ -1,8 +1,7 @@
-const CACHE_NAME = "dzili-workspace-v2026-11-23-top3";
+const CACHE_NAME = "dzili-workspace-v2026-11-23-unified";
 const ASSETS = [
   "./",
   "./index.html",
-  "./workspace.html",
   "./dzili-app.js",
   "./dzili-unified.css",
   "./kalkulator-ilmiah.js",
@@ -46,7 +45,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((c) => c.put(event.request, copy));
         }
         return res;
-      }).catch(() => caches.match("./workspace.html"));
+      }).catch(() => caches.match("./index.html"));
     })
   );
 });
