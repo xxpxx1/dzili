@@ -1,0 +1,57 @@
+.dzili-bdr-wrap { display: grid; gap: 12px; color: #2b1420; }
+.dzili-bdr-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dzili-bdr-search { flex: 1 1 180px; }
+.dzili-folder-shelf { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.dzili-folder-card { min-width: 104px; background: #fff; border: 1px solid #f6c7d6; border-radius: 14px; padding: 9px 11px; display: grid; gap: 2px; text-align: left; cursor: pointer; color: #3b1326; }
+.dzili-folder-card span { font-size: 11px; color: #7c4b62; }
+.dzili-folder-card.is-active { background: #ec3a68; border-color: #ec3a68; color: #fff; }
+.dzili-folder-card.is-active span { color: #ffe7ef; }
+.dzili-bdr-form { display: grid; gap: 8px; background: #fff; border: 1px solid #f6c4d4; border-radius: 16px; padding: 12px; }
+.dzili-file-hidden { display: none; }
+.dzili-bdr-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dzili-bdr-status { font-size: 12px; color: #7a4960; }
+.dzili-sym-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.dzili-sym-btn { border: 1px solid #f4bfd0; background: #fff5f8; color: #5b1b36; border-radius: 8px; padding: 5px 9px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.dzili-textarea { width: 100%; box-sizing: border-box; border: 1px solid #f1bfd0; border-radius: 12px; padding: 9px 11px; font-size: 13px; font-family: inherit; background: #fff9fb; color: #2b1420; }
+.dzili-bdr-list { display: grid; gap: 10px; }
+.dzili-bdr-card { background: #fff; border: 1px solid #fae0e8; border-radius: 16px; padding: 13px; display: grid; gap: 6px; box-shadow: 0 2px 10px rgba(236, 58, 104, 0.05); }
+.dzili-bdr-card-head { display: flex; justify-content: space-between; align-items: center; }
+.dzili-bdr-folder { font-size: 11px; font-weight: 700; color: #ec3a68; background: #ffeaf1; padding: 3px 9px; border-radius: 999px; }
+.dzili-fav-btn { border: 0; background: transparent; font-size: 18px; color: #ec3a68; cursor: pointer; padding: 0 4px; }
+.dzili-bdr-card h4 { margin: 0; font-size: 15px; color: #2b1420; }
+.dzili-bdr-preview { margin: 0; white-space: pre-wrap; font-family: inherit; font-size: 12px; color: #5c3246; background: #fff8fa; border-radius: 10px; padding: 8px 10px; }
+
+.dzili-folder-shelf {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  overflow: visible !important;
+}
+.dzili-folder-card {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  min-width: 0 !important;
+  padding: 10px 12px !important;
+}
+.dzili-folder-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #ffe8f0;
+  color: #ec3a68;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.dzili-folder-card.is-active .dzili-folder-icon {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.dzili-folder-info {
+  display: grid;
+  gap: 1px;
+  text-align: left;
+}
