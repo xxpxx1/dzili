@@ -3,6 +3,7 @@ import { mountTaskProductivity } from "./tugas-produktivitas.js";
 import { mountBinderLibrary } from "./binder-library.js";
 import { mountFocusProductivity } from "./fokus-produktivitas.js";
 import { mountAcademicSemester } from "./akademik-semester.js";
+import { createScientificCalculatorModal } from "./kalkulator-ilmiah.js";
 
 const TABS = [
   { id: "jadwal", label: "Jadwal", mount: mountScheduleDashboard },
@@ -29,6 +30,8 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   rootEl.textContent = "";
   rootEl.className = "dzili-shell";
 
+  const calcModal = createScientificCalculatorModal();
+
   const topBar = make("header", "dzili-topbar");
   const greetBox = make("div", "dzili-greet");
   const dateStr = new Date().toLocaleDateString("id-ID", {
@@ -38,12 +41,20 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   });
   greetBox.append(make("h2", "", `Selamat Malam, ${studentName}!`), make("small", "", dateStr));
 
-  const quickChips = make("div", "dzili-quick-chips");
-  quickChips.append(
-    make("span", "dzili-qchip", "Mode Lokal • Aman"),
-    make("span", "dzili-qchip is-accent", "5 Modul Aktif")
-  );
-  topBar.append(greetBox, quickChips);
+  const actionIcons = make("div", "dzili-top-actions");
+  const homeLink = make("a", "dzili-icon-btn", "⌂");
+  homeLink.href = "./index.html";
+  homeLink.title = "Beranda / Landing Page";
+  homeLink.setAttribute("aria-label", "Kembali ke Beranda");
+
+  const calcBtn = make("button", "dzili-icon-btn", "🧮");
+  calcBtn.type = "button";
+  calcBtn.title = "Kalkulator Ilmiah";
+  calcBtn.setAttribute("aria-label", "Buka Kalkulator Ilmiah");
+  calcBtn.addEventListener("click", () => calcModal.open());
+
+  actionIcons.append(homeLink, calcBtn);
+  topBar.append(greetBox, actionIcons);
 
   const banner = make(
     "div",
@@ -58,7 +69,8 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   TABS.forEach((t) => {
     const panel = make("section", "dzili-panel");
     panel.id = `dzili-panel-${t.id}`;
-    panel.style.display = "none";
+    panel.setAttribute("data-panel", t.id);
+    panel.style.setProperty("display", "none", "important");
     panels[t.id] = panel;
     stage.appendChild(panel);
   });
@@ -78,21 +90,22 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   function switchTab(tabId) {
     const target = TABS.find((t) => t.id === tabId) || TABS[0];
     TABS.forEach((t) => {
-      const active = t.id === target.id;
+      const isTarget = t.id === target.id;
       const panel = panels[t.id];
-      panel.hidden = !active;
-      panel.style.display = active ? "grid" : "none";
-      if (active && !mounted[t.id]) {
+      panel.hidden = !isTarget;
+      panel.style.setProperty("display", isTarget ? "grid" : "none", "important");
+      if (isTarget && !mounted[t.id]) {
         mounted[t.id] = target.mount(panel);
-      } else if (active && mounted[t.id] && typeof mounted[t.id].refresh === "function") {
+      } else if (isTarget && mounted[t.id] && typeof mounted[t.id].refresh === "function") {
         mounted[t.id].refresh();
       }
     });
     navBtns.forEach((b) => b.classList.toggle("is-active", b.dataset.tab === target.id));
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   rootEl.append(topBar, banner, stage, nav);
-  switchTab(options.initialTab || "jadwal");
-
+  const initialParam = new URLSearchParams(window.location.search).get("tab");
+  switchTab(initialParam || options.initialTab || "jadwal");
   return { switchTab };
 }

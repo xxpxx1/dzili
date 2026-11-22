@@ -4,27 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <title>Dzili — Ruang Belajar Pribadi</title>
+  <title>Dzili — Keep Learning, Satu Bab Setiap Hari</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: #2b1420;
+      color: #361324;
       background:
-        radial-gradient(circle at 15% 10%, #ffd9e6 0%, transparent 45%),
-        radial-gradient(circle at 88% 18%, #ffe5ee 0%, transparent 48%),
-        linear-gradient(180deg, #fff7fa 0%, #ffe9f1 100%);
+        radial-gradient(circle at 82% 16%, rgba(255, 194, 216, 0.72) 0%, transparent 46%),
+        radial-gradient(circle at 15% 42%, rgba(255, 219, 232, 0.75) 0%, transparent 50%),
+        linear-gradient(165deg, #fff5f8 0%, #ffe6ef 48%, #ffdce8 100%);
       min-height: 100dvh;
     }
-    .wrap {
+    .page {
       max-width: 520px;
       margin: 0 auto;
-      padding: 16px 16px 36px;
+      padding: 16px 16px 34px;
       display: grid;
       gap: 16px;
     }
-    .nav {
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -36,201 +36,306 @@
       gap: 10px;
       font-weight: 800;
       font-size: 19px;
-      color: #2b1420;
+      color: #2b101d;
     }
-    .brand-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ec3a68 0%, #d42656 100%);
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #f04875 0%, #d82959 100%);
       color: #fff;
       display: grid;
       place-items: center;
-      font-size: 16px;
-      box-shadow: 0 6px 14px rgba(236, 58, 104, 0.25);
+      font-size: 15px;
+      box-shadow: 0 6px 16px rgba(236, 58, 104, 0.24);
     }
-    .btn-top {
+    .btn-open {
       text-decoration: none;
-      background: #fff;
-      color: #c41e4d;
-      border: 1px solid #f4bfd0;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #f3bfd0;
+      color: #9e1b43;
       padding: 8px 14px;
       border-radius: 999px;
       font-size: 13px;
       font-weight: 700;
     }
-    .hero-card {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #f7cad8;
-      border-radius: 26px;
-      padding: 18px;
+    .hero {
       display: grid;
-      gap: 14px;
-      box-shadow: 0 12px 30px rgba(236, 58, 104, 0.1);
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 12px;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 234, 242, 0.86) 100%);
+      border: 1px solid #f7c9d8;
+      border-radius: 26px;
+      padding: 16px;
+      box-shadow: 0 12px 28px rgba(224, 68, 112, 0.11);
     }
-    .hero-media {
+    .hero-copy h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.16;
+      color: #2c101e;
+    }
+    .hero-copy h1 span {
+      color: #e12f60;
+    }
+    .hero-copy p {
+      margin: 0 0 12px;
+      font-size: 12.5px;
+      line-height: 1.48;
+      color: #6b3c52;
+    }
+    .btn-start {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      background: linear-gradient(135deg, #f04875 0%, #d62656 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13.5px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      box-shadow: 0 8px 18px rgba(236, 58, 104, 0.28);
+    }
+    .hero-tag {
+      margin-top: 9px;
+      font-size: 11px;
+      color: #87526a;
+      font-weight: 600;
+    }
+    .hero-art {
       position: relative;
       border-radius: 20px;
       overflow: hidden;
-      background: linear-gradient(145deg, #ffd8e6 0%, #ffeef4 100%);
-      aspect-ratio: 16 / 11;
+      background: linear-gradient(160deg, #ffe3ed 0%, #ffd0e1 100%);
+      aspect-ratio: 4 / 5;
+      box-shadow: 0 8px 20px rgba(214, 38, 86, 0.12);
     }
-    .hero-media img {
+    .hero-art img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center top;
       display: block;
     }
-    .hero-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: fit-content;
-      background: #ffe8f0;
-      color: #c41e4d;
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 12px;
-      border-radius: 999px;
+    .hero-art::after {
+      content: "";
+      position: inset 0;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 240, 246, 0.06) 55%, rgba(255, 224, 236, 0.35) 100%);
+      pointer-events: none;
     }
-    .hero-copy h1 {
-      margin: 6px 0 8px;
-      font-size: 27px;
-      line-height: 1.2;
-      color: #2b1420;
-    }
-    .hero-copy h1 span {
-      color: #ec3a68;
-    }
-    .hero-copy p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.55;
-      color: #6b3d52;
-    }
-    .hero-cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    .btn-cta {
-      flex: 1 1 180px;
-      text-align: center;
-      text-decoration: none;
-      background: linear-gradient(135deg, #ec3a68 0%, #d42656 100%);
-      color: #fff;
-      font-weight: 700;
-      font-size: 15px;
-      padding: 13px 18px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(236, 58, 104, 0.25);
-    }
-    .formula-card {
-      background: #fff;
-      border: 1px solid #f7cad8;
-      border-radius: 22px;
+    .card-math {
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 238, 244, 0.92) 100%);
+      border: 1px solid #f6c7d6;
+      border-radius: 24px;
       padding: 16px;
       display: grid;
-      gap: 6px;
+      gap: 8px;
+      box-shadow: 0 10px 24px rgba(224, 68, 112, 0.08);
     }
-    .formula-tag {
+    .math-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      color: #ec3a68;
-    }
-    .formula-card h2 {
-      margin: 0;
-      font-size: 18px;
-      color: #2b1420;
-    }
-    .formula-eq {
-      display: inline-block;
-      width: fit-content;
-      background: #fff3f7;
-      border: 1px solid #f5c5d4;
-      color: #b81d48;
       font-weight: 700;
-      padding: 5px 10px;
-      border-radius: 10px;
+      color: #c42754;
+      letter-spacing: 0.04em;
+    }
+    .math-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .math-main h2 {
+      margin: 0 0 4px;
+      font-size: 19px;
+      color: #2b101d;
+    }
+    .math-eq {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       font-size: 14px;
+      font-weight: 700;
+      color: #361324;
     }
-    .formula-card p {
-      margin: 2px 0 0;
+    .chip-sub {
+      font-size: 11px;
+      background: #ffe5ee;
+      color: #b81d49;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .btn-shuffle-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid #f4bfd0;
+      background: #fff6f9;
+      color: #c42754;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .math-desc {
+      margin: 0;
       font-size: 13px;
-      color: #6b3d52;
+      color: #6b3c52;
     }
-    .mini-grid {
+    .math-quote {
+      margin: 0;
+      font-size: 12.5px;
+      font-style: italic;
+      color: #8f5670;
+    }
+    .math-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .math-foot small {
+      font-size: 11.5px;
+      color: #7c4960;
+    }
+    .btn-random {
+      border: 1px solid #f2b8cb;
+      background: #fff;
+      color: #9e1b43;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .shortcuts {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+      gap: 10px;
     }
-    .mini-card {
+    .shortcut {
+      text-decoration: none;
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid #f6c7d6;
-      border-radius: 16px;
-      padding: 11px 10px;
+      border-radius: 20px;
+      padding: 12px 10px;
       display: grid;
-      gap: 2px;
+      gap: 3px;
+      color: #2b101d;
+      box-shadow: 0 6px 16px rgba(224, 68, 112, 0.06);
     }
-    .mini-card strong {
+    .shortcut .ico {
+      font-size: 15px;
+      color: #e12f60;
+    }
+    .shortcut strong {
       font-size: 13px;
-      color: #2b1420;
     }
-    .mini-card span {
+    .shortcut span {
       font-size: 11px;
       color: #7a4960;
+      line-height: 1.3;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="nav">
+  <div class="page">
+    <header class="topbar">
       <div class="brand">
-        <span class="brand-badge">D</span>
+        <span class="brand-icon">📖</span>
         <span>Dzili</span>
       </div>
-      <a class="btn-top" href="./workspace.html">Buka Aplikasi</a>
+      <a class="btn-open" href="./workspace.html">Buka Aplikasi</a>
     </header>
 
-    <section class="hero-card">
-      <div class="hero-media">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Keep Learning, <span>Satu Bab Setiap Hari.</span></h1>
+        <p>Atur jadwal kuliah, simpan rumus di binder digital, dan jaga ritme fokus dalam satu ruang belajar.</p>
+        <a class="btn-start" href="./workspace.html">Mulai Belajar →</a>
+        <div class="hero-tag">✦ Ruang belajar pribadi & offline ready</div>
+      </div>
+      <div class="hero-art">
         <img src="./hero-dzili.png" alt="Ilustrasi belajar Dzili">
       </div>
-      <div class="hero-copy">
-        <span class="hero-pill">✦ Ruang Belajar Pribadi & Offline Ready</span>
-        <h1>Keep Learning, <span>Satu Bab Setiap Hari.</span></h1>
-        <p>Atur jadwal kuliah, simpan rumus di binder digital, dan jaga ritme fokus dalam satu ruang belajar yang hangat dan teratur.</p>
+    </section>
+
+    <section class="card-math">
+      <div class="math-top">
+        <span id="math-cat">● CATATAN MATEMATIKA</span>
+        <span id="math-idx">1 / 6</span>
       </div>
-      <div class="hero-cta-row">
-        <a class="btn-cta" href="./workspace.html">Mulai Belajar →</a>
+      <div class="math-main">
+        <div>
+          <h2 id="math-title">Identitas Euler</h2>
+          <div class="math-eq">
+            <span id="math-eq">e^(iπ) + 1 = 0</span>
+            <span class="chip-sub" id="math-sub">Analisis</span>
+          </div>
+        </div>
+        <button class="btn-shuffle-icon" id="btn-next-top" type="button" title="Materi berikutnya">↻</button>
+      </div>
+      <p class="math-desc" id="math-desc">Lima konstanta fundamental dalam satu persamaan</p>
+      <p class="math-quote" id="math-quote">"Menghubungkan e, i, π, 1, dan 0 secara harmonis."</p>
+      <div class="math-foot">
+        <small>Ringkasan cepat untuk pemanasan</small>
+        <button class="btn-random" id="btn-random-math" type="button">⇄ Acak Materi</button>
       </div>
     </section>
 
-    <section class="formula-card">
-      <span class="formula-tag">CATATAN MATEMATIKA • ANALISIS</span>
-      <h2>Identitas Euler</h2>
-      <div class="formula-eq">e^(iπ) + 1 = 0</div>
-      <p>Menghubungkan lima konstanta fundamental <em>e, i, π, 1,</em> dan <em>0</em> secara harmonis dalam satu persamaan.</p>
-    </section>
-
-    <section class="mini-grid">
-      <div class="mini-card">
+    <section class="shortcuts">
+      <a class="shortcut" href="./workspace.html?tab=jadwal">
+        <span class="ico">📅</span>
         <strong>Sen–Min</strong>
-        <span>Dashboard Jadwal</span>
-      </div>
-      <div class="mini-card">
+        <span>Jadwal Kuliah</span>
+      </a>
+      <a class="shortcut" href="./workspace.html?tab=binder">
+        <span class="ico">📘</span>
         <strong>Binder</strong>
-        <span>Rumus, OCR & PDF</span>
-      </div>
-      <div class="mini-card">
-        <strong>Fokus</strong>
-        <span>Timer & Kue</span>
-      </div>
+        <span>Rumus & OCR</span>
+      </a>
+      <a class="shortcut" href="./workspace.html?tab=fokus">
+        <span class="ico">⏱</span>
+        <strong>Offline</strong>
+        <span>Fokus & Kue</span>
+      </a>
     </section>
   </div>
+
+  <script>
+    const ITEMS = [
+      { title: "Identitas Euler", eq: "e^(iπ) + 1 = 0", sub: "Analisis", desc: "Lima konstanta fundamental dalam satu persamaan", quote: '"Menghubungkan e, i, π, 1, dan 0 secara harmonis."' },
+      { title: "Teorema Dasar Kalkulus", eq: "∫ₐᵇ f'(x) dx = f(b) − f(a)", sub: "Kalkulus", desc: "Menghubungkan turunan dan integral tentu", quote: '"Diferensiasi dan integrasi saling berkebalikan."' },
+      { title: "Determinan Matriks 2×2", eq: "det(A) = ad − bc", sub: "Aljabar", desc: "Ukuran skala luas transformasi linear", quote: '"Nilai determinan menentukan keterbalikan matriks."' },
+      { title: "Rata-Rata & Variansi", eq: "σ² = Σ(xᵢ − μ)² / N", sub: "Statistika", desc: "Sebaran data terhadap nilai rata-rata", quote: '"Memahami sebaran sama pentingnya dengan rata-rata."' },
+      { title: "Teorema Pythagoras", eq: "a² + b² = c²", sub: "Geometri", desc: "Hubungan sisi segitiga siku-siku", quote: '"Fondasi jarak dan ruang dalam geometri."' },
+      { title: "Limit Dasar Trigonometri", eq: "lim(x→0) sin(x)/x = 1", sub: "Analisis", desc: "Perilaku fungsi trigonometri mendekati nol", quote: '"Perilaku lokal menentukan turunan fungsi."' }
+    ];
+    let idx = 0;
+    const renderCard = () => {
+      const it = ITEMS[idx];
+      document.getElementById("math-idx").textContent = `${idx + 1} / ${ITEMS.length}`;
+      document.getElementById("math-title").textContent = it.title;
+      document.getElementById("math-eq").textContent = it.eq;
+      document.getElementById("math-sub").textContent = it.sub;
+      document.getElementById("math-desc").textContent = it.desc;
+      document.getElementById("math-quote").textContent = it.quote;
+    };
+    const nextCard = () => {
+      idx = (idx + 1) % ITEMS.length;
+      renderCard();
+    };
+    document.getElementById("btn-next-top").addEventListener("click", nextCard);
+    document.getElementById("btn-random-math").addEventListener("click", () => {
+      idx = (idx + 1 + Math.floor(Math.random() * (ITEMS.length - 1))) % ITEMS.length;
+      renderCard();
+    });
+  </script>
 </body>
 </html>

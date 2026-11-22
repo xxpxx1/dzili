@@ -1,10 +1,12 @@
-const CACHE_NAME = "dzili-workspace-v2026-11-23-push1";
+const CACHE_NAME = "dzili-workspace-v2026-11-23-push2";
 const ASSETS = [
   "./",
   "./index.html",
   "./workspace.html",
   "./dzili-app.js",
   "./dzili-unified.css",
+  "./kalkulator-ilmiah.js",
+  "./kalkulator-dzili.css",
   "./jadwal-dashboard.js",
   "./jadwal-dzili.css",
   "./tugas-produktivitas.js",

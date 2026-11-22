@@ -1,0 +1,102 @@
+.dzili-calc-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 20, 32, 0.36);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 60;
+}
+.dzili-calc-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 88dvh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #fff8fa 0%, #ffeef4 100%);
+  border-top-left-radius: 26px;
+  border-top-right-radius: 26px;
+  padding: 16px 14px 22px;
+  box-shadow: 0 -10px 30px rgba(43, 20, 32, 0.16);
+  display: grid;
+  gap: 12px;
+}
+.dzili-calc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dzili-calc-head h3 {
+  margin: 0;
+  font-size: 17px;
+  color: #2b1420;
+}
+.dzili-calc-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dzili-calc-deg, .dzili-calc-close {
+  border: 1px solid #f4bfd0;
+  background: #fff;
+  color: #5b1b36;
+  border-radius: 12px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dzili-calc-screen {
+  background: #fff;
+  border: 1px solid #f6c7d6;
+  border-radius: 18px;
+  padding: 12px 14px;
+  text-align: right;
+  display: grid;
+  gap: 4px;
+}
+.dzili-calc-expr {
+  font-size: 13px;
+  color: #8a566e;
+  min-height: 18px;
+  word-break: break-all;
+}
+.dzili-calc-res {
+  font-size: 30px;
+  font-weight: 800;
+  color: #2b1420;
+  line-height: 1.15;
+  word-break: break-all;
+}
+.dzili-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.dzili-calc-key {
+  border: 1px solid #f7d2de;
+  background: #fff;
+  color: #3b1326;
+  border-radius: 14px;
+  padding: 11px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dzili-calc-key.is-op {
+  background: #fff0f5;
+  color: #c41e4d;
+  font-weight: 700;
+}
+.dzili-calc-key.is-danger {
+  background: #ffe3ec;
+  color: #b51743;
+  font-weight: 700;
+}
+.dzili-calc-key.is-eq {
+  background: linear-gradient(135deg, #ec3a68 0%, #d42656 100%);
+  border-color: #ec3a68;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+}
