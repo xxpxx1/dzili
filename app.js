@@ -746,3 +746,76 @@ document.addEventListener('visibilitychange', () => {
   if (!document.hidden) { tickTimer(); if (syncCfg.cloudUrl) { pullFromCloud(); setTimeout(() => { if (isCloudBooting) { isCloudBooting = false; renderAll(); } }, 2200); } }
 });
 setInterval(() => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); }, 15000);
+
+
+(function() {
+  const LP_ITEMS = [
+    { title: 'Identitas Euler', expr: 'e^(iπ) + 1 = 0', cat: 'Analisis', meaning: 'Lima konstanta fundamental dalam satu persamaan', note: '“Menghubungkan e, i, π, 1, dan 0 secara harmonis.”' },
+    { title: 'Teorema Pythagoras', expr: 'a² + b² = c²', cat: 'Geometri', meaning: 'Relasi sisi segitiga siku-siku pada bidang Euclid', note: '“Dasar perhitungan jarak dan vektor di ruang berdimensi n.”' },
+    { title: 'Deret Geometri Tak Hingga', expr: 'S∞ = a / (1 − r)', cat: 'Kalkulus', meaning: 'Konvergen saat nilai mutlak rasio |r| < 1', note: '“Penjumlahan tak hingga yang menghasilkan nilai berhingga.”' },
+    { title: 'Teorema Dasar Kalkulus', expr: '∫ₐᵇ f(x) dx = F(b) − F(a)', cat: 'Kalkulus', meaning: 'Menghubungkan turunan dan integral tentu', note: '“Luas di bawah kurva cukup dihitung dari antiturunannya.”' },
+    { title: 'Identitas Trigonometri', expr: 'sin²θ + cos²θ = 1', cat: 'Trigonometri', meaning: 'Proyeksi koordinat titik pada lingkaran satuan', note: '“Berlaku untuk setiap sudut θ di bilangan real.”' },
+    { title: 'Rumus Kombinasi', expr: 'C(n, k) = n! / (k!(n − k)!)', cat: 'Diskrit', meaning: 'Banyak cara memilih k objek tanpa urutan', note: '“Fondasi peluang dan koefisien ekspansi binomial.”' }
+  ];
+  let lpIdx = 0;
+
+  window.renderLandingFormula = function() {
+    const it = LP_ITEMS[lpIdx];
+    const elT = document.getElementById('lpFormulaTitle');
+    if (!elT) return;
+    document.getElementById('lpFormulaIndex').textContent = (lpIdx + 1) + ' / ' + LP_ITEMS.length;
+    elT.textContent = it.title;
+    document.getElementById('lpFormulaExpr').textContent = it.expr;
+    document.getElementById('lpFormulaCat').textContent = it.cat;
+    document.getElementById('lpFormulaMeaning').textContent = it.meaning;
+    document.getElementById('lpFormulaNote').textContent = it.note;
+  };
+
+  window.nextLandingFormula = function() {
+    lpIdx = (lpIdx + 1) % LP_ITEMS.length;
+    window.renderLandingFormula();
+  };
+
+  window.enterDziliApp = function(tabName) {
+    const lp = document.getElementById('dziliLandingView');
+    const app = document.getElementById('dziliMainApp');
+    if (lp) lp.style.display = 'none';
+    if (app) app.style.display = 'block';
+    try { localStorage.setItem('dzili_seen_landing', '1'); } catch (e) {}
+    if (tabName && typeof window.switchTab === 'function') {
+      window.switchTab(tabName);
+    }
+    window.scrollTo(0, 0);
+  };
+
+  window.openDziliLanding = function() {
+    const lp = document.getElementById('dziliLandingView');
+    const app = document.getElementById('dziliMainApp');
+    if (app) app.style.display = 'none';
+    if (lp) lp.style.display = 'block';
+    window.scrollTo(0, 0);
+  };
+
+  if (typeof window.openModal !== 'function') {
+    window.openModal = function(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.add('open');
+    };
+  }
+  if (typeof window.closeModals !== 'function') {
+    window.closeModals = function() {
+      document.querySelectorAll('.modal-backdrop.open').forEach(function(m) {
+        m.classList.remove('open');
+      });
+    };
+  }
+  if (typeof window.openSettings !== 'function') {
+    window.openSettings = function() {
+      window.openModal('modal-settings');
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    window.renderLandingFormula();
+  });
+})();

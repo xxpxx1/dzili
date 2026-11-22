@@ -523,38 +523,25 @@ body {
   }
 }
 
-/* === DZILI LANDING PAGE (BEGIN CONCEPT x DZILI ROSE IDENTITY) === */
-.landing-shell {
-  z-index: 40;
+/* === DZILI LANDING LIGHT (ROSE BERRY EDITORIAL) === */
+.landing-light-shell {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 78% 20%, rgba(246, 194, 112, 0.22) 0%, transparent 46%),
-    radial-gradient(circle at 18% 38%, rgba(221, 49, 99, 0.24) 0%, transparent 52%),
-    linear-gradient(180deg, #1E1017 0%, #2B1520 52%, #170B11 100%);
-  color: #FFF5F8;
+  background: linear-gradient(180deg, #FFEBF1 0%, #FFE1EA 55%, #FFD7E4 100%);
+  color: #3B1724;
   font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  padding: calc(14px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
-  position: relative;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  padding: calc(14px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
 }
 
 .lp-wrap {
-  width: 100%;
   max-width: 520px;
   margin: 0 auto;
-  position: relative;
-  z-index: 2;
 }
 
-.lp-nav {
+.lp-top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .lp-brand {
@@ -563,366 +550,302 @@ body {
   gap: 10px;
 }
 
-.lp-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #DD3163 0%, #FE546F 100%);
-  display: flex;
+.lp-logo-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #DD3163;
+  color: #FFFFFF;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
-  box-shadow: 0 6px 18px rgba(221, 49, 99, 0.42);
+  box-shadow: 0 4px 12px rgba(221, 49, 99, 0.25);
 }
-.lp-logo svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+.lp-logo-badge svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-.lp-brand-name {
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+.lp-brand-title {
   font-size: 19px;
   font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #FFFFFF;
+  letter-spacing: -0.025em;
+  color: #2D111B;
 }
 
-.lp-nav-actions {
-  display: flex;
+.lp-open-pill {
+  background: #FFFDFE;
+  color: #DD3163;
+  border: 1px solid rgba(221, 49, 99, 0.25);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(221, 49, 99, 0.08);
+}
+
+.lp-hero-card {
+  background: #FFFDFE;
+  border: 1px solid rgba(221, 49, 99, 0.14);
+  border-radius: 22px;
+  padding: 18px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 16px rgba(221, 49, 99, 0.06);
+}
+
+.lp-hero-grid {
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.lp-heading {
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: #2D111B;
+  margin-bottom: 10px;
+}
+
+.lp-rose { color: #DD3163; }
+
+.lp-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #764A5B;
+  margin-bottom: 16px;
+}
+
+.lp-main-cta {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-}
-
-.lp-pill-open {
-  height: 36px;
-  padding: 0 15px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 162, 191, 0.45);
-  background: rgba(221, 49, 99, 0.18);
-  color: #FFA2BF;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.16s var(--spring), background-color 0.2s ease;
-}
-.lp-pill-open:active { transform: scale(0.94); }
-
-.lp-circle-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 162, 191, 0.22);
-  background: rgba(255, 255, 255, 0.06);
-  color: #FFD6E3;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.16s var(--spring), background-color 0.2s ease;
-}
-.lp-circle-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.lp-circle-btn:active { transform: scale(0.9); }
-
-.lp-hero {
-  position: relative;
-  padding: 6px 0 22px;
-  min-height: 325px;
-}
-
-.lp-art-box {
-  position: absolute;
-  right: -22px;
-  top: -6px;
-  width: 68%;
-  max-width: 335px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.lp-art-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 24px;
-  object-fit: cover;
-  filter: saturate(1.04) contrast(1.02);
-  -webkit-mask-image: radial-gradient(ellipse 84% 86% at 58% 45%, #000 56%, transparent 98%);
-  mask-image: radial-gradient(ellipse 84% 86% at 58% 45%, #000 56%, transparent 98%);
-}
-
-.lp-hero-copy {
-  position: relative;
-  z-index: 2;
-  max-width: 62%;
-}
-
-.lp-title {
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-  color: #FFFFFF;
-  margin-bottom: 12px;
-  text-shadow: 0 2px 18px rgba(23, 11, 17, 0.78);
-}
-
-.lp-title .lp-accent {
-  color: #FF6E97;
-  display: inline-block;
-}
-
-.lp-sub {
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 13.5px;
-  font-weight: 500;
-  line-height: 1.55;
-  color: #F4D5DF;
-  margin-bottom: 20px;
-  text-shadow: 0 1px 14px rgba(23, 11, 17, 0.88);
-}
-
-.lp-cta-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
   background: linear-gradient(135deg, #DD3163 0%, #FE546F 100%);
   color: #FFFFFF;
   border: none;
   border-radius: 999px;
-  padding: 13px 22px;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 14px;
+  padding: 11px 18px;
+  font-size: 13.5px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(221, 49, 99, 0.46);
-  transition: transform 0.18s var(--spring), box-shadow 0.2s ease;
+  box-shadow: 0 6px 16px rgba(221, 49, 99, 0.28);
 }
-.lp-cta-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.lp-cta-btn:active { transform: scale(0.94); }
+.lp-main-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
 
-.lp-trust {
+.lp-caption-note {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 18px;
+  gap: 6px;
+  margin-top: 12px;
   font-size: 11.5px;
-  color: #E2B8C6;
+  color: #8E6273;
 }
-.lp-trust-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 110, 151, 0.22);
-  border: 1px solid rgba(255, 162, 191, 0.42);
-  color: #FFA2BF;
-  flex-shrink: 0;
-}
-.lp-trust-badge svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.1; }
+.lp-caption-note svg { width: 14px; height: 14px; stroke: #DD3163; fill: none; stroke-width: 2; flex-shrink: 0; }
 
-/* Kartu Pratinjau Interaktif (Bernuansa Warm Rose Glass) */
-.lp-card {
-  position: relative;
-  z-index: 2;
-  background: rgba(43, 21, 32, 0.84);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 162, 191, 0.24);
+.lp-hero-media {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(221, 49, 99, 0.14);
+  background: #FCEBF0;
+}
+
+.lp-hero-photo {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.lp-formula-card {
+  background: #FFFDFE;
+  border: 1px solid rgba(221, 49, 99, 0.14);
   border-radius: 22px;
-  padding: 18px;
+  padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 12px 32px rgba(15, 6, 11, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 16px rgba(221, 49, 99, 0.06);
 }
 
-.lp-card-top {
+.lp-formula-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
 }
 
-.lp-card-kicker {
+.lp-dot-label {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #FFA2BF;
+  letter-spacing: 0.06em;
+  color: #DD3163;
 }
-.lp-kicker-dot {
+
+.lp-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #F6C270;
-  box-shadow: 0 0 8px #F6C270;
+  background: #FE546F;
+  display: inline-block;
 }
 
-.lp-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.lp-counter {
   font-size: 12px;
-  color: #D8A8B8;
+  color: #8E6273;
   font-variant-numeric: tabular-nums;
 }
 
-.lp-card-main {
+.lp-formula-body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
-.lp-formula-name {
-  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 21px;
+.lp-f-title {
+  font-size: 20px;
   font-weight: 800;
-  color: #FFFFFF;
-  letter-spacing: -0.025em;
+  color: #2D111B;
   margin-bottom: 4px;
 }
 
-.lp-formula-expr {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 13px;
-  color: #F4D5DF;
-  margin-bottom: 8px;
+.lp-f-eq-row {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 6px;
 }
 
-.lp-formula-tag {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
+.lp-f-eq {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  color: #3B1724;
+  background: #FFF2F6;
+  padding: 2px 7px;
   border-radius: 6px;
-  background: rgba(255, 162, 191, 0.14);
-  color: #FFA2BF;
 }
 
-.lp-formula-meaning {
-  font-size: 13.5px;
+.lp-f-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #DD3163;
+  background: rgba(255, 162, 191, 0.35);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.lp-f-meaning {
+  font-size: 13px;
   font-weight: 600;
-  color: #FF6E97;
+  color: #4D2030;
   margin-bottom: 3px;
 }
 
-.lp-formula-note {
-  font-size: 12.5px;
+.lp-f-quote {
+  font-size: 12px;
   font-style: italic;
-  color: #D8A8B8;
-  line-height: 1.45;
+  color: #8E6273;
 }
 
-.lp-card-action-ico {
-  width: 40px;
-  height: 40px;
+.lp-refresh-circle {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(221, 49, 99, 0.22);
-  border: 1px solid rgba(255, 162, 191, 0.34);
-  color: #FFA2BF;
+  border: 1px solid rgba(221, 49, 99, 0.18);
+  background: #FFF5F8;
+  color: #DD3163;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   cursor: pointer;
-  transition: transform 0.16s var(--spring);
 }
-.lp-card-action-ico svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; }
-.lp-card-action-ico:active { transform: scale(0.9); }
+.lp-refresh-circle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-.lp-card-foot {
-  border-top: 1px solid rgba(255, 162, 191, 0.14);
-  padding-top: 11px;
+.lp-formula-foot {
+  border-top: 1px solid rgba(221, 49, 99, 0.1);
+  padding-top: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
-.lp-foot-hint {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.lp-foot-text {
   font-size: 11.5px;
-  color: #D8A8B8;
+  color: #8E6273;
 }
-.lp-foot-hint svg { width: 14px; height: 14px; stroke: #F6C270; fill: none; stroke-width: 2; }
 
-.lp-shuffle-btn {
+.lp-pill-action {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 13px;
+  background: #FFF2F6;
+  color: #DD3163;
+  border: 1px solid rgba(221, 49, 99, 0.22);
   border-radius: 999px;
-  border: 1px solid rgba(255, 162, 191, 0.45);
-  background: rgba(221, 49, 99, 0.18);
-  color: #FFA2BF;
+  padding: 6px 12px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.16s var(--spring), background-color 0.2s ease;
 }
-.lp-shuffle-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.1; }
-.lp-shuffle-btn:active { transform: scale(0.93); }
+.lp-pill-action svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.1; }
 
-/* 3 Kartu Ringkasan Bawah */
-.lp-stats {
-  position: relative;
-  z-index: 2;
+.lp-quick-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 9px;
 }
 
-.lp-stat-box {
-  background: rgba(43, 21, 32, 0.80);
-  border: 1px solid rgba(255, 162, 191, 0.16);
+.lp-quick-item {
+  background: #FFFDFE;
+  border: 1px solid rgba(221, 49, 99, 0.14);
   border-radius: 16px;
   padding: 12px 10px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  cursor: pointer;
   text-align: left;
-  transition: transform 0.16s var(--spring), border-color 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(221, 49, 99, 0.05);
 }
-.lp-stat-box:active { transform: scale(0.95); }
 
-.lp-stat-ico {
-  width: 28px;
-  height: 28px;
+.lp-q-icon {
+  width: 26px;
+  height: 26px;
   border-radius: 8px;
-  background: rgba(221, 49, 99, 0.22);
-  color: #FF6E97;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  margin-bottom: 8px;
 }
-.lp-stat-ico svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.lp-q-icon svg { width: 15px; height: 15px; stroke: #FFFFFF; fill: none; stroke-width: 2; }
+.lp-q-icon.cal { background: #FE546F; }
+.lp-q-icon.book { background: #2D6CDF; }
+.lp-q-icon.focus { background: #DD3163; }
 
-.lp-stat-val {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #FFFFFF;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-}
-.lp-stat-lbl {
-  font-size: 10.5px;
-  color: #D8A8B8;
-  margin-top: 1px;
+.lp-q-title { font-size: 13.5px; font-weight: 800; color: #2D111B; }
+.lp-q-sub { font-size: 11px; color: #8E6273; margin-top: 1px; }
+
+/* 3 Kartu Ringkasan Beranda (Seperti tampilan sebelumnya) */
+.bento-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin-bottom: 14px;
 }
 
-@media (hover: hover) {
-  .lp-pill-open:hover, .lp-shuffle-btn:hover { background: rgba(221, 49, 99, 0.30); }
-  .lp-cta-btn:hover { box-shadow: 0 10px 28px rgba(254, 84, 111, 0.54); }
-  .lp-stat-box:hover { border-color: rgba(255, 162, 191, 0.42); transform: translateY(-1px); }
+.bento-3-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 10px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(221, 49, 99, 0.05);
 }
+
+.bento-3-lbl { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.bento-3-val { font-size: 13.5px; font-weight: 700; color: var(--text); line-height: 1.25; font-variant-numeric: tabular-nums; }
+.bento-3-sub { font-size: 10.5px; color: var(--muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
