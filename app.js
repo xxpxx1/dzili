@@ -819,3 +819,27 @@ setInterval(() => { if (!document.hidden && syncCfg.cloudUrl) pullFromCloud(); }
     window.renderLandingFormula();
   });
 })();
+
+
+(function() {
+  window.openModal = window.openModal || function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('open');
+  };
+  window.closeModals = window.closeModals || function() {
+    document.querySelectorAll('.modal-backdrop.open').forEach(function(el) {
+      el.classList.remove('open');
+    });
+  };
+  window.openSettings = window.openSettings || function() {
+    window.openModal('modal-settings');
+  };
+  window.switchTab = window.switchTab || function(tab) {
+    document.querySelectorAll('[data-tab-panel]').forEach(function(p) {
+      p.style.display = (p.getAttribute('data-tab-panel') === tab) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.nav-item').forEach(function(n) {
+      n.classList.toggle('active', n.getAttribute('data-tab') === tab);
+    });
+  };
+})();
