@@ -1,4 +1,4 @@
-const CACHE_NAME = "dzili-workspace-v2026-11-23-unified";
+const CACHE_NAME = "dzili-v28";
 const ASSETS = [
   "./",
   "./index.html",
@@ -17,35 +17,34 @@ const ASSETS = [
   "./fokus-produktivitas.js",
   "./fokus-dzili.css",
   "./akademik-semester.js",
-  "./akademik-dzili.css"
+  "./akademik-dzili.css",
+  "./hero-dzili.png"
 ];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS).catch(() => {}))
   );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((res) => {
-        if (res && res.ok && event.request.url.startsWith(self.location.origin)) {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(event.request, copy));
-        }
+    fetch(event.request)
+      .then((res) => {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone)).catch(() => {});
         return res;
-      }).catch(() => caches.match("./index.html"));
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });

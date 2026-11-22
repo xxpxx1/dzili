@@ -155,3 +155,129 @@ body.dzili-body {
   box-shadow: 0 3px 10px rgba(236, 58, 104, 0.08);
 }
 @import url("./pengaturan-dzili.css");
+
+/* === V28 LANDING & TOP ACTION STYLES === */
+.dzili-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dzili-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #f2bfd0;
+  background: #fff8fa;
+  color: #4d1b2f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.dzili-icon-btn:active {
+  transform: scale(0.95);
+  background: #ffe3ec;
+}
+
+.dzili-nav-btn {
+  border: none;
+  background: transparent;
+  color: #7c4b60;
+  border-radius: 14px;
+  padding: 8px 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dzili-nav-btn.is-active {
+  background: #ffe2eb;
+  color: #d42656;
+}
+
+.lp-light-shell {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #fff2f6 0%, #ffe6ee 55%, #ffdbe7 100%);
+  color: #3b1724;
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  padding: calc(14px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.lp-wrap { max-width: 520px; margin: 0 auto; }
+.lp-top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.lp-brand { display: flex; align-items: center; gap: 10px; }
+.lp-logo-badge {
+  width: 34px; height: 34px; border-radius: 10px; background: #dd3163; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(221, 49, 99, 0.24);
+}
+.lp-logo-badge svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+.lp-brand-title { font-size: 19px; font-weight: 800; letter-spacing: -0.025em; color: #2d111b; }
+.lp-open-pill {
+  background: #fffdfe; color: #dd3163; border: 1px solid rgba(221, 49, 99, 0.24);
+  border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer;
+}
+
+.lp-hero-card {
+  background: #fffdfe; border: 1px solid rgba(221, 49, 99, 0.14); border-radius: 22px;
+  padding: 18px 16px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(221, 49, 99, 0.06);
+}
+.lp-hero-grid { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 12px; align-items: center; }
+.lp-heading { font-size: 26px; font-weight: 800; line-height: 1.14; letter-spacing: -0.03em; color: #2d111b; margin: 0 0 10px; }
+.lp-rose { color: #dd3163; }
+.lp-desc { font-size: 13px; line-height: 1.5; color: #764a5b; margin: 0 0 16px; }
+.lp-main-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #dd3163 0%, #fe546f 100%); color: #fff;
+  border: none; border-radius: 999px; padding: 11px 18px; font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+.lp-main-cta svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.lp-caption-note { display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 11.5px; color: #8e6273; }
+.lp-caption-note svg { width: 14px; height: 14px; stroke: #dd3163; fill: none; stroke-width: 2; flex-shrink: 0; }
+.lp-hero-media { border-radius: 16px; overflow: hidden; border: 1px solid rgba(221, 49, 99, 0.14); background: #fcebf0; }
+.lp-hero-photo { width: 100%; height: 215px; object-fit: cover; object-position: center top; display: block; }
+
+.lp-formula-card {
+  background: #fffdfe; border: 1px solid rgba(221, 49, 99, 0.14); border-radius: 22px;
+  padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(221, 49, 99, 0.06);
+}
+.lp-formula-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.lp-dot-label { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; color: #dd3163; }
+.lp-dot { width: 7px; height: 7px; border-radius: 50%; background: #fe546f; display: inline-block; }
+.lp-counter { font-size: 12px; color: #8e6273; font-variant-numeric: tabular-nums; }
+.lp-formula-body { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.lp-f-title { font-size: 19px; font-weight: 800; color: #2d111b; margin-bottom: 4px; }
+.lp-f-eq-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.lp-f-eq { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: #3b1724; background: #fff2f6; padding: 2px 7px; border-radius: 6px; }
+.lp-f-badge { font-size: 11px; font-weight: 700; color: #dd3163; background: rgba(255, 162, 191, 0.35); padding: 2px 8px; border-radius: 999px; }
+.lp-f-meaning { font-size: 13px; font-weight: 600; color: #4d2030; margin-bottom: 3px; }
+.lp-f-quote { font-size: 12px; font-style: italic; color: #8e6273; }
+.lp-refresh-circle {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(221, 49, 99, 0.18);
+  background: #fff5f8; color: #dd3163; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer;
+}
+.lp-refresh-circle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+.lp-formula-foot { border-top: 1px solid rgba(221, 49, 99, 0.1); padding-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lp-foot-text { font-size: 11.5px; color: #8e6273; }
+.lp-pill-action {
+  display: inline-flex; align-items: center; gap: 6px; background: #fff2f6; color: #dd3163;
+  border: 1px solid rgba(221, 49, 99, 0.22); border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.lp-pill-action svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.1; }
+
+.lp-quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+.lp-quick-item {
+  background: #fffdfe; border: 1px solid rgba(221, 49, 99, 0.14); border-radius: 16px;
+  padding: 12px 10px; text-align: left; cursor: pointer; box-shadow: 0 2px 8px rgba(221, 49, 99, 0.05);
+}
+.lp-q-icon { width: 26px; height: 26px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.lp-q-icon svg { width: 15px; height: 15px; stroke: #fff; fill: none; stroke-width: 2; }
+.lp-q-icon.cal { background: #fe546f; }
+.lp-q-icon.book { background: #2d6cdf; }
+.lp-q-icon.focus { background: #dd3163; }
+.lp-q-title { font-size: 13.5px; font-weight: 800; color: #2d111b; }
+.lp-q-sub { font-size: 11px; color: #8e6273; margin-top: 1px; }

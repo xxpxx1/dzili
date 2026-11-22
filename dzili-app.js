@@ -34,9 +34,27 @@ export function mountDziliWorkspace(rootEl, options = {}) {
 
   const calcModal = createScientificCalculatorModal();
 
+  function svgIcon(paths) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("width", "18");
+    svg.setAttribute("height", "18");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    paths.forEach((d) => {
+      const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      p.setAttribute("d", d);
+      svg.appendChild(p);
+    });
+    return svg;
+  }
+
   const topBar = make("header", "dzili-topbar");
   const greetBox = make("div", "dzili-greet");
-  const greetTitle = make("h2", "", `Selamat Malam, ${studentName}!`);
+  const greetTitle = make("h2", "", `Selamat Pagi, ${studentName}!`);
   const dateStr = new Date().toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
@@ -46,23 +64,37 @@ export function mountDziliWorkspace(rootEl, options = {}) {
 
   const actionIcons = make("div", "dzili-top-actions");
 
-  const homeLink = make("a", "dzili-icon-btn", "⌂");
-  homeLink.href = "./index.html";
-  homeLink.title = "Beranda";
-  homeLink.setAttribute("aria-label", "Kembali ke Beranda");
+  const homeBtn = make("button", "dzili-icon-btn");
+  homeBtn.type = "button";
+  homeBtn.title = "Landing Page";
+  homeBtn.setAttribute("aria-label", "Kembali ke Landing Page");
+  homeBtn.appendChild(svgIcon(["M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", "M9 22V12h6v10"]));
+  homeBtn.addEventListener("click", () => {
+    if (typeof options.onBackLanding === "function") {
+      options.onBackLanding();
+    } else {
+      const lp = document.getElementById("dziliLandingView");
+      if (lp) {
+        rootEl.style.display = "none";
+        lp.style.display = "block";
+      }
+    }
+  });
 
-  const calcBtn = make("button", "dzili-icon-btn", "🧮");
+  const calcBtn = make("button", "dzili-icon-btn");
   calcBtn.type = "button";
   calcBtn.title = "Kalkulator Ilmiah";
   calcBtn.setAttribute("aria-label", "Buka Kalkulator Ilmiah");
+  calcBtn.appendChild(svgIcon(["M4 4h16v16H4z", "M8 8h8", "M8 12h2", "M14 12h2", "M8 16h2", "M14 16h2"]));
   calcBtn.addEventListener("click", () => calcModal.open());
 
-  const settingsBtn = make("button", "dzili-icon-btn", "⚙");
+  const settingsBtn = make("button", "dzili-icon-btn");
   settingsBtn.type = "button";
   settingsBtn.title = "Pengaturan";
   settingsBtn.setAttribute("aria-label", "Buka Pengaturan");
+  settingsBtn.appendChild(svgIcon(["M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z", "M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"]));
 
-  actionIcons.append(homeLink, calcBtn, settingsBtn);
+  actionIcons.append(homeBtn, calcBtn, settingsBtn);
   topBar.append(greetBox, actionIcons);
 
   const banner = make(
@@ -115,15 +147,20 @@ export function mountDziliWorkspace(rootEl, options = {}) {
 
   const settingsModal = createSettingsModal((updated) => {
     studentName = updated.studentName;
-    greetTitle.textContent = `Selamat Malam, ${studentName}!`;
+    greetTitle.textContent = `Selamat Pagi, ${studentName}!`;
     Object.values(mounted).forEach((m) => {
       if (m && typeof m.refresh === "function") m.refresh();
     });
   });
+
   settingsBtn.addEventListener("click", () => settingsModal.open());
 
   rootEl.append(topBar, banner, stage, nav);
-  const initialParam = new URLSearchParams(window.location.search).get("tab");
-  switchTab(initialParam || options.initialTab || "jadwal");
-  return { switchTab };
+  switchTab("jadwal");
+
+  return {
+    switchTab,
+    openCalculator: () => calcModal.open(),
+    openSettings: () => settingsModal.open()
+  };
 }

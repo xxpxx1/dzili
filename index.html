@@ -2,18 +2,177 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFE8EF">
   <meta name="referrer" content="no-referrer">
   <title>Dzili — Ruang Belajar</title>
-  <link rel="stylesheet" href="./dzili-unified.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./dzili-unified.css?v=28">
 </head>
 <body class="dzili-body">
-  <div id="dzili-root"></div>
+  <section id="dziliLandingView" class="lp-light-shell">
+    <div class="lp-wrap">
+      <header class="lp-top-bar">
+        <div class="lp-brand">
+          <div class="lp-logo-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <span class="lp-brand-title">Dzili</span>
+        </div>
+        <button type="button" class="lp-open-pill" id="lpOpenAppTop">Buka Aplikasi</button>
+      </header>
+
+      <div class="lp-hero-card">
+        <div class="lp-hero-grid">
+          <div class="lp-hero-copy">
+            <h1 class="lp-heading">Keep Learning,<br>Satu Bab <span class="lp-rose">Setiap Hari.</span></h1>
+            <p class="lp-desc">Atur jadwal kuliah, simpan rumus di binder digital, dan jaga ritme fokus dalam satu ruang belajar.</p>
+            <button type="button" class="lp-main-cta" id="lpStartBtn">
+              <span>Mulai Belajar</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+            <div class="lp-caption-note">
+              <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 10.7l-5 3.6 1.9 5.7-4.9-3.5-4.9 3.5 1.9-5.7-5-3.6 6.1-1.9z"/></svg>
+              <span>Ruang belajar pribadi &amp; offline-ready</span>
+            </div>
+          </div>
+          <div class="lp-hero-media">
+            <img src="./hero-dzili.png?v=28" alt="Dzili Ruang Belajar" class="lp-hero-photo" />
+          </div>
+        </div>
+      </div>
+
+      <div class="lp-formula-card">
+        <div class="lp-formula-head">
+          <span class="lp-dot-label"><i class="lp-dot"></i>CATATAN MATEMATIKA</span>
+          <span class="lp-counter" id="lpFormulaIndex">1 / 6</span>
+        </div>
+        <div class="lp-formula-body">
+          <div>
+            <div class="lp-f-title" id="lpFormulaTitle">Identitas Euler</div>
+            <div class="lp-f-eq-row">
+              <code class="lp-f-eq" id="lpFormulaExpr">e^(iπ) + 1 = 0</code>
+              <span class="lp-f-badge" id="lpFormulaCat">Analisis</span>
+            </div>
+            <div class="lp-f-meaning" id="lpFormulaMeaning">Lima konstanta fundamental dalam satu persamaan</div>
+            <div class="lp-f-quote" id="lpFormulaNote">“Menghubungkan e, i, π, 1, dan 0 secara harmonis.”</div>
+          </div>
+          <button type="button" class="lp-refresh-circle" id="lpCopyBtn" title="Salin Rumus" aria-label="Salin Rumus">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <div class="lp-formula-foot">
+          <span class="lp-foot-text" id="lpCopyStatus">Ringkasan cepat untuk pemanasan</span>
+          <button type="button" class="lp-pill-action" id="lpShuffleBtn">
+            <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+            <span>Acak Materi</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="lp-quick-grid">
+        <button type="button" class="lp-quick-item" data-lp-tab="jadwal">
+          <div class="lp-q-icon cal">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="lp-q-title">Sen–Min</div>
+          <div class="lp-q-sub">Jadwal Kuliah</div>
+        </button>
+        <button type="button" class="lp-quick-item" data-lp-tab="binder">
+          <div class="lp-q-icon book">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="lp-q-title">Binder</div>
+          <div class="lp-q-sub">Rumus &amp; OCR</div>
+        </button>
+        <button type="button" class="lp-quick-item" data-lp-tab="fokus">
+          <div class="lp-q-icon focus">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6"/></svg>
+          </div>
+          <div class="lp-q-title">Offline</div>
+          <div class="lp-q-sub">Fokus &amp; Kue</div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div id="dzili-root" style="display:none;"></div>
+
   <script type="module">
-    import { mountDziliWorkspace } from "./dzili-app.js";
-    mountDziliWorkspace(document.getElementById("dzili-root"));
+    import { mountDziliWorkspace } from "./dzili-app.js?v=28";
+
+    const FORMULAS = [
+      { title: "Identitas Euler", expr: "e^(iπ) + 1 = 0", cat: "Analisis", meaning: "Lima konstanta fundamental dalam satu persamaan", note: "“Menghubungkan e, i, π, 1, dan 0 secara harmonis.”" },
+      { title: "Teorema Pythagoras", expr: "a² + b² = c²", cat: "Geometri", meaning: "Relasi sisi segitiga siku-siku pada bidang Euclid", note: "“Dasar perhitungan jarak dan vektor di ruang berdimensi n.”" },
+      { title: "Deret Geometri Tak Hingga", expr: "S∞ = a / (1 − r)", cat: "Kalkulus", meaning: "Konvergen saat nilai mutlak rasio |r| < 1", note: "“Penjumlahan tak hingga yang menghasilkan nilai berhingga.”" },
+      { title: "Teorema Dasar Kalkulus", expr: "∫ₐᵇ f(x) dx = F(b) − F(a)", cat: "Kalkulus", meaning: "Menghubungkan turunan dan integral tentu", note: "“Luas di bawah kurva cukup dihitung dari antiturunannya.”" },
+      { title: "Identitas Trigonometri", expr: "sin²θ + cos²θ = 1", cat: "Trigonometri", meaning: "Proyeksi koordinat titik pada lingkaran satuan", note: "“Berlaku untuk setiap sudut θ di bilangan real.”" },
+      { title: "Rumus Kombinasi", expr: "C(n, k) = n! / (k!(n − k)!)", cat: "Diskrit", meaning: "Banyak cara memilih k objek tanpa urutan", note: "“Fondasi peluang dan koefisien ekspansi binomial.”" }
+    ];
+
+    let idx = 0;
+    let workspaceApi = null;
+
+    function renderFormula() {
+      const item = FORMULAS[idx];
+      document.getElementById("lpFormulaIndex").textContent = `${idx + 1} / ${FORMULAS.length}`;
+      document.getElementById("lpFormulaTitle").textContent = item.title;
+      document.getElementById("lpFormulaExpr").textContent = item.expr;
+      document.getElementById("lpFormulaCat").textContent = item.cat;
+      document.getElementById("lpFormulaMeaning").textContent = item.meaning;
+      document.getElementById("lpFormulaNote").textContent = item.note;
+    }
+
+    function ensureWorkspaceMounted() {
+      if (!workspaceApi) {
+        workspaceApi = mountDziliWorkspace(document.getElementById("dzili-root"), {
+          onBackLanding: () => {
+            document.getElementById("dzili-root").style.display = "none";
+            document.getElementById("dziliLandingView").style.display = "block";
+            window.scrollTo({ top: 0, behavior: "instant" });
+          }
+        });
+      }
+      return workspaceApi;
+    }
+
+    function enterApp(tabId) {
+      document.getElementById("dziliLandingView").style.display = "none";
+      document.getElementById("dzili-root").style.display = "grid";
+      const api = ensureWorkspaceMounted();
+      if (api && tabId && typeof api.switchTab === "function") {
+        api.switchTab(tabId);
+      }
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
+    document.getElementById("lpOpenAppTop").addEventListener("click", () => enterApp());
+    document.getElementById("lpStartBtn").addEventListener("click", () => enterApp());
+    document.getElementById("lpShuffleBtn").addEventListener("click", () => {
+      idx = (idx + 1) % FORMULAS.length;
+      renderFormula();
+    });
+    document.getElementById("lpCopyBtn").addEventListener("click", () => {
+      const item = FORMULAS[idx];
+      const text = `${item.title}: ${item.expr}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
+      const statusEl = document.getElementById("lpCopyStatus");
+      statusEl.textContent = "Rumus disalin ke papan klip";
+      setTimeout(() => { statusEl.textContent = "Ringkasan cepat untuk pemanasan"; }, 1600);
+    });
+
+    document.querySelectorAll("[data-lp-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => enterApp(btn.getAttribute("data-lp-tab")));
+    });
+
+    renderFormula();
+
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
+      navigator.serviceWorker.register("./sw.js?v=28").catch(() => {});
     }
   </script>
 </body>
