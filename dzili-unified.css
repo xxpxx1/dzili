@@ -281,3 +281,212 @@ body.dzili-body {
 .lp-q-icon.focus { background: #dd3163; }
 .lp-q-title { font-size: 13.5px; font-weight: 800; color: #2d111b; }
 .lp-q-sub { font-size: 11px; color: #8e6273; margin-top: 1px; }
+
+/* === V29 MODAL OVERLAY & CALC/SETTINGS FIX === */
+[hidden],
+.dzili-calc-backdrop[hidden],
+.dzili-set-backdrop[hidden] {
+  display: none !important;
+}
+
+.dzili-calc-backdrop,
+.dzili-set-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 120 !important;
+  background: rgba(43, 20, 32, 0.52) !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.dzili-calc-sheet,
+.dzili-set-box {
+  width: 100%;
+  max-width: 480px;
+  max-height: 88dvh;
+  overflow-y: auto;
+  background: #fffdfe;
+  border: 1px solid #f4bfd0;
+  border-radius: 24px;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  box-shadow: 0 18px 44px rgba(43, 20, 32, 0.28);
+  color: #2b1420;
+  box-sizing: border-box;
+}
+
+.dzili-calc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.dzili-calc-head h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #2b1420;
+}
+
+.dzili-calc-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dzili-calc-deg {
+  border: 1px solid #f2bfd0;
+  background: #fff2f6;
+  color: #dd3163;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.dzili-calc-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #f2bfd0;
+  background: #fff2f6;
+  color: #4d1b2f;
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.dzili-calc-screen {
+  background: #fff3f7;
+  border: 1px solid #f4bfd0;
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  text-align: right;
+  font-family: "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.dzili-calc-expr {
+  font-size: 12.5px;
+  color: #7a4960;
+  min-height: 18px;
+  word-break: break-all;
+}
+
+.dzili-calc-res {
+  font-size: 26px;
+  font-weight: 800;
+  color: #2b1420;
+  margin-top: 2px;
+  word-break: break-all;
+}
+
+.dzili-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+}
+
+.dzili-calc-key {
+  border: 1px solid #f3c4d3;
+  background: #fff9fb;
+  color: #2b1420;
+  border-radius: 12px;
+  padding: 11px 4px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.dzili-calc-key:active {
+  transform: scale(0.95);
+}
+
+.dzili-calc-key.is-op {
+  background: #ffe6ee;
+  color: #c41e4d;
+}
+
+.dzili-calc-key.is-danger {
+  background: #ffedf1;
+  color: #b4233c;
+}
+
+.dzili-calc-key.is-eq {
+  background: linear-gradient(135deg, #dd3163 0%, #fe546f 100%);
+  border-color: #dd3163;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.dzili-set-form {
+  display: grid;
+  gap: 10px;
+}
+
+.dzili-set-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #4d1b2f;
+}
+
+.dzili-input {
+  width: 100%;
+  border: 1px solid #f2bfd0;
+  background: #fff8fa;
+  color: #2b1420;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14.5px;
+  box-sizing: border-box;
+}
+
+.dzili-set-status {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #dd3163;
+  min-height: 18px;
+}
+
+.dzili-set-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.dzili-btn-ghost {
+  border: 1px solid #f2bfd0;
+  background: #fff2f6;
+  color: #7a4960;
+  border-radius: 12px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dzili-btn-primary {
+  border: none;
+  background: linear-gradient(135deg, #dd3163 0%, #fe546f 100%);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}

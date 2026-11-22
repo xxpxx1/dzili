@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./dzili-unified.css?v=28">
+  <link rel="stylesheet" href="./dzili-unified.css?v=29">
 </head>
 <body class="dzili-body">
   <section id="dziliLandingView" class="lp-light-shell">
@@ -39,7 +39,7 @@
             </div>
           </div>
           <div class="lp-hero-media">
-            <img src="./hero-dzili.png?v=28" alt="Dzili Ruang Belajar" class="lp-hero-photo" />
+            <img src="./hero-dzili.png?v=29" alt="Dzili Ruang Belajar" class="lp-hero-photo" />
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@
   <div id="dzili-root" style="display:none;"></div>
 
   <script type="module">
-    import { mountDziliWorkspace } from "./dzili-app.js?v=28";
+    import { mountDziliWorkspace } from "./dzili-app.js?v=29";
 
     const FORMULAS = [
       { title: "Identitas Euler", expr: "e^(iπ) + 1 = 0", cat: "Analisis", meaning: "Lima konstanta fundamental dalam satu persamaan", note: "“Menghubungkan e, i, π, 1, dan 0 secara harmonis.”" },
@@ -172,7 +172,7 @@
     renderFormula();
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js?v=28").catch(() => {});
+      navigator.serviceWorker.register("./sw.js?v=29").catch(() => {});
     }
   </script>
 </body>
