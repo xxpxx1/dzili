@@ -1,5 +1,7 @@
 const PREF_KEY = "dzili_prefs_v1";
 const FOCUS_KEY = "dzili_focus_v1";
+const DEFAULT_BANNER =
+  "Semangat kuliahnya hari ini! Jaga ritme fokus, simpan rumus di Binder, dan jangan lupa istirahat cukup.";
 
 function el(tag, className = "", text = "") {
   const n = document.createElement(tag);
@@ -14,28 +16,45 @@ function cleanName(v) {
   return s || "Dzili";
 }
 
+function cleanBanner(v) {
+  if (typeof v !== "string") return DEFAULT_BANNER;
+  const s = v.replace(/[\u0000-\u001F\u007F]/g, "").trim().slice(0, 180);
+  return s || DEFAULT_BANNER;
+}
+
 export function loadDziliPrefs() {
   try {
     const raw = localStorage.getItem(PREF_KEY);
-    if (!raw) return { studentName: "Dzili", dailyTargetMin: 75 };
+    if (!raw) {
+      return { studentName: "Dzili", dailyTargetMin: 75, bannerMessage: DEFAULT_BANNER };
+    }
     const p = JSON.parse(raw);
     return {
       studentName: cleanName(p?.studentName),
       dailyTargetMin: Number.isFinite(Number(p?.dailyTargetMin))
         ? Math.max(15, Math.min(600, Math.round(Number(p.dailyTargetMin))))
-        : 75
+        : 75,
+      bannerMessage: cleanBanner(p?.bannerMessage)
     };
   } catch {
-    return { studentName: "Dzili", dailyTargetMin: 75 };
+    return { studentName: "Dzili", dailyTargetMin: 75, bannerMessage: DEFAULT_BANNER };
   }
 }
 
 export function saveDziliPrefs(prefs) {
   try {
-    localStorage.setItem(PREF_KEY, JSON.stringify({
-      studentName: cleanName(prefs?.studentName),
-      dailyTargetMin: Math.max(15, Math.min(600, Math.round(Number(prefs?.dailyTargetMin || 75))))
-    }));
+    const current = loadDziliPrefs();
+    localStorage.setItem(
+      PREF_KEY,
+      JSON.stringify({
+        studentName: cleanName(prefs?.studentName ?? current.studentName),
+        dailyTargetMin: Math.max(
+          15,
+          Math.min(600, Math.round(Number(prefs?.dailyTargetMin ?? current.dailyTargetMin ?? 75)))
+        ),
+        bannerMessage: cleanBanner(prefs?.bannerMessage ?? current.bannerMessage)
+      })
+    );
     return true;
   } catch {
     return false;
@@ -60,6 +79,11 @@ export function createSettingsModal(onSaved) {
   nameInput.maxLength = 40;
   nameInput.required = true;
 
+  const bannerLabel = el("label", "dzili-set-label", "Ucapan / Banner Beranda");
+  const bannerInput = el("input", "dzili-input");
+  bannerInput.maxLength = 180;
+  bannerInput.placeholder = DEFAULT_BANNER;
+
   const targetLabel = el("label", "dzili-set-label", "Target Fokus Harian (menit)");
   const targetInput = el("input", "dzili-input");
   targetInput.type = "number";
@@ -76,7 +100,16 @@ export function createSettingsModal(onSaved) {
   saveBtn.type = "submit";
   btnRow.append(resetFocusBtn, saveBtn);
 
-  form.append(nameLabel, nameInput, targetLabel, targetInput, statusText, btnRow);
+  form.append(
+    nameLabel,
+    nameInput,
+    bannerLabel,
+    bannerInput,
+    targetLabel,
+    targetInput,
+    statusText,
+    btnRow
+  );
   box.append(head, form);
   backdrop.appendChild(box);
   document.body.appendChild(backdrop);
@@ -89,6 +122,7 @@ export function createSettingsModal(onSaved) {
   function open() {
     const cur = loadDziliPrefs();
     nameInput.value = cur.studentName;
+    bannerInput.value = cur.bannerMessage;
     targetInput.value = String(cur.dailyTargetMin);
     statusText.textContent = "";
     backdrop.hidden = false;
@@ -115,6 +149,7 @@ export function createSettingsModal(onSaved) {
     e.preventDefault();
     const nextPrefs = {
       studentName: cleanName(nameInput.value),
+      bannerMessage: cleanBanner(bannerInput.value),
       dailyTargetMin: Math.max(15, Math.min(600, Math.round(Number(targetInput.value || 75))))
     };
     saveDziliPrefs(nextPrefs);

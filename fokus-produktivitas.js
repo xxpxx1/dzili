@@ -1,11 +1,17 @@
 const FOCUS_KEY = "dzili_focus_v1";
 const FORTUNES = [
-  "Satu bab kecil hari ini lebih baik daripada menunda sampai besok.",
-  "Fokus 25 menit yang jernih mengalahkan dua jam sambil terdistraksi.",
-  "Rumus yang kamu pahami pelan-pelan hari ini akan terasa ringan saat ujian.",
-  "Istirahat secukupnya adalah bagian dari strategi belajar, bukan rasa bersalah.",
-  "Konsistensi kecilmu sedang membangun ritme besar untuk semester ini.",
-  "Kalau buntu di satu soal, tarik napas sebentar lalu cek ulang langkah pertamanya."
+  "Satu langkah kecil yang konsisten hari ini jauh lebih kuat daripada niat besar yang ditunda.",
+  "Istirahat sebentar bukan tanda menyerah—otakmu sedang merapikan ingatan yang baru dipelajari.",
+  "Kamu tidak perlu menguasai semuanya dalam satu malam; cukup pahami satu konsep sampai tuntas.",
+  "Catatan rapi hari ini adalah hadiah terbaik untuk dirimu sendiri menjelang hari ujian.",
+  "Fokus 25 menit dengan sepenuh hati lebih bernilai daripada duduk dua jam sambil terdistraksi.",
+  "Kalau mulai buntu, tarik napas pelan, minum air putih, lalu mulai lagi dari soal paling sederhana.",
+  "Kemajuan sering kali terasa pelan di permukaan, padahal akarnya sedang menguat di dalam.",
+  "Selesaikan satu tugas kecil dulu agar momentum semangatmu kembali menyala.",
+  "Tidak apa-apa salah saat latihan—setiap kesalahan menunjukkan bagian mana yang siap dipahami.",
+  "Jaga ritme belajar dan tidurmu; pikiran yang segar menangkap ide dua kali lebih cepat.",
+  "Hari ini kamu sudah bertahan dan berusaha sejauh ini—itu sudah layak diapresiasi.",
+  "Ubah target yang terasa berat menjadi langkah pertama yang bisa dikerjakan dalam 5 menit."
 ];
 
 function todayISO(now = new Date()) {

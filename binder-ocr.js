@@ -1,13 +1,41 @@
 import { sanitizeString } from "./binder-store.js";
 
-export function compressImageFile(file, maxWidth = 1280, quality = 0.8) {
+let tesseractLoadingPromise = null;
+
+function ensureTesseractLoaded() {
+  if (typeof window === "undefined") return Promise.resolve(null);
+  if (window.Tesseract && typeof window.Tesseract.recognize === "function") {
+    return Promise.resolve(window.Tesseract);
+  }
+  if (tesseractLoadingPromise) return tesseractLoadingPromise;
+
+  tesseractLoadingPromise = new Promise((resolve) => {
+    const existing = document.querySelector('script[data-dzili-ocr="tesseract"]');
+    if (existing) {
+      existing.addEventListener("load", () => resolve(window.Tesseract || null), { once: true });
+      existing.addEventListener("error", () => resolve(null), { once: true });
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+    script.async = true;
+    script.dataset.dziliOcr = "tesseract";
+    script.onload = () => resolve(window.Tesseract || null);
+    script.onerror = () => resolve(null);
+    document.head.appendChild(script);
+  });
+
+  return tesseractLoadingPromise;
+}
+
+export function compressImageFile(file, maxWidth = 1280, quality = 0.82) {
   return new Promise((resolve, reject) => {
-    if (!file || !/^image\/(png|jpeg|webp)$/i.test(file.type)) {
+    if (!file || !/^image\/(png|jpeg|jpg|webp)$/i.test(file.type)) {
       reject(new Error("Hanya mendukung format PNG, JPG, atau WEBP."));
       return;
     }
-    if (file.size > 6 * 1024 * 1024) {
-      reject(new Error("Ukuran gambar maksimal 6 MB."));
+    if (file.size > 8 * 1024 * 1024) {
+      reject(new Error("Ukuran gambar maksimal 8 MB."));
       return;
     }
 
@@ -36,12 +64,12 @@ export function compressImageFile(file, maxWidth = 1280, quality = 0.8) {
 }
 
 export async function runSafeOCR(imageSource, lang = "ind+eng") {
-  const TesseractGlobal = typeof window !== "undefined" ? window.Tesseract : null;
+  const TesseractGlobal = await ensureTesseractLoaded();
   if (!TesseractGlobal || typeof TesseractGlobal.recognize !== "function") {
     return {
       ok: false,
       text: "",
-      message: "Mesin OCR belum termuat. Catatan/foto tetap bisa disimpan manual."
+      message: "Mesin OCR offline/gagal dimuat. Foto tetap tersimpan & teks bisa diisi manual."
     };
   }
   try {
@@ -50,9 +78,13 @@ export async function runSafeOCR(imageSource, lang = "ind+eng") {
     return {
       ok: true,
       text: cleanText,
-      message: cleanText ? "Scan OCR selesai." : "Tidak ada teks terbaca jelas."
+      message: cleanText ? "Scan OCR selesai. Silakan cek/edit teks." : "Tidak ada teks terbaca jelas."
     };
   } catch {
-    return { ok: false, text: "", message: "Proses OCR gagal dijalankan pada gambar ini." };
+    return {
+      ok: false,
+      text: "",
+      message: "OCR gagal memproses gambar ini. Silakan isi teks secara manual."
+    };
   }
 }

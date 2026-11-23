@@ -100,7 +100,7 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   const banner = make(
     "div",
     "dzili-banner",
-    "Semangat kuliahnya hari ini! Jaga ritme fokus, simpan rumus di Binder, dan jangan lupa istirahat cukup."
+    prefs.bannerMessage
   );
 
   const stage = make("main", "dzili-stage");
@@ -148,6 +148,7 @@ export function mountDziliWorkspace(rootEl, options = {}) {
   const settingsModal = createSettingsModal((updated) => {
     studentName = updated.studentName;
     greetTitle.textContent = `Selamat Pagi, ${studentName}!`;
+    if (updated.bannerMessage) banner.textContent = updated.bannerMessage;
     Object.values(mounted).forEach((m) => {
       if (m && typeof m.refresh === "function") m.refresh();
     });

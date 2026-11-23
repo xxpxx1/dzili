@@ -177,6 +177,7 @@ export function mountBinderLibrary(hostEl) {
   const fileInput = el("input", "dzili-file-hidden");
   fileInput.type = "file";
   fileInput.accept = "image/png,image/jpeg,image/webp";
+  fileInput.setAttribute("capture", "environment");
 
   const scanBtn = el("button", "dzili-btn-ghost", "Scan Foto / OCR");
   scanBtn.type = "button";
