@@ -196,6 +196,35 @@ export function mountBinderLibrary(hostEl) {
   const statusNote = el("span", "dzili-bdr-status");
   toolRow.append(camBtn, galleryBtn, cameraInput, galleryInput, statusNote);
 
+  const bodyArea = el("textarea", "dzili-textarea");
+  bodyArea.rows = 5;
+  bodyArea.placeholder = "Tulis catatan, teorema, atau rumus...";
+
+  const ocrArea = el("textarea", "dzili-textarea");
+  ocrArea.rows = 2;
+  ocrArea.placeholder = "Hasil scan OCR (bisa diedit atau dilengkapi manual)...";
+
+  const snippetBar = el("div", "dzili-bdr-snippets");
+
+  function insertSnippet(snippet) {
+    const start = bodyArea.selectionStart ?? bodyArea.value.length;
+    const end = bodyArea.selectionEnd ?? bodyArea.value.length;
+    bodyArea.value = bodyArea.value.slice(0, start) + snippet + bodyArea.value.slice(end);
+    bodyArea.focus();
+  }
+
+  [
+    ["+ Teorema", "\n[Teorema] "],
+    ["+ Rumus", "\n[Rumus] "],
+    ["+ Definisi", "\n[Definisi] "],
+    ...SYMBOLS.map((s) => [s, s])
+  ].forEach(([label, snip]) => {
+    const b = el("button", "dzili-sym-btn", label);
+    b.type = "button";
+    b.addEventListener("click", () => insertSnippet(snip));
+    snippetBar.appendChild(b);
+  });
+
   async function handlePickedImage(e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -216,25 +245,6 @@ export function mountBinderLibrary(hostEl) {
 
   cameraInput.addEventListener("change", handlePickedImage);
   galleryInput.addEventListener("change", handlePickedImage);
-
-  const snippetBar = el("div", "dzili-bdr-snippets");
-  function insertSnippet(snippet) {
-    const start = bodyArea.selectionStart ?? bodyArea.value.length;
-    const end = bodyArea.selectionEnd ?? bodyArea.value.length;
-    bodyArea.value = bodyArea.value.slice(0, start) + snippet + bodyArea.value.slice(end);
-    bodyArea.focus();
-  }
-  [
-    ["+ Teorema", "\n[Teorema] "],
-    ["+ Rumus", "\n[Rumus] "],
-    ["+ Definisi", "\n[Definisi] "],
-    ...SYMBOLS.map((s) => [s, s])
-  ].forEach(([label, snip]) => {
-    const b = el("button", "dzili-sym-btn", label);
-    b.type = "button";
-    b.addEventListener("click", () => insertSnippet(snip));
-    snippetBar.appendChild(b);
-  });
 
   const saveBtn = el("button", "dzili-btn-primary", "Simpan ke Binder");
   saveBtn.type = "submit";
@@ -269,58 +279,54 @@ export function mountBinderLibrary(hostEl) {
 
   editor.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const title = cleanText(titleInput.value, 150);
-    if (!title) return;
-    const prev = editingId ? notes.find((n) => n.id === editingId) : null;
-    const record = {
-      id: editingId || `bdr_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      folder: normFolder(folderSelect.value),
-      title,
-      body: cleanText(bodyArea.value, 15000),
-      ocr: cleanText(ocrArea.value, 10000),
-      favorite: prev ? prev.favorite : false,
-      hasImage: pendingImageFlag,
-      updatedAt: new Date().toISOString().slice(0, 10)
-    };
-    await putNote(record);
-    notes = await loadNotes();
-    editingId = null;
-    editor.hidden = true;
-    render();
-  });
+    const title = cleanText(titleInput.value, 150) || "Catatan";
+    const body = cleanText(bodyArea.value, 15000);
+    const ocr = cleanText(ocrArea.value, 10000);
+    const folder = normFolder(folderSelect.value);
+    const updatedAt = new Date().toISOString().slice(0, 10);
+    const existing = editingId ? notes.find((n) => n.id === editingId) : null;
 
-  const FOLDER_ICONS = {
-    Semua: "✦",
-    Kalkulus: "∫",
-    Aljabar: "𝑥²",
-    Statistika: "📊",
-    Geometri: "△",
-    Analisis: "∞",
-    Umum: "📘"
-  };
+    const record = {
+      id: editingId || `bdr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      folder,
+      title,
+      body,
+      ocr,
+      favorite: existing ? Boolean(existing.favorite) : false,
+      hasImage: Boolean(pendingImageFlag || ocr),
+      updatedAt
+    };
+
+    try {
+      await putNote(record);
+      notes = await loadNotes();
+      editingId = null;
+      pendingImageFlag = false;
+      editor.hidden = true;
+      statusNote.textContent = "Tersimpan ke Binder.";
+      render();
+    } catch {
+      statusNote.textContent = "Gagal menyimpan catatan ke penyimpanan lokal.";
+    }
+  });
 
   function renderFolders() {
     folderShelf.textContent = "";
     ["Semua", ...FOLDERS].forEach((f) => {
-      const count = f === "Semua" ? notes.length : notes.filter((n) => n.folder === f).length;
-      const card = el("button", "dzili-folder-card");
-      card.type = "button";
-      if (activeFolder === f) card.classList.add("is-active");
-      const iconBadge = el("span", "dzili-folder-icon", FOLDER_ICONS[f] || "📘");
-      const infoWrap = el("div", "dzili-folder-info");
-      infoWrap.append(el("strong", "", f), el("span", "", `${count} catatan`));
-      card.append(iconBadge, infoWrap);
-      card.addEventListener("click", () => {
+      const btn = el("button", "dzili-chip-btn", f);
+      btn.type = "button";
+      btn.classList.toggle("is-active", activeFolder === f);
+      btn.addEventListener("click", () => {
         activeFolder = f;
         render();
       });
-      folderShelf.appendChild(card);
+      folderShelf.appendChild(btn);
     });
   }
 
   function render() {
     renderFolders();
-    const q = cleanText(searchQuery, 120).toLowerCase();
+    const q = searchQuery.trim().toLowerCase();
     const filtered = notes.filter((n) => {
       if (activeFolder !== "Semua" && n.folder !== activeFolder) return false;
       if (onlyFav && !n.favorite) return false;
