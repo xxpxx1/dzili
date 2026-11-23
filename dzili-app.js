@@ -136,7 +136,17 @@ export function mountDziliWorkspace(rootEl, options = {}) {
       panel.hidden = !isTarget;
       panel.style.setProperty("display", isTarget ? "grid" : "none", "important");
       if (isTarget && !mounted[t.id]) {
-        mounted[t.id] = target.mount(panel);
+        try {
+          mounted[t.id] = target.mount(panel);
+        } catch (err) {
+          panel.textContent = "";
+          const errBox = make("div", "dzili-card");
+          errBox.append(
+            make("strong", "", `Error memuat ${t.label}:`),
+            make("pre", "", String(err && (err.stack || err.message) || err))
+          );
+          panel.appendChild(errBox);
+        }
       } else if (isTarget && mounted[t.id] && typeof mounted[t.id].refresh === "function") {
         mounted[t.id].refresh();
       }
