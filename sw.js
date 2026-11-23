@@ -12,7 +12,7 @@ const ASSETS = [
   "./jadwal-dzili.css",
   "./tugas-produktivitas.js",
   "./tugas-dzili.css",
-  "./binder-library.js",
+  "./binder-library.js?v=37",
   "./binder-dzili.css",
   "./fokus-produktivitas.js",
   "./fokus-dzili.css",

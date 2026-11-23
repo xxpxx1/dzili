@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js";
+import { runSafeOCR } from "./binder-ocr.js?v=37";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
