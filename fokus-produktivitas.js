@@ -1,18 +1,238 @@
 const FOCUS_KEY = "dzili_focus_v1";
 const FORTUNES = [
-  "Satu langkah kecil yang konsisten hari ini jauh lebih kuat daripada niat besar yang ditunda.",
-  "Istirahat sebentar bukan tanda menyerah—otakmu sedang merapikan ingatan yang baru dipelajari.",
-  "Kamu tidak perlu menguasai semuanya dalam satu malam; cukup pahami satu konsep sampai tuntas.",
-  "Catatan rapi hari ini adalah hadiah terbaik untuk dirimu sendiri menjelang hari ujian.",
-  "Fokus 25 menit dengan sepenuh hati lebih bernilai daripada duduk dua jam sambil terdistraksi.",
-  "Kalau mulai buntu, tarik napas pelan, minum air putih, lalu mulai lagi dari soal paling sederhana.",
-  "Kemajuan sering kali terasa pelan di permukaan, padahal akarnya sedang menguat di dalam.",
-  "Selesaikan satu tugas kecil dulu agar momentum semangatmu kembali menyala.",
-  "Tidak apa-apa salah saat latihan—setiap kesalahan menunjukkan bagian mana yang siap dipahami.",
-  "Jaga ritme belajar dan tidurmu; pikiran yang segar menangkap ide dua kali lebih cepat.",
-  "Hari ini kamu sudah bertahan dan berusaha sejauh ini—itu sudah layak diapresiasi.",
-  "Ubah target yang terasa berat menjadi langkah pertama yang bisa dikerjakan dalam 5 menit."
+  {
+    "tag": "Ramalan Kuliah",
+    "text": "Hari ini dosen akan selesai menjelaskan 10 menit lebih awal. Aamiin paling kencang!"
+  },
+  {
+    "tag": "Ramalan Kuliah",
+    "text": "Dosen yang biasanya killer hari ini lagi mode baik hati dan nggak jadi ngasih kuis dadakan."
+  },
+  {
+    "tag": "Ramalan Kuliah",
+    "text": "Kursi favoritmu di kelas masih kosong dan dingin AC-nya pas banget hari ini."
+  },
+  {
+    "tag": "Ramalan Kuliah",
+    "text": "Kelompok presentasimu bakal dapat pertanyaan yang kebetulan banget baru saja kamu baca!"
+  },
+  {
+    "tag": "Ramalan Kuliah",
+    "text": "Jam kosong tak terduga akan muncul di saat baterai energimu tinggal 15%."
+  },
+  {
+    "tag": "Ramalan Kuliah",
+    "text": "Catatan yang kamu tulis rapi hari ini bakal menyelamatkanmu pas H-1 ujian nanti."
+  },
+  {
+    "tag": "Ramalan Jajan",
+    "text": "Seseorang di sekitar sini diam-diam ingin mentraktir kamu kopi atau matcha minggu ini."
+  },
+  {
+    "tag": "Ramalan Jajan",
+    "text": "Jajanan yang lagi kamu pengenin sejak kemarin bakal ketemu di jalan pulang nanti."
+  },
+  {
+    "tag": "Ramalan Hari Ini",
+    "text": "Antrean makan siangmu hari ini bakal lancar jaya dan porsinya lebih banyak dari biasanya."
+  },
+  {
+    "tag": "Ramalan Hari Ini",
+    "text": "Cuaca hari ini bersahabat banget buat pulang kuliah tanpa drama kehujanan."
+  },
+  {
+    "tag": "Hoki Akademik",
+    "text": "Materi yang baru saja kamu baca punya peluang 87,4% muncul di kuis atau ujian nanti!"
+  },
+  {
+    "tag": "Hoki Hari Ini",
+    "text": "Kamu akan menemukan jawaban soal yang sempat bikin bingung tepat setelah minum sesuatu yang segar."
+  },
+  {
+    "tag": "Hoki Hari Ini",
+    "text": "Baterai HP dan baterai semangatmu akan awet sampai kelas terakhir selesai!"
+  },
+  {
+    "tag": "Hoki Hari Ini",
+    "text": "Notifikasi yang bikin senyum-senyum sendiri bakal masuk ke HP-mu hari ini."
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Kenapa buku matematika selalu kelihatan sedih? Karena punya banyak masalah. Untung kamu jago nyelesainnya!"
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Apa bedanya kamu sama integral tentu? Kalau integral tentu ada batasnya, kalau cantiknya kamu tak terhingga."
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Sudut apa yang paling hangat? Bukan sudut 90 derajat, tapi sudut bibir kamu pas lagi senyum."
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Kenapa garis sejajar nggak pernah ketemu? Soalnya mereka belum install aplikasi Dzili."
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Kenapa angka 6 takut sama angka 7? Karena seven eight nine (7 8 9)!"
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Apa yang dibilang angka 0 ke angka 8? \"Ikat pinggangnya keren banget, Bro!\""
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Kenapa tanaman di jurusan matematika nggak pernah tumbuh normal? Karena akarnya kuadrat semua."
+  },
+  {
+    "tag": "Humor Math",
+    "text": "Cintaku ke kamu itu kayak nilai Pi (π): nggak pernah berhenti dan nggak bakal habis dibagi apa pun."
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Angka berapa yang paling romantis? Angka 2, soalnya kalau sendiri sepi, kalau berdua jadi asyik."
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Kopi apa yang paling pahit? Kopilih dia daripada aku. Bercanda deng, yang manis cuma kamu!"
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Hewan apa yang paling sering telat masuk kelas pagi? Kaki seribu, kelamaan pakai sepatunya."
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Kenapa zombie kalau nyerang selalu rame-rame? Kalau sendirian namanya zomblo."
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Ikan apa yang paling sering berhenti mendadak? Ikan pause."
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Awan apa yang bikin seneng? Awanna be with you terus setiap hari."
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Benda apa yang kalau dipotong malah makin tinggi? Celana panjang!"
+  },
+  {
+    "tag": "Tebak-Tebakan",
+    "text": "Sayur apa yang jago nyanyi? Kol-play!"
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Niat hati buka HP cuma mau cek jam kuliah 5 detik. Eh, tahu-tahu sudah 40 menit nonton video kucing nyanyi."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Momen paling menegangkan di kelas: dosen bilang \"Coba yang pojok jawab\", lalu seluruh kelas mendadak pura-pura sibuk nyatet."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Definisi percaya diri tingkat dewa: ngerjain soal hitungan 3 halaman penuh tanpa kalkulator, pas dicek ternyata salah tanda minus di baris pertama."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Tadi malam sudah pasang 5 alarm buat kelas pagi. Pas pagi bunyi, bukannya bangun malah dimatiin sambil bilang \"5 menit lagi\" dalam mimpi."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Di catatan binder tulisannya rapi estetik pakai stabilo pastel. Pas masuk halaman ke-4 dosen ngebut, tulisannya berubah jadi sandi rumput."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Status baterai HP 10%: panik cari colokan. Status baterai otak 10%: masih sempat mikir \"habis ini enaknya jajan apa ya?\""
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Bilangnya ke teman \"Aku belum belajar sama sekali nih\", pas nilai keluar ternyata dapat A. Semoga kejadian ini menular ke kamu!"
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Hukum kekekalan tugas kuliah: satu tugas selesai dicentang, dua tugas baru langsung muncul di grup kelas."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Persiapan belajar: rapikan meja 20 menit, bikin minum 10 menit, pilih lagu 15 menit, belajarnya 5 menit lalu ngantuk."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Kalau ketemu soal ujian yang bentuknya aneh banget, tarik napas, baca bismillah, dan ingat: dosennya juga manusia yang suka ngopi."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Misteri terbesar mahasiswa: pulpen baru beli kemarin langsung hilang, tapi pulpen nemu di jalan awet sampai lulus."
+  },
+  {
+    "tag": "Cerita Mini",
+    "text": "Katanya matematika itu ilmu pasti, tapi kenapa pas ditanya \"Mau makan di mana?\" jawabannya selalu \"Terserah\"?"
+  },
+  {
+    "tag": "Mood Booster",
+    "text": "Nggak apa-apa jalan pelan, yang penting nggak mundur. Kamu sudah hebat banget sejauh ini!"
+  },
+  {
+    "tag": "Mood Booster",
+    "text": "Kalau hari ini terasa berat, ingat: ada seseorang yang selalu bangga sama setiap usaha kecilmu."
+  },
+  {
+    "tag": "Mood Booster",
+    "text": "Jangan lupa minum air putih! Otak yang encer butuh hidrasi, bukan cuma kafein dan harapan."
+  },
+  {
+    "tag": "Mood Booster",
+    "text": "Bahu tegang? Tarik napas 4 detik, embuskan pelan. Tugasnya nggak akan kabur kok, santai dulu 2 menit."
+  },
+  {
+    "tag": "Mood Booster",
+    "text": "Kamu itu kombinasi langka: pinter ngitung rumus, tapi juga jago bikin hari orang lain jadi lebih cerah."
+  },
+  {
+    "tag": "Mood Booster",
+    "text": "Setiap halaman catatan yang kamu tulis hari ini adalah investasi buat versi kamu yang sukses di masa depan."
+  },
+  {
+    "tag": "Pesan Manis",
+    "text": "Rumus kebahagiaan hari ini: Istirahat cukup + Minum air putih + Senyum manis kamu."
+  },
+  {
+    "tag": "Pesan Manis",
+    "text": "Capek boleh, nyerah jangan. Kalau butuh tempat cerita atau butuh teman jajan, tinggal kabari ya!"
+  },
+  {
+    "tag": "Pesan Manis",
+    "text": "Terima kasih sudah bertahan dan berjuang melewati hari ini dengan keren. Selamat istirahat nanti malam!"
+  },
+  {
+    "tag": "Pesan Manis",
+    "text": "Dari sekian banyak probabilitas di dunia, ketemu dan kenal kamu tetap jadi hasil perhitungan terbaik."
+  },
+  {
+    "tag": "Pesan Manis",
+    "text": "Semangat terus kuliahnya, Bu Matematikawan! Dunia butuh lebih banyak orang hebat dan baik hati kayak kamu."
+  },
+  {
+    "tag": "Pengingat Lembut",
+    "text": "Matamu sudah kerja keras menatap layar dan buku hari ini. Kedip-kedip sebentar dan lihat yang hijau-hijau ya."
+  },
+  {
+    "tag": "Pengingat Lembut",
+    "text": "Nilai bagus itu bonus, yang paling penting kamu tetap sehat, bahagia, dan nggak telat makan."
+  },
+  {
+    "tag": "Pengingat Lembut",
+    "text": "Satu langkah kecil hari ini jauh lebih berarti daripada rencana sempurna yang nggak pernah dimulai."
+  }
 ];
+
+function formatFortuneItem(item) {
+  if (typeof item === 'string') return item;
+  if (item && typeof item === 'object') {
+    return item.tag ? `[${item.tag}] ${item.text}` : String(item.text || '');
+  }
+  return String(item || '');
+}
 
 function todayISO(now = new Date()) {
   const y = now.getFullYear();
@@ -296,7 +516,7 @@ export function mountFocusProductivity(hostEl) {
       return;
     }
 
-    currentFortune = FORTUNES[fortuneIdx % FORTUNES.length];
+    currentFortune = formatFortuneItem(FORTUNES[fortuneIdx % FORTUNES.length]);
     fortuneIdx += 1;
     state.cookiesLeft = Math.max(0, state.cookiesLeft - 1);
     saveFocusState(state);

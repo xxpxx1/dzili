@@ -174,69 +174,47 @@ export function mountBinderLibrary(hostEl) {
   titleInput.required = true;
 
   const toolRow = el("div", "dzili-bdr-tools");
-  const fileInput = el("input", "dzili-file-hidden");
-  fileInput.type = "file";
-  fileInput.accept = "image/png,image/jpeg,image/webp";
-  fileInput.setAttribute("capture", "environment");
 
-  const scanBtn = el("button", "dzili-btn-ghost", "Scan Foto / OCR");
-  scanBtn.type = "button";
-  scanBtn.addEventListener("click", () => fileInput.click());
+  const cameraInput = el("input", "dzili-file-hidden");
+  cameraInput.type = "file";
+  cameraInput.accept = "image/*";
+  cameraInput.setAttribute("capture", "environment");
+
+  const galleryInput = el("input", "dzili-file-hidden");
+  galleryInput.type = "file";
+  galleryInput.accept = "image/png,image/jpeg,image/webp";
+
+  const camBtn = el("button", "dzili-btn-ghost", "Kamera + OCR");
+  camBtn.type = "button";
+  camBtn.addEventListener("click", () => cameraInput.click());
+
+  const galleryBtn = el("button", "dzili-btn-ghost", "Galeri + OCR");
+  galleryBtn.type = "button";
+  galleryBtn.addEventListener("click", () => galleryInput.click());
 
   const statusNote = el("span", "dzili-bdr-status");
-  toolRow.append(scanBtn, fileInput, statusNote);
+  toolRow.append(camBtn, galleryBtn, cameraInput, galleryInput, statusNote);
 
-  const snippetBar = el("div", "dzili-sym-bar");
-  const bodyArea = el("textarea", "dzili-textarea");
-  bodyArea.rows = 4;
-  bodyArea.placeholder = "Tulis catatan, teorema, atau rumus...";
-
-  const ocrArea = el("textarea", "dzili-textarea");
-  ocrArea.rows = 2;
-  ocrArea.placeholder = "Hasil scan OCR (bisa diedit atau dilengkapi manual)...";
-
-  function insertSnippet(snippet) {
-    const start = bodyArea.selectionStart ?? bodyArea.value.length;
-    const end = bodyArea.selectionEnd ?? bodyArea.value.length;
-    bodyArea.value = bodyArea.value.slice(0, start) + snippet + bodyArea.value.slice(end);
-    bodyArea.focus();
-  }
-
-  [
-    ["+ Teorema", "\n[Teorema] "],
-    ["+ Rumus", "\n[Rumus] "],
-    ["+ Definisi", "\n[Definisi] "],
-    ...SYMBOLS.map((s) => [s, s])
-  ].forEach(([label, snip]) => {
-    const b = el("button", "dzili-sym-btn", label);
-    b.type = "button";
-    b.addEventListener("click", () => insertSnippet(snip));
-    snippetBar.appendChild(b);
-  });
-
-  fileInput.addEventListener("change", async (e) => {
+  async function handlePickedImage(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!/^image\/(png|jpeg|webp)$/i.test(file.type) || file.size > 6 * 1024 * 1024) {
-      statusNote.textContent = "Pilih gambar PNG/JPG/WEBP maks 6 MB.";
+    if (!/^image\/(png|jpeg|jpg|webp)$/i.test(file.type) || file.size > 8 * 1024 * 1024) {
+      statusNote.textContent = "Pilih gambar PNG/JPG/WEBP maks 8 MB.";
+      e.target.value = "";
       return;
     }
     pendingImageFlag = true;
-    if (window.Tesseract && typeof window.Tesseract.recognize === "function") {
-      statusNote.textContent = "Memproses OCR...";
-      try {
-        const res = await window.Tesseract.recognize(file, "ind+eng");
-        const txt = cleanText(res?.data?.text || "", 10000);
-        if (txt) ocrArea.value = txt;
-        statusNote.textContent = txt ? "OCR selesai." : "Tidak ada teks terbaca.";
-      } catch {
-        statusNote.textContent = "OCR gagal, silakan ketik/tempel hasil bacaan.";
-      }
-    } else {
-      statusNote.textContent = "Gambar dipilih. Mesin OCR belum aktif, isi teks OCR manual bila perlu.";
+    statusNote.textContent = "Menyiapkan & memindai OCR...";
+    const res = await runSafeOCR(file, "ind+eng");
+    if (res && res.text) {
+      ocrArea.value = res.text;
     }
-    fileInput.value = "";
-  });
+    statusNote.textContent = res?.message || "Gambar siap disimpan.";
+    e.target.value = "";
+  }
+
+  cameraInput.addEventListener("change", handlePickedImage);
+  galleryInput.addEventListener("change", handlePickedImage);
 
   const saveBtn = el("button", "dzili-btn-primary", "Simpan ke Binder");
   saveBtn.type = "submit";
