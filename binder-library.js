@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js?v=41";
+import { runSafeOCR } from "./binder-ocr.js?v=42";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
@@ -86,6 +86,46 @@ function el(tag, className = "", text = "") {
   return node;
 }
 
+function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Gagal membaca file gambar."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Format gambar tidak dapat dimuat."));
+      img.onload = () => {
+        const scale = img.width > maxWidth ? maxWidth / img.width : 1;
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("Canvas tidak tersedia."));
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = String(reader.result || "");
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+export function downloadNoteImage(note) {
+  if (!note || !note.imageData) return false;
+  const safeName = (note.title || "catatan-binder")
+    .toLowerCase()
+    .replace(/[^a-z0-9-_]+/gi, "-")
+    .replace(/^-+|-+$/g, "") || "catatan-binder";
+  const a = document.createElement("a");
+  a.href = note.imageData;
+  a.download = `${safeName}.jpg`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  return true;
+}
+
 export function exportNoteToPDF(note) {
   const win = window.open("", "_blank", "width=780,height=900");
   if (!win) return;
@@ -137,6 +177,7 @@ export function mountBinderLibrary(hostEl) {
   let searchQuery = "";
   let editingId = null;
   let pendingImageFlag = false;
+  let pendingImageData = "";
   let imageMode = "ocr"; // "photo" = potret saja, "ocr" = potret/galeri + scan OCR
 
   hostEl.textContent = "";
@@ -253,7 +294,15 @@ export function mountBinderLibrary(hostEl) {
       return;
     }
 
-    pendingImageFlag = true;
+    statusNote.textContent = "Menyiapkan foto catatan...";
+    try {
+      pendingImageData = await compressImageToDataUrl(file);
+      pendingImageFlag = true;
+    } catch {
+      statusNote.textContent = "Gagal memproses foto.";
+      return;
+    }
+
     if (!titleInput.value.trim()) {
       const nowStr = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
       titleInput.value = `Potret Catatan (${nowStr})`;
@@ -267,6 +316,7 @@ export function mountBinderLibrary(hostEl) {
       ocr: cleanText(ocrArea.value, 10000),
       favorite: editingId ? Boolean(notes.find((n) => n.id === editingId)?.favorite) : false,
       hasImage: true,
+      imageData: pendingImageData,
       updatedAt: new Date().toISOString().slice(0, 10)
     };
 
@@ -275,6 +325,8 @@ export function mountBinderLibrary(hostEl) {
       notes = await loadNotes();
       editingId = null;
       pendingImageFlag = false;
+      pendingImageData = "";
+      pendingImageData = "";
       editor.hidden = true;
       ocrSourceBox.hidden = true;
       statusNote.textContent = "Foto potret tersimpan ke Binder.";
@@ -293,6 +345,11 @@ export function mountBinderLibrary(hostEl) {
       return;
     }
     pendingImageFlag = true;
+    try {
+      pendingImageData = await compressImageToDataUrl(file);
+    } catch {
+      pendingImageData = "";
+    }
     statusNote.textContent = "Memindai teks OCR...";
     const res = await runSafeOCR(file, "ind+eng");
     if (res && res.text) {
@@ -343,7 +400,8 @@ export function mountBinderLibrary(hostEl) {
 
   function openEditor(item = null) {
     editingId = item ? item.id : null;
-    pendingImageFlag = Boolean(item?.hasImage);
+    pendingImageFlag = Boolean(item?.hasImage || item?.imageData);
+    pendingImageData = item?.imageData || "";
     folderSelect.value = item?.folder || (activeFolder !== "Semua" ? activeFolder : "Kalkulus");
     titleInput.value = item?.title || "";
     bodyArea.value = item?.body || "";
@@ -380,7 +438,8 @@ export function mountBinderLibrary(hostEl) {
       body,
       ocr,
       favorite: existing ? Boolean(existing.favorite) : false,
-      hasImage: Boolean(pendingImageFlag || ocr),
+      hasImage: Boolean(pendingImageFlag || pendingImageData || ocr),
+      imageData: pendingImageData || existing?.imageData || "",
       updatedAt
     };
 
@@ -447,13 +506,33 @@ export function mountBinderLibrary(hostEl) {
       head.append(badge, favBtn);
 
       const title = el("h4", "", item.title);
-      const previewSource = item.body || item.ocr || (item.hasImage ? "Lampiran foto catatan" : "");
+      const previewSource = item.body || item.ocr || (item.imageData || item.hasImage ? "Lampiran foto catatan" : "");
       const preview = el("pre", "dzili-bdr-preview", previewSource.slice(0, 240));
+
+      let photoThumb = null;
+      if (item.imageData) {
+        photoThumb = document.createElement("img");
+        photoThumb.src = item.imageData;
+        photoThumb.alt = item.title;
+        photoThumb.className = "dzili-bdr-photo";
+        photoThumb.style.width = "100%";
+        photoThumb.style.maxHeight = "220px";
+        photoThumb.style.objectFit = "cover";
+        photoThumb.style.borderRadius = "12px";
+        photoThumb.style.margin = "8px 0";
+      }
 
       const actions = el("div", "dzili-tl-actions");
       const editBtn = el("button", "dzili-btn-mini", "Edit");
       editBtn.type = "button";
       editBtn.addEventListener("click", () => openEditor(item));
+
+      if (item.imageData) {
+        const dlBtn = el("button", "dzili-btn-mini", "Unduh Foto");
+        dlBtn.type = "button";
+        dlBtn.addEventListener("click", () => downloadNoteImage(item));
+        actions.appendChild(dlBtn);
+      }
 
       const pdfBtn = el("button", "dzili-btn-mini", "PDF");
       pdfBtn.type = "button";
@@ -469,7 +548,11 @@ export function mountBinderLibrary(hostEl) {
       });
 
       actions.append(editBtn, pdfBtn, delBtn);
-      card.append(head, title, preview, actions);
+      if (photoThumb) {
+        card.append(head, title, photoThumb, preview, actions);
+      } else {
+        card.append(head, title, preview, actions);
+      }
       listEl.appendChild(card);
     });
   }
