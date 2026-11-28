@@ -1,4 +1,4 @@
-const CACHE_NAME = "dzili-v37";
+const CACHE_NAME = "dzili-v38";
 const ASSETS = [
   "./",
   "./index.html",
@@ -12,7 +12,7 @@ const ASSETS = [
   "./jadwal-dzili.css",
   "./tugas-produktivitas.js",
   "./tugas-dzili.css",
-  "./binder-library.js?v=37",
+  "./binder-library.js?v=38",
   "./binder-dzili.css",
   "./fokus-produktivitas.js",
   "./fokus-dzili.css",

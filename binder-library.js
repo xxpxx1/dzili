@@ -175,114 +175,140 @@ export function mountBinderLibrary(hostEl) {
   titleInput.placeholder = "Judul materi / bab (mis. Integral Lipat Dua)";
   titleInput.required = true;
 
-  const modeRow = el("div", "dzili-bdr-tools");
-  const modePhotoBtn = el("button", "dzili-chip-btn", "Mode: Potret");
-  modePhotoBtn.type = "button";
-  const modeOcrBtn = el("button", "dzili-chip-btn is-active", "Mode: Scan OCR");
-  modeOcrBtn.type = "button";
-
-  function syncImageModeUI() {
-    modePhotoBtn.classList.toggle("is-active", imageMode === "photo");
-    modeOcrBtn.classList.toggle("is-active", imageMode === "ocr");
-    camBtn.textContent = imageMode === "ocr" ? "Kamera + OCR" : "Potret Kamera";
-    galleryBtn.textContent = imageMode === "ocr" ? "Galeri + OCR" : "Pilih Foto Galeri";
-  }
-
-  modePhotoBtn.addEventListener("click", () => {
-    imageMode = "photo";
-    syncImageModeUI();
-    statusNote.textContent = "Mode Potret aktif: gambar disimpan tanpa scan OCR.";
-  });
-
-  modeOcrBtn.addEventListener("click", () => {
-    imageMode = "ocr";
-    syncImageModeUI();
-    statusNote.textContent = "Mode Scan OCR aktif: gambar akan dipindai teksnya.";
-  });
-
   const toolRow = el("div", "dzili-bdr-tools");
 
-  const cameraInput = el("input", "dzili-file-hidden");
-  cameraInput.type = "file";
-  cameraInput.accept = "image/*";
-  cameraInput.setAttribute("capture", "environment");
+  const photoOnlyInput = el("input", "dzili-file-hidden");
+  photoOnlyInput.type = "file";
+  photoOnlyInput.accept = "image/*";
+  photoOnlyInput.setAttribute("capture", "environment");
 
-  const galleryInput = el("input", "dzili-file-hidden");
-  galleryInput.type = "file";
-  galleryInput.accept = "image/png,image/jpeg,image/webp";
+  const ocrCameraInput = el("input", "dzili-file-hidden");
+  ocrCameraInput.type = "file";
+  ocrCameraInput.accept = "image/*";
+  ocrCameraInput.setAttribute("capture", "environment");
 
-  const camBtn = el("button", "dzili-btn-ghost", "Kamera + OCR");
-  camBtn.type = "button";
-  camBtn.addEventListener("click", () => cameraInput.click());
+  const ocrGalleryInput = el("input", "dzili-file-hidden");
+  ocrGalleryInput.type = "file";
+  ocrGalleryInput.accept = "image/png,image/jpeg,image/webp";
 
-  const galleryBtn = el("button", "dzili-btn-ghost", "Galeri + OCR");
-  galleryBtn.type = "button";
-  galleryBtn.addEventListener("click", () => galleryInput.click());
+  const cameraBtn = el("button", "dzili-btn-ghost", "Kamera");
+  cameraBtn.type = "button";
+
+  const ocrBtn = el("button", "dzili-btn-ghost", "OCR");
+  ocrBtn.type = "button";
+
+  const ocrSourceBox = el("div", "dzili-bdr-tools");
+  ocrSourceBox.hidden = true;
+
+  const ocrFromCamBtn = el("button", "dzili-chip-btn", "Kamera OCR");
+  ocrFromCamBtn.type = "button";
+
+  const ocrFromGalleryBtn = el("button", "dzili-chip-btn", "Galeri OCR");
+  ocrFromGalleryBtn.type = "button";
+
+  ocrSourceBox.append(ocrFromCamBtn, ocrFromGalleryBtn);
 
   const statusNote = el("span", "dzili-bdr-status");
-  modeRow.append(modePhotoBtn, modeOcrBtn);
-  toolRow.append(camBtn, galleryBtn, cameraInput, galleryInput, statusNote);
+  toolRow.append(
+    cameraBtn,
+    ocrBtn,
+    photoOnlyInput,
+    ocrCameraInput,
+    ocrGalleryInput,
+    statusNote
+  );
 
-  const bodyArea = el("textarea", "dzili-textarea");
-  bodyArea.rows = 5;
-  bodyArea.placeholder = "Tulis catatan, teorema, atau rumus...";
-
-  const ocrArea = el("textarea", "dzili-textarea");
-  ocrArea.rows = 2;
-  ocrArea.placeholder = "Hasil scan OCR (bisa diedit atau dilengkapi manual)...";
-
-  const snippetBar = el("div", "dzili-bdr-snippets");
-
-  function insertSnippet(snippet) {
-    const start = bodyArea.selectionStart ?? bodyArea.value.length;
-    const end = bodyArea.selectionEnd ?? bodyArea.value.length;
-    bodyArea.value = bodyArea.value.slice(0, start) + snippet + bodyArea.value.slice(end);
-    bodyArea.focus();
-  }
-
-  [
-    ["+ Teorema", "\n[Teorema] "],
-    ["+ Rumus", "\n[Rumus] "],
-    ["+ Definisi", "\n[Definisi] "],
-    ...SYMBOLS.map((s) => [s, s])
-  ].forEach(([label, snip]) => {
-    const b = el("button", "dzili-sym-btn", label);
-    b.type = "button";
-    b.addEventListener("click", () => insertSnippet(snip));
-    snippetBar.appendChild(b);
+  cameraBtn.addEventListener("click", () => {
+    ocrSourceBox.hidden = true;
+    photoOnlyInput.click();
   });
 
-  async function handlePickedImage(e) {
+  ocrBtn.addEventListener("click", () => {
+    ocrSourceBox.hidden = !ocrSourceBox.hidden;
+    if (!ocrSourceBox.hidden) {
+      statusNote.textContent = "Pilih sumber OCR: Kamera OCR atau Galeri OCR.";
+    }
+  });
+
+  ocrFromCamBtn.addEventListener("click", () => {
+    ocrSourceBox.hidden = true;
+    ocrCameraInput.click();
+  });
+
+  ocrFromGalleryBtn.addEventListener("click", () => {
+    ocrSourceBox.hidden = true;
+    ocrGalleryInput.click();
+  });
+
+  photoOnlyInput.addEventListener("change", async (e) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!/^image\/(png|jpeg|jpg|webp|heic|heif)$/i.test(file.type) && !file.type.startsWith("image/")) {
+      statusNote.textContent = "File harus berupa gambar.";
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      statusNote.textContent = "Ukuran foto maksimal 10 MB.";
+      return;
+    }
+
+    pendingImageFlag = true;
+    if (!titleInput.value.trim()) {
+      const nowStr = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+      titleInput.value = `Potret Catatan (${nowStr})`;
+    }
+
+    const record = {
+      id: editingId || `bdr_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      folder: normFolder(folderSelect.value),
+      title: cleanText(titleInput.value, 150) || "Potret Catatan",
+      body: cleanText(bodyArea.value, 15000),
+      ocr: cleanText(ocrArea.value, 10000),
+      favorite: editingId ? Boolean(notes.find((n) => n.id === editingId)?.favorite) : false,
+      hasImage: true,
+      updatedAt: new Date().toISOString().slice(0, 10)
+    };
+
+    try {
+      await putNote(record);
+      notes = await loadNotes();
+      editingId = null;
+      pendingImageFlag = false;
+      editor.hidden = true;
+      ocrSourceBox.hidden = true;
+      statusNote.textContent = "Foto potret tersimpan ke Binder.";
+      render();
+    } catch {
+      statusNote.textContent = "Foto siap, tekan Simpan ke Binder untuk menyimpan.";
+    }
+  });
+
+  async function handleOcrFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     if (!/^image\/(png|jpeg|jpg|webp)$/i.test(file.type) || file.size > 8 * 1024 * 1024) {
-      statusNote.textContent = "Pilih gambar PNG/JPG/WEBP maks 8 MB.";
-      e.target.value = "";
+      statusNote.textContent = "Pilih gambar PNG/JPG/WEBP maks 8 MB untuk OCR.";
       return;
     }
     pendingImageFlag = true;
-    if (imageMode !== "ocr") {
-      statusNote.textContent = "Foto potret siap dilampirkan (tanpa OCR).";
-      e.target.value = "";
-      return;
-    }
-    statusNote.textContent = "Menyiapkan & memindai OCR...";
+    statusNote.textContent = "Memindai teks OCR...";
     const res = await runSafeOCR(file, "ind+eng");
     if (res && res.text) {
       ocrArea.value = res.text;
     }
-    statusNote.textContent = res?.message || "Gambar siap disimpan.";
-    e.target.value = "";
+    statusNote.textContent = res?.message || "Proses OCR selesai.";
   }
 
-  cameraInput.addEventListener("change", handlePickedImage);
-  galleryInput.addEventListener("change", handlePickedImage);
+  ocrCameraInput.addEventListener("change", handleOcrFile);
+  ocrGalleryInput.addEventListener("change", handleOcrFile);
 
   const saveBtn = el("button", "dzili-btn-primary", "Simpan ke Binder");
   saveBtn.type = "submit";
   const cancelBtn = el("button", "dzili-btn-ghost", "Batal");
   cancelBtn.type = "button";
-  editor.append(folderSelect, titleInput, modeRow, toolRow, snippetBar, bodyArea, ocrArea, saveBtn, cancelBtn);
+  editor.append(folderSelect, titleInput, toolRow, ocrSourceBox, snippetBar, bodyArea, ocrArea, saveBtn, cancelBtn);
 
   const listEl = el("div", "dzili-bdr-list");
 
