@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js?v=44";
+import { runSafeOCR } from "./binder-ocr.js?v=45";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
@@ -530,12 +530,27 @@ export function mountBinderLibrary(hostEl) {
       editBtn.type = "button";
       editBtn.addEventListener("click", () => openEditor(item));
 
-      if (item.imageData) {
-        const dlBtn = el("button", "dzili-btn-mini", "Unduh Foto");
-        dlBtn.type = "button";
-        dlBtn.addEventListener("click", () => downloadNoteImage(item));
-        actions.appendChild(dlBtn);
-      }
+      const jpgBtn = el("button", "dzili-btn-mini", "JPG");
+      jpgBtn.type = "button";
+      jpgBtn.addEventListener("click", async () => {
+        if (item.imageData) {
+          downloadNoteImage(item);
+        } else if (typeof exportNoteToJPG === "function") {
+          await exportNoteToJPG(item);
+        }
+      });
+
+      const dlBtn = el("button", "dzili-btn-mini", "Unduh");
+      dlBtn.type = "button";
+      dlBtn.addEventListener("click", async () => {
+        if (item.imageData) {
+          downloadNoteImage(item);
+        } else if (typeof downloadNoteAsset === "function") {
+          await downloadNoteAsset(item);
+        } else if (typeof exportNoteToJPG === "function") {
+          await exportNoteToJPG(item);
+        }
+      });
 
       const pdfBtn = el("button", "dzili-btn-mini", "PDF");
       pdfBtn.type = "button";
@@ -550,7 +565,7 @@ export function mountBinderLibrary(hostEl) {
         render();
       });
 
-      actions.append(editBtn, pdfBtn, delBtn);
+      actions.append(editBtn, jpgBtn, dlBtn, pdfBtn, delBtn);
       if (photoThumb) {
         card.append(head, title, photoThumb, preview, actions);
       } else {
