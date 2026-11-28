@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js?v=45";
+import { runSafeOCR } from "./binder-ocr.js?v=46";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
@@ -114,12 +114,44 @@ function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
   });
 }
 
+function dataUrlToJpegBlob(dataUrl) {
+  const parts = String(dataUrl || "").split(",");
+  if (parts.length < 2) return null;
+  const mimeMatch = parts[0].match(/data:([^;]+);base64/i);
+  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+  const binStr = atob(parts[1]);
+  const len = binStr.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i += 1) {
+    bytes[i] = binStr.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mime });
+}
+
+function triggerBlobDownload(blob, filename) {
+  if (!blob) return false;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return true;
+}
+
 export function downloadNoteImage(note) {
   if (!note || !note.imageData) return false;
   const safeName = (note.title || "foto-kamera-binder")
     .toLowerCase()
     .replace(/[^a-z0-9-_]+/gi, "-")
     .replace(/^-+|-+$/g, "") || "foto-kamera-binder";
+  const blob = dataUrlToJpegBlob(note.imageData);
+  if (blob) {
+    return triggerBlobDownload(blob, `${safeName}.jpg`);
+  }
   const a = document.createElement("a");
   a.href = note.imageData;
   a.download = `${safeName}.jpg`;
