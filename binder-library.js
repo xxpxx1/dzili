@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js?v=42";
+import { runSafeOCR } from "./binder-ocr.js?v=44";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
@@ -103,7 +103,10 @@ function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
         const ctx = canvas.getContext("2d");
         if (!ctx) return reject(new Error("Canvas tidak tersedia."));
         ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL("image/jpeg", quality));
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.88));
       };
       img.src = String(reader.result || "");
     };
@@ -113,10 +116,10 @@ function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
 
 export function downloadNoteImage(note) {
   if (!note || !note.imageData) return false;
-  const safeName = (note.title || "catatan-binder")
+  const safeName = (note.title || "foto-kamera-binder")
     .toLowerCase()
     .replace(/[^a-z0-9-_]+/gi, "-")
-    .replace(/^-+|-+$/g, "") || "catatan-binder";
+    .replace(/^-+|-+$/g, "") || "foto-kamera-binder";
   const a = document.createElement("a");
   a.href = note.imageData;
   a.download = `${safeName}.jpg`;
@@ -329,7 +332,7 @@ export function mountBinderLibrary(hostEl) {
       pendingImageData = "";
       editor.hidden = true;
       ocrSourceBox.hidden = true;
-      statusNote.textContent = "Foto potret tersimpan ke Binder.";
+      statusNote.textContent = "Foto .jpg tersimpan di Binder. Tekan Unduh di kartu untuk menyimpan ke perangkat.";
       render();
     } catch {
       statusNote.textContent = "Foto siap, tekan Simpan ke Binder untuk menyimpan.";
