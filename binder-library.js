@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js?v=40";
+import { runSafeOCR } from "./binder-ocr.js?v=41";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
@@ -303,6 +303,14 @@ export function mountBinderLibrary(hostEl) {
 
   ocrCameraInput.addEventListener("change", handleOcrFile);
   ocrGalleryInput.addEventListener("change", handleOcrFile);
+
+  const bodyArea = el("textarea", "dzili-textarea");
+  bodyArea.rows = 5;
+  bodyArea.placeholder = "Tulis catatan, teorema, atau rumus...";
+
+  const ocrArea = el("textarea", "dzili-textarea");
+  ocrArea.rows = 2;
+  ocrArea.placeholder = "Hasil scan OCR (bisa diedit atau dilengkapi manual)...";
 
   const snippetBar = el("div", "dzili-bdr-snippets");
 
