@@ -304,6 +304,27 @@ export function mountBinderLibrary(hostEl) {
   ocrCameraInput.addEventListener("change", handleOcrFile);
   ocrGalleryInput.addEventListener("change", handleOcrFile);
 
+  const snippetBar = el("div", "dzili-bdr-snippets");
+
+  function insertSnippet(snippet) {
+    const start = bodyArea.selectionStart ?? bodyArea.value.length;
+    const end = bodyArea.selectionEnd ?? bodyArea.value.length;
+    bodyArea.value = bodyArea.value.slice(0, start) + snippet + bodyArea.value.slice(end);
+    bodyArea.focus();
+  }
+
+  [
+    ["+ Teorema", "\n[Teorema] "],
+    ["+ Rumus", "\n[Rumus] "],
+    ["+ Definisi", "\n[Definisi] "],
+    ...SYMBOLS.map((s) => [s, s])
+  ].forEach(([label, snip]) => {
+    const b = el("button", "dzili-sym-btn", label);
+    b.type = "button";
+    b.addEventListener("click", () => insertSnippet(snip));
+    snippetBar.appendChild(b);
+  });
+
   const saveBtn = el("button", "dzili-btn-primary", "Simpan ke Binder");
   saveBtn.type = "submit";
   const cancelBtn = el("button", "dzili-btn-ghost", "Batal");
