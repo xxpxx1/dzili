@@ -339,6 +339,47 @@ const MODES = [
   { key: "long", label: "Santai 15m", minutes: 15 }
 ];
 
+const FORTUNE_DECK_KEY = "dzili_fortune_deck_v1";
+
+function buildShuffledDeck(len) {
+  const arr = Array.from({ length: Math.max(1, len) }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
+}
+
+function pickNextFortuneIndex(totalLen) {
+  const safeLen = Math.max(1, totalLen);
+  let deckData = null;
+  try {
+    const raw = localStorage.getItem(FORTUNE_DECK_KEY);
+    if (raw) deckData = JSON.parse(raw);
+  } catch {}
+
+  let order = Array.isArray(deckData?.order)
+    ? deckData.order.filter((n) => Number.isInteger(n) && n >= 0 && n < safeLen)
+    : [];
+  let cursor = Number.isInteger(deckData?.cursor) ? deckData.cursor : 0;
+
+  if (order.length !== safeLen || cursor >= order.length) {
+    order = buildShuffledDeck(safeLen);
+    cursor = 0;
+  }
+
+  const chosenIdx = order[cursor];
+  cursor += 1;
+
+  try {
+    localStorage.setItem(FORTUNE_DECK_KEY, JSON.stringify({ order, cursor }));
+  } catch {}
+
+  return chosenIdx;
+}
+
 export function mountFocusProductivity(hostEl) {
   if (!hostEl) return null;
   const state = loadFocusState();
@@ -516,8 +557,8 @@ export function mountFocusProductivity(hostEl) {
       return;
     }
 
-    currentFortune = formatFortuneItem(FORTUNES[fortuneIdx % FORTUNES.length]);
-    fortuneIdx += 1;
+    const nextIdx = pickNextFortuneIndex(FORTUNES.length);
+    currentFortune = formatFortuneItem(FORTUNES[nextIdx]);
     state.cookiesLeft = Math.max(0, state.cookiesLeft - 1);
     saveFocusState(state);
 

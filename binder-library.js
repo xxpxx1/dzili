@@ -137,6 +137,7 @@ export function mountBinderLibrary(hostEl) {
   let searchQuery = "";
   let editingId = null;
   let pendingImageFlag = false;
+  let imageMode = "ocr"; // "photo" = potret saja, "ocr" = potret/galeri + scan OCR
 
   hostEl.textContent = "";
   hostEl.className = "dzili-bdr-wrap";
@@ -174,6 +175,31 @@ export function mountBinderLibrary(hostEl) {
   titleInput.placeholder = "Judul materi / bab (mis. Integral Lipat Dua)";
   titleInput.required = true;
 
+  const modeRow = el("div", "dzili-bdr-tools");
+  const modePhotoBtn = el("button", "dzili-chip-btn", "Mode: Potret");
+  modePhotoBtn.type = "button";
+  const modeOcrBtn = el("button", "dzili-chip-btn is-active", "Mode: Scan OCR");
+  modeOcrBtn.type = "button";
+
+  function syncImageModeUI() {
+    modePhotoBtn.classList.toggle("is-active", imageMode === "photo");
+    modeOcrBtn.classList.toggle("is-active", imageMode === "ocr");
+    camBtn.textContent = imageMode === "ocr" ? "Kamera + OCR" : "Potret Kamera";
+    galleryBtn.textContent = imageMode === "ocr" ? "Galeri + OCR" : "Pilih Foto Galeri";
+  }
+
+  modePhotoBtn.addEventListener("click", () => {
+    imageMode = "photo";
+    syncImageModeUI();
+    statusNote.textContent = "Mode Potret aktif: gambar disimpan tanpa scan OCR.";
+  });
+
+  modeOcrBtn.addEventListener("click", () => {
+    imageMode = "ocr";
+    syncImageModeUI();
+    statusNote.textContent = "Mode Scan OCR aktif: gambar akan dipindai teksnya.";
+  });
+
   const toolRow = el("div", "dzili-bdr-tools");
 
   const cameraInput = el("input", "dzili-file-hidden");
@@ -194,6 +220,7 @@ export function mountBinderLibrary(hostEl) {
   galleryBtn.addEventListener("click", () => galleryInput.click());
 
   const statusNote = el("span", "dzili-bdr-status");
+  modeRow.append(modePhotoBtn, modeOcrBtn);
   toolRow.append(camBtn, galleryBtn, cameraInput, galleryInput, statusNote);
 
   const bodyArea = el("textarea", "dzili-textarea");
@@ -234,6 +261,11 @@ export function mountBinderLibrary(hostEl) {
       return;
     }
     pendingImageFlag = true;
+    if (imageMode !== "ocr") {
+      statusNote.textContent = "Foto potret siap dilampirkan (tanpa OCR).";
+      e.target.value = "";
+      return;
+    }
     statusNote.textContent = "Menyiapkan & memindai OCR...";
     const res = await runSafeOCR(file, "ind+eng");
     if (res && res.text) {
@@ -250,7 +282,7 @@ export function mountBinderLibrary(hostEl) {
   saveBtn.type = "submit";
   const cancelBtn = el("button", "dzili-btn-ghost", "Batal");
   cancelBtn.type = "button";
-  editor.append(folderSelect, titleInput, toolRow, snippetBar, bodyArea, ocrArea, saveBtn, cancelBtn);
+  editor.append(folderSelect, titleInput, modeRow, toolRow, snippetBar, bodyArea, ocrArea, saveBtn, cancelBtn);
 
   const listEl = el("div", "dzili-bdr-list");
 
