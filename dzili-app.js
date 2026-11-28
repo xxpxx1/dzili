@@ -1,6 +1,6 @@
 import { mountScheduleDashboard } from "./jadwal-dashboard.js";
 import { mountTaskProductivity } from "./tugas-produktivitas.js";
-import { mountBinderLibrary } from "./binder-library.js?v=46";
+import { mountBinderLibrary } from "./binder-library.js?v=47";
 import { mountFocusProductivity } from "./fokus-produktivitas.js";
 import { mountAcademicSemester } from "./akademik-semester.js";
 import { createScientificCalculatorModal } from "./kalkulator-ilmiah.js";

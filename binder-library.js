@@ -1,4 +1,4 @@
-import { runSafeOCR } from "./binder-ocr.js?v=46";
+import { runSafeOCR } from "./binder-ocr.js?v=47";
 const DB_NAME = "dzili_binder_v2";
 const DB_VERSION = 1;
 const STORE = "notes";
@@ -86,14 +86,12 @@ function el(tag, className = "", text = "") {
   return node;
 }
 
-function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
+function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.85) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("Gagal membaca file gambar."));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error("Format gambar tidak dapat dimuat."));
-      img.onload = () => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
         const scale = img.width > maxWidth ? maxWidth / img.width : 1;
         const w = Math.max(1, Math.round(img.width * scale));
         const h = Math.max(1, Math.round(img.height * scale));
@@ -101,16 +99,47 @@ function compressImageToDataUrl(file, maxWidth = 1280, quality = 0.82) {
         canvas.width = w;
         canvas.height = h;
         const ctx = canvas.getContext("2d");
-        if (!ctx) return reject(new Error("Canvas tidak tersedia."));
-        ctx.drawImage(img, 0, 0, w, h);
+        if (!ctx) {
+          URL.revokeObjectURL(objectUrl);
+          return reject(new Error("Canvas tidak tersedia."));
+        }
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL("image/jpeg", 0.88));
-      };
-      img.src = String(reader.result || "");
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        URL.revokeObjectURL(objectUrl);
+        resolve(dataUrl);
+      } catch (err) {
+        URL.revokeObjectURL(objectUrl);
+        reject(err);
+      }
     };
-    reader.readAsDataURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Format gambar tidak dapat dimuat."));
+      reader.onload = () => {
+        const fbImg = new Image();
+        fbImg.onerror = () => reject(new Error("Format gambar tidak dapat dimuat."));
+        fbImg.onload = () => {
+          const scale = fbImg.width > maxWidth ? maxWidth / fbImg.width : 1;
+          const w = Math.max(1, Math.round(fbImg.width * scale));
+          const h = Math.max(1, Math.round(fbImg.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("Canvas tidak tersedia."));
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(fbImg, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        fbImg.src = String(reader.result || "");
+      };
+      reader.readAsDataURL(file);
+    };
+    img.src = objectUrl;
   });
 }
 
